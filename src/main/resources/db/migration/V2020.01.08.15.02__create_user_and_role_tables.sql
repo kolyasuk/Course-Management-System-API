@@ -15,8 +15,6 @@ VALUES ('ROLE_STUDENT'),
        ('ROLE_ADMIN');
 
 CREATE TABLE USER_ROLES (user_id int not null references USER(id),
-                        role_id int not null references ROLE(id));
-
-
-# INSERT INTO USER (username, password, full_name, role)
-# VALUES ('admin', '', 'admin', 'ADMIN');
+                        role_id int not null references ROLE(id),
+                        foreign key (user_id) references USER(id),
+                        foreign key (role_id) references ROLE(id));

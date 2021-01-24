@@ -3,8 +3,6 @@ package edu.sombra.cms.controller;
 import edu.sombra.cms.config.security.JwtTokenUtil;
 import edu.sombra.cms.config.security.UserDetailsImpl;
 import edu.sombra.cms.domain.dto.RegistrationDTO;
-import edu.sombra.cms.domain.dto.UserDTO;
-import edu.sombra.cms.domain.entity.User;
 import edu.sombra.cms.domain.mapper.UserMapper;
 import edu.sombra.cms.domain.payload.LoginRequest;
 import edu.sombra.cms.domain.payload.UserView;
@@ -17,12 +15,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -55,6 +53,5 @@ public class AuthController {
     public UserView register(@RequestBody @Valid RegistrationDTO registrationDTO) {
         return userService.create(registrationDTO);
     }
-
 
 }

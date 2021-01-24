@@ -14,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static edu.sombra.cms.domain.enumeration.RoleEnum.*;
-import static java.lang.String.format;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
