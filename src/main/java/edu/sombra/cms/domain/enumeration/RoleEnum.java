@@ -4,7 +4,8 @@ public enum RoleEnum {
 
     ROLE_STUDENT("STUDENT"),
     ROLE_INSTRUCTOR("INSTRUCTOR"),
-    ROLE_ADMIN("ADMIN");
+    ROLE_ADMIN("ADMIN"),
+    ROLE_PENDING("PENDING");
 
     private String value;
 

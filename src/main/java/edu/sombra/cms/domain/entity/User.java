@@ -1,6 +1,8 @@
 package edu.sombra.cms.domain.entity;
 
+import edu.sombra.cms.domain.enumeration.RoleEnum;
 import lombok.Data;
+import org.apache.tomcat.jni.Address;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -36,6 +38,7 @@ public class User {
     @Size(max = 50)
     @Email
     private String email;
+
     private String fullName;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -46,7 +49,23 @@ public class User {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
     @UpdateTimestamp
     private LocalDateTime modifiedAt;
+
+    @OneToOne(mappedBy = "user")
+    private Student student;
+
+    @OneToOne(mappedBy = "user")
+    private Instructor instructor;
+
+    private String message;
+
+    @Enumerated(EnumType.STRING)
+    private RoleEnum requestedRole;
+
+    public void addRole(Role role){
+        roles.add(role);
+    }
 
 }

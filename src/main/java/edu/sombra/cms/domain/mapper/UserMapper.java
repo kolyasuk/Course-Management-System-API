@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 public class UserMapper {
 
     private final PasswordEncoder passwordEncoder;
-    private final RoleRepository roleRepository;
 
     public UserDTO toDTO(User user){
         return new UserDTO()
@@ -41,7 +40,9 @@ public class UserMapper {
                 .setId(user.getId())
                 .setUsername(user.getUsername())
                 .setFullName(user.getFullName())
-                .setEmail(user.getEmail());
+                .setEmail(user.getEmail())
+                .setMessage(user.getMessage())
+                .setRequestedRole(user.getRequestedRole());
     }
 
     public User fromDTO(UserDTO userDTO){
@@ -53,16 +54,12 @@ public class UserMapper {
     }
 
     public User fromRegistrationDTO(RegistrationDTO registrationDTO){
-        Set<Role> roles = registrationDTO.getRoles().stream().map(role ->
-            roleRepository.findByName(role)
-                    .orElseThrow(() -> new RuntimeException("Role is not found."))
-        ).collect(Collectors.toSet());
-
         return new User()
                 .setUsername(registrationDTO.getUsername())
                 .setFullName(registrationDTO.getFullName())
                 .setEmail(registrationDTO.getEmail())
-                .setPassword(passwordEncoder.encode(registrationDTO.getPassword()))
-                .setRoles(roles);
+                .setMessage(registrationDTO.getMessage())
+                .setRequestedRole(registrationDTO.getRequestedRole())
+                .setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
     }
 }

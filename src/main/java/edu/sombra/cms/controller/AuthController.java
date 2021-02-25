@@ -32,6 +32,11 @@ public class AuthController {
     private final UserMapper userMapper;
     private final UserService userService;
 
+    @PostMapping("/signup")
+    public UserView register(@RequestBody @Valid RegistrationDTO registrationDTO) {
+        return userService.create(registrationDTO);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest) {
         try {
@@ -47,11 +52,6 @@ public class AuthController {
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-    }
-
-    @PostMapping("/signup")
-    public UserView register(@RequestBody @Valid RegistrationDTO registrationDTO) {
-        return userService.create(registrationDTO);
     }
 
 }

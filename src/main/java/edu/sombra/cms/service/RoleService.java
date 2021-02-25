@@ -1,19 +1,15 @@
 package edu.sombra.cms.service;
 
 import edu.sombra.cms.domain.dto.RegistrationDTO;
+import edu.sombra.cms.domain.entity.Role;
 import edu.sombra.cms.domain.entity.User;
 import edu.sombra.cms.domain.enumeration.RoleEnum;
 import edu.sombra.cms.domain.payload.UserView;
 
 import java.util.List;
 
-public interface UserService {
+public interface RoleService {
 
-    UserView create(RegistrationDTO registrationDTO);
+    Role findRoleByName(RoleEnum roleEnum);
 
-    void assignUserRole(Integer userId, RoleEnum roleEnum);
-
-    User findUserById(Integer userId);
-
-    List<UserView> findUsersByRole(RoleEnum role);
 }
