@@ -72,3 +72,6 @@ Thumbs.db
 */webapp/node/
 */webapp/etc/
 */webapp/package-lock.json
+
+#properties files
+application.properties

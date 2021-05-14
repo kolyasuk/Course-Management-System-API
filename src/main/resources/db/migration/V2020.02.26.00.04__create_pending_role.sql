@@ -1,2 +1,2 @@
-INSERT INTO ROLE (name)
+INSERT INTO role (name)
 VALUES ('ROLE_PENDING');

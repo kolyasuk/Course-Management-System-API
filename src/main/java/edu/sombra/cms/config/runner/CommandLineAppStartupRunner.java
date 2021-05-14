@@ -31,7 +31,9 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
                     .setRePassword(adminPassword)
                     .setEmail("admin@gmail.com")
                     .setFullName("admin")
-                    .setRoles(Set.of(RoleEnum.ROLE_ADMIN));
+                    .setMessage("admin auto registration")
+                    .setRoles(Set.of(RoleEnum.ROLE_ADMIN))
+                    .setRequestedRole(RoleEnum.ROLE_ADMIN);
 
             userService.create(admin);
         }
