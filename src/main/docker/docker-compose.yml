@@ -1,0 +1,19 @@
+version: "3"
+services:
+  cms-db:
+    image: mysql/mysql-server:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=cms-api
+      - MYSQL_ROOT_HOST=%
+    ports:
+      - 6603:3306
+  cms-api:
+    build:
+      context: ../../../../Course-Management-System-API/
+      dockerfile: /src/main/docker/Dockerfile
+    restart: on-failure
+    depends_on:
+      - cms-db
+    ports:
+      - 8080:8080
