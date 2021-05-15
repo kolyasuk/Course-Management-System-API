@@ -3,19 +3,19 @@ pipeline{
     stages{
         stage("build"){
             steps{
-                echo 'building the staging application...'
+                echo 'building the production application...'
             }
         }
 
         stage("test"){
             steps{
-                echo 'testing the staging application...'
+                echo 'testing the production application...'
             }
         }
 
         stage("deploy"){
             steps{
-                echo 'deploying the staging application...'
+                echo 'deploying the production application...'
             }
         }
     }
