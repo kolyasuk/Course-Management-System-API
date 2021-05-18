@@ -27,7 +27,11 @@ pipeline{
         
        stage("execute jar"){
             steps{
-                echo 'deploying the staging application...'
+                echo 'executing jar file...'
+                sh 'ssh -i ../awskey.pem ec2-user@ec2-18-194-1-142.eu-central-1.compute.amazonaws.com'
+                sh 'kill -9 java'
+                sh 'java -jar CMS-API-1.0-SNAPSHOT.jar'
+                sh 'exit'
             }
         }
     }
