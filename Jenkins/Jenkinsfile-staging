@@ -7,8 +7,8 @@ pipeline{
         stage("build jar"){
             steps{
                 echo 'building the staging application...'
-                sh 'set GRADLE_OPTS=-Xms1024m -Xmx1024m'
-                sh './gradlew clean build'
+                sh 'set GRADLE_OPTS=-Xmxn1024m'
+                sh './gradlew clean build --no-daemon'
             }
         }
         
