@@ -10,10 +10,18 @@ pipeline{
                 sh './gradlew clean build'
             }
         }
-
-        stage("test"){
+        
+       stage("build docker"){
             steps{
-                echo 'testing the staging application...'
+                echo 'building docker...'
+
+            }
+        }
+        
+       stage("publish image to Docker Hub"){
+            steps{
+                echo 'publishing docker...'
+
             }
         }
 
