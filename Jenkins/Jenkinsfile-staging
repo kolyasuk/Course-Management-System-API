@@ -14,14 +14,15 @@ pipeline{
        stage("build docker"){
             steps{
                 echo 'building docker...'
-
+                sh 'docker build -f src\main\docker\Dockerfile -t cms-api:latest .' 
+                sh 'docker tag cms-api dzioba/cms-api:latest'
             }
         }
         
        stage("publish image to Docker Hub"){
             steps{
                 echo 'publishing docker...'
-
+                sh  'docker push dzioba/cms-api:latest'
             }
         }
 
