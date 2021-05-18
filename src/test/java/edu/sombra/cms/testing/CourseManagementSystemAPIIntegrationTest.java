@@ -24,29 +24,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class CourseManagementSystemAPIIntegrationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+//     @Autowired
+//     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+//     @Autowired
+//     private ObjectMapper objectMapper;
 
-    @Test
-    @Transactional
-    void registerNewUser() throws Exception {
-        RegistrationDTO user = new RegistrationDTO()
-                .setUsername("user")
-                .setPassword("password")
-                .setRePassword("password")
-                .setEmail("email@gmail.com")
-                .setFullName("user")
-                .setRoles(Set.of(RoleEnum.ROLE_STUDENT));
+//     @Test
+//     @Transactional
+//     void registerNewUser() throws Exception {
+//         RegistrationDTO user = new RegistrationDTO()
+//                 .setUsername("user")
+//                 .setPassword("password")
+//                 .setRePassword("password")
+//                 .setEmail("email@gmail.com")
+//                 .setFullName("user")
+//                 .setRoles(Set.of(RoleEnum.ROLE_STUDENT));
 
-        mockMvc.perform(post("/api/auth/signup")
-                .contentType("application/json")
-                .content(objectMapper.writeValueAsString(user)))
-                .andExpect(status().isOk())
-                .andReturn();
-    }
+//         mockMvc.perform(post("/api/auth/signup")
+//                 .contentType("application/json")
+//                 .content(objectMapper.writeValueAsString(user)))
+//                 .andExpect(status().isOk())
+//                 .andReturn();
+//     }
 
     //TODO: add remove, user exists, success and failed create admin tests
 
