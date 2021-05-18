@@ -7,7 +7,7 @@ pipeline{
         stage("build jar"){
             steps{
                 echo 'building the staging application...'
-                sh './gradlew --no-daemon -Dorg.gradle.jvmargs=-Xmx512m --scan clean build'
+                sh './gradlew --no-daemon -Dorg.gradle.jvmargs=-Xmx400m --scan clean build'
             }
         }
         
