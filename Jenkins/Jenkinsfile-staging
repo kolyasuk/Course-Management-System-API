@@ -32,7 +32,7 @@ pipeline{
                 sh 'kill -9 java'
                 sh 'java -jar CMS-API-1.0-SNAPSHOT.jar'
                 sh 'exit'
-                EOT
+                'EOT'
             }
         }
     }
