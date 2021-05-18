@@ -8,7 +8,7 @@ pipeline{
             steps{
                 echo 'building the staging application...'
                 sh 'set GRADLE_OPTS=-Xmxn1024m'
-                sh './gradlew clean build --no-daemon'
+                sh './gradlew --scan clean build --no-daemon'
             }
         }
         
