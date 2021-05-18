@@ -4,7 +4,7 @@ pipeline{
         gradle 'Gradle'
     }
     stages{
-        stage("build"){
+        stage("build jar"){
             steps{
                 echo 'building the staging application...'
                 sh './gradlew clean build'
@@ -17,7 +17,15 @@ pipeline{
             }
         }
 
-        stage("deploy"){
+        stage("move jar"){
+            steps{
+                echo 'moving jar file...'
+                sh 'scp -o StrictHostKeyChecking=no -i awskey.pem staging-cms-api/build/libs/CMS-API-1.0-SNAPSHOT.jar 
+                ec2-user@ec2-18-194-1-142.eu-central-1.compute.amazonaws.com:/home/ec2-user'
+            }
+        }
+        
+       stage("execute jar"){
             steps{
                 echo 'deploying the staging application...'
             }
