@@ -7,6 +7,7 @@ pipeline{
         stage("build"){
             steps{
                 echo 'building the staging application...'
+                sh './gradlew clean build'
             }
         }
 
@@ -19,7 +20,6 @@ pipeline{
         stage("deploy"){
             steps{
                 echo 'deploying the staging application...'
-                sh './gradlew -v'
             }
         }
     }
