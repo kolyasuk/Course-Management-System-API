@@ -1,6 +1,6 @@
 FROM adoptopenjdk/openjdk11:alpine-jre
 
-ARG JAR_FILE=../../../build/libs/CMS-API-1.0-SNAPSHOT.jar
+ARG JAR_FILE=build/libs/CMS-API-1.0-SNAPSHOT.jar
 
 WORKDIR /opt/app
 
