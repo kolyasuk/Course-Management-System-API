@@ -7,28 +7,33 @@ pipeline{
         stage("Build jar"){
             steps{
                 echo 'building the staging application...'
-                sh './gradlew clean build'
+                bat './gradlew clean build'
             }
         }
         
        stage("Build docker"){
             steps{
                 echo 'building docker...'
-                sh 'sudo docker build -f src/main/docker/Dockerfile -t cms-api:latest .' 
-                sh 'docker tag cms-api dzioba/cms-api:latest'
+                bat 'sudo docker build -f src/main/docker/Dockerfile -t cms-api:latest .' 
+                bat 'docker tag cms-api dzioba/cms-api:latest'
             }
         }
         
        stage("Publish image to Docker Hub"){
             steps{
                 echo 'publishing docker...'
-                sh  'docker push dzioba/cms-api:latest'
+                bat  'docker push dzioba/cms-api:latest'
             }
         }
         
        stage('Run Docker container') {
             steps {
-                sh 'ssh -i //home/ec2-user/awskey.pem ec2-user@ec2-18-184-98-187.eu-central-1.compute.amazonaws.com docker run -d -p 8080:8080 dzioba/cms-api'
+                echo 'executing jar file...'
+                bat '''ssh -i //home/ec2-user/awskey.pem ec2-user@ec2-18-184-98-187.eu-central-1.compute.amazonaws.com << EOT
+                docker rm $(docker stop cms-api)
+                docker run --name cms-api -d -p 8080:8080 dzioba/cms-api
+                exit
+                EOT'''
             }
         }
     }
