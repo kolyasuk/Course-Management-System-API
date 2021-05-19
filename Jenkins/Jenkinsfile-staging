@@ -32,7 +32,7 @@ pipeline{
             steps {
                 echo 'running docker image...'
                 bat 'ssh -i C://Users//dziob//Desktop//aws//awskey.pem ec2-user@ec2-18-184-98-187.eu-central-1.compute.amazonaws.com '+
-                +'"docker rm $(docker stop cms-api); docker run --name cms-api -d -p 8080:8080 dzioba/cms-api"'
+                '"docker rm $(docker stop cms-api); docker run --name cms-api -d -p 8080:8080 dzioba/cms-api"'
                 bat 'exit'
             }
         }
