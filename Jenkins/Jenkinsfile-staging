@@ -28,7 +28,7 @@ pipeline{
         
        stage('Run Docker container') {
             steps {
-                sh "docker -H ssh://ec2-user@ec2-3-65-11-209.eu-central-1.compute.amazonaws.com -i "awskey.pem"  run -d -p 8080:8080 dzioba/cms-api"
+                sh 'ssh -i //home/ec2-user/awskey.pem ec2-user@ec2-18-184-98-187.eu-central-1.compute.amazonaws.com docker run -d -p 8080:8080 dzioba/cms-api'
             }
         }
     }
