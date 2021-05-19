@@ -14,7 +14,7 @@ pipeline{
        stage("Build docker"){
             steps{
                 echo 'building docker...'
-                bat 'sudo docker build -f src/main/docker/Dockerfile -t cms-api:latest .' 
+                bat 'docker build -f src/main/docker/Dockerfile -t cms-api:latest .' 
                 bat 'docker tag cms-api dzioba/cms-api:latest'
             }
         }
