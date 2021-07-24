@@ -74,4 +74,4 @@ Thumbs.db
 */webapp/package-lock.json
 
 #properties files
-application-*.properties
+application.properties
