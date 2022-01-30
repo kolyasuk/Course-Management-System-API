@@ -2,11 +2,8 @@ package edu.sombra.cms.controller;
 
 import edu.sombra.cms.config.security.JwtTokenUtil;
 import edu.sombra.cms.config.security.UserDetailsImpl;
-import edu.sombra.cms.domain.dto.RegistrationDTO;
 import edu.sombra.cms.domain.mapper.UserMapper;
-import edu.sombra.cms.domain.payload.LoginRequest;
-import edu.sombra.cms.domain.payload.UserView;
-import edu.sombra.cms.service.UserService;
+import edu.sombra.cms.domain.payload.LoginRequestData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,18 +27,12 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
     private final UserMapper userMapper;
-    private final UserService userService;
-
-    @PostMapping("/signup")
-    public UserView register(@RequestBody @Valid RegistrationDTO registrationDTO) {
-        return userService.create(registrationDTO);
-    }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestBody @Valid LoginRequestData loginRequestData) {
         try {
             Authentication authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+                    .authenticate(new UsernamePasswordAuthenticationToken(loginRequestData.getUsername(), loginRequestData.getPassword()));
 
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 

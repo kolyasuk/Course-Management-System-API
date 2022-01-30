@@ -1,21 +1,20 @@
 package edu.sombra.cms.domain.enumeration;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum RoleEnum {
 
     ROLE_STUDENT("STUDENT"),
     ROLE_INSTRUCTOR("INSTRUCTOR"),
-    ROLE_ADMIN("ADMIN"),
-    ROLE_PENDING("PENDING");
+    ROLE_ADMIN("ADMIN");
 
-    private String value;
+    private final String name;
 
-    RoleEnum(String value) {
-        this.value = value;
+    public boolean isEqual(String s){
+        return name.equals(s);
     }
-
-    public String getValue(){
-        return value;
-    }
-
 
 }

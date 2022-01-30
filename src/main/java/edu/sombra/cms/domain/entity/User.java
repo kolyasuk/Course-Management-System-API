@@ -1,8 +1,9 @@
 package edu.sombra.cms.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import edu.sombra.cms.domain.enumeration.RoleEnum;
-import lombok.Data;
-import org.apache.tomcat.jni.Address;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -11,9 +12,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.*;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(	name = "user",
         uniqueConstraints = {
@@ -24,7 +25,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private long id;
 
     @NotBlank
     @Size(max = 20)
@@ -41,11 +42,8 @@ public class User {
 
     private String fullName;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
+    @ManyToOne
+    private Role role;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -59,13 +57,16 @@ public class User {
     @OneToOne(mappedBy = "user")
     private Instructor instructor;
 
-    private String message;
+    @OneToOne(mappedBy = "user")
+    private S3File s3File;
 
-    @Enumerated(EnumType.STRING)
-    private RoleEnum requestedRole;
+    public RoleEnum getRoleEnum() {
+        return role.getRole();
+    }
 
-    public void addRole(Role role){
-        roles.add(role);
+    @JsonIgnore
+    public boolean isAdmin() {
+        return getRoleEnum().equals(RoleEnum.ROLE_ADMIN);
     }
 
 }

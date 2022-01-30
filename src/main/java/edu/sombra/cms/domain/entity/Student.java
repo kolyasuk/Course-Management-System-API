@@ -1,6 +1,7 @@
 package edu.sombra.cms.domain.entity;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -9,7 +10,8 @@ import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Entity
 public class Student {
 
@@ -29,7 +31,7 @@ public class Student {
     @Size(max = 50)
     private String email;
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "student")
     private Set<StudentCourse> studentCourses = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL)

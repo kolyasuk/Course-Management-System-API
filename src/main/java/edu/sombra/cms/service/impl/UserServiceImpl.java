@@ -1,28 +1,27 @@
 package edu.sombra.cms.service.impl;
 
-import edu.sombra.cms.domain.dto.RegistrationDTO;
-import edu.sombra.cms.domain.entity.Role;
+import edu.sombra.cms.config.security.UserDetailsImpl;
+import edu.sombra.cms.domain.dto.FullUserInfoDTO;
 import edu.sombra.cms.domain.entity.User;
 import edu.sombra.cms.domain.enumeration.RoleEnum;
 import edu.sombra.cms.domain.mapper.UserMapper;
-import edu.sombra.cms.domain.payload.UserView;
-import edu.sombra.cms.repository.RoleRepository;
+import edu.sombra.cms.domain.payload.RegistrationData;
 import edu.sombra.cms.repository.UserRepository;
 import edu.sombra.cms.service.RoleService;
 import edu.sombra.cms.service.UserService;
-import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ValidationException;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static edu.sombra.cms.domain.enumeration.RoleEnum.ROLE_ADMIN;
 
 
 @Service
@@ -34,42 +33,53 @@ public class UserServiceImpl implements UserService {
     private final RoleService roleService;
 
     @Override
-    public UserView create(RegistrationDTO registrationDTO) {
-        validateCreatingAdminRole(registrationDTO);
+    public FullUserInfoDTO create(RegistrationData registrationData) {
+        validateRegistrationData(registrationData);
 
-        if (userRepository.existsByUsername(registrationDTO.getUsername())) {
+        User userToRegister = userMapper.fromRegistrationData(registrationData);
+        var registeredUser = userMapper.toView(userRepository.save(userToRegister));
+
+        sendWelcomeEmail(registeredUser.getEmail());
+
+        return registeredUser;
+    }
+
+    private void sendWelcomeEmail(String email){
+        System.out.println("Send message on mail to complete the registration");
+    }
+
+    private void validateRegistrationData(RegistrationData registrationData) {
+        if (userRepository.existsByUsername(registrationData.getUsername())) {
+            //todo: refactor to keeps exceptions in files
             throw new ValidationException("Username exists!");
         }
-        if (!registrationDTO.getPassword().equals(registrationDTO.getRePassword())) {
-            throw new ValidationException("Passwords don't match!");
-        }
-        if (userRepository.existsByEmail(registrationDTO.getEmail())) {
+        if (userRepository.existsByEmail(registrationData.getEmail())) {
+            //todo: refactor to keeps exceptions in files
             throw new ValidationException("Email is already in use!");
         }
-        User user = userMapper.fromRegistrationDTO(registrationDTO);
-        Set<Role> roles = Set.of(roleService.findRoleByName(RoleEnum.ROLE_PENDING));
-        user.setRoles(roles);
-
-        return userMapper.toView(userRepository.save(user));
     }
 
     @Override
-    public void assignUserRole(Integer userId, RoleEnum roleEnum) {
+    public void setUserRole(Long userId, RoleEnum roleEnum) {
+        if (roleEnum.equals(ROLE_ADMIN))
+            validateCreatingAdminRole();
+
+
         User user = findUserById(userId);
-        user.addRole(roleService.findRoleByName(roleEnum));
+        user.setRole(roleService.findRoleByName(roleEnum));
 
         userRepository.save(user);
     }
 
     @Override
-    public User findUserById(Integer userId) {
+    public User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(()->new IllegalArgumentException("User not found"));
     }
 
     @Override
-    public List<UserView> findUsersByRole(RoleEnum role) {
-        var users = userRepository.findAllByRoles(role.getValue())
+    public List<FullUserInfoDTO> findUsersByRole(RoleEnum role) {
+        var users = userRepository.findAllByRoles(role.getName())
                 .orElseThrow(() ->
                 new IllegalArgumentException("User not found"));
 
@@ -79,13 +89,26 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
-    private void validateCreatingAdminRole(RegistrationDTO registrationDTO){
-        if(!registrationDTO.getRoles().contains(RoleEnum.ROLE_ADMIN)) return;
+    @Override
+    public User getLoggedUser() {
+        var loggedUser = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return findUserById(loggedUser.getId());
+    }
 
-        if(authentication != null
-                && !authentication.getAuthorities().contains(new SimpleGrantedAuthority(RoleEnum.ROLE_ADMIN.toString())))
+    private void validateCreatingAdminRole(){
+        if(!isLoggedUserAdmin())
             throw new AccessDeniedException("You are not allowed to create admins");
+    }
+
+    private boolean isLoggedUserAdmin(){
+        var authentication = Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
+                .map(Authentication::getAuthorities).orElse(null);
+
+        if(authentication != null){
+            return authentication.stream().map(GrantedAuthority::getAuthority).anyMatch(RoleEnum.ROLE_ADMIN::isEqual);
+        }
+
+        return false;
     }
 }

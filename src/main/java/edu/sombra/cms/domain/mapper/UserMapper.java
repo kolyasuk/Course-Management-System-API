@@ -1,24 +1,21 @@
 package edu.sombra.cms.domain.mapper;
 
 import edu.sombra.cms.config.security.UserDetailsImpl;
-import edu.sombra.cms.domain.dto.RegistrationDTO;
+import edu.sombra.cms.domain.dto.FullUserInfoDTO;
 import edu.sombra.cms.domain.dto.UserDTO;
-import edu.sombra.cms.domain.entity.Role;
 import edu.sombra.cms.domain.entity.User;
-import edu.sombra.cms.domain.payload.UserView;
-import edu.sombra.cms.repository.RoleRepository;
+import edu.sombra.cms.domain.payload.RegistrationData;
+import edu.sombra.cms.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class UserMapper {
 
     private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
 
     public UserDTO toDTO(User user){
         return new UserDTO()
@@ -27,22 +24,20 @@ public class UserMapper {
                 .setFullName(user.getFullName());
     }
 
-    public UserView toView(UserDetailsImpl userDetails){
-        return new UserView()
+    public FullUserInfoDTO toView(UserDetailsImpl userDetails){
+        return new FullUserInfoDTO()
                 .setId(userDetails.getId())
                 .setUsername(userDetails.getUsername())
                 .setFullName(userDetails.getFullName())
                 .setEmail(userDetails.getEmail());
     }
 
-    public UserView toView(User user){
-        return new UserView()
+    public FullUserInfoDTO toView(User user){
+        return new FullUserInfoDTO()
                 .setId(user.getId())
                 .setUsername(user.getUsername())
                 .setFullName(user.getFullName())
-                .setEmail(user.getEmail())
-                .setMessage(user.getMessage())
-                .setRequestedRole(user.getRequestedRole());
+                .setEmail(user.getEmail());
     }
 
     public User fromDTO(UserDTO userDTO){
@@ -53,13 +48,12 @@ public class UserMapper {
                 .setPassword(passwordEncoder.encode(userDTO.getPassword()));
     }
 
-    public User fromRegistrationDTO(RegistrationDTO registrationDTO){
+    public User fromRegistrationData(RegistrationData registrationData){
         return new User()
-                .setUsername(registrationDTO.getUsername())
-                .setFullName(registrationDTO.getFullName())
-                .setEmail(registrationDTO.getEmail())
-                .setMessage(registrationDTO.getMessage())
-                .setRequestedRole(registrationDTO.getRequestedRole())
-                .setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
+                .setUsername(registrationData.getUsername())
+                .setFullName(registrationData.getFullName())
+                .setEmail(registrationData.getEmail())
+                .setRole(roleService.findRoleByName(registrationData.getRole()))
+                .setPassword(passwordEncoder.encode(registrationData.getPassword()));
     }
 }

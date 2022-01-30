@@ -15,7 +15,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role findRoleByName(RoleEnum roleEnum) {
-        return roleRepository.findByName(roleEnum)
+        return roleRepository.findByRole(roleEnum)
                 .orElseThrow(() ->
                         new IllegalArgumentException("Role not found"));
     }

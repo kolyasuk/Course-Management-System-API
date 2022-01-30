@@ -4,7 +4,8 @@ CREATE TABLE instructor (
     last_name varchar(40) not null,
     email varchar(40) not null,
     info varchar(500) not null,
-    user_id int(11) not null references user(id)
+    user_id bigint(11) not null,
+    FOREIGN KEY (user_id) REFERENCES user(Id)
 );
 
 CREATE TABLE course (
@@ -13,8 +14,10 @@ CREATE TABLE course (
 );
 
 CREATE TABLE instructor_course (
-    instructor_id bigint not null references instructor(id),
-    course_id bigint not null references course(id),
+    instructor_id bigint not null,
+    course_id bigint not null,
+    FOREIGN KEY (instructor_id) REFERENCES instructor(Id),
+    FOREIGN KEY (course_id) REFERENCES course(Id),
     primary key (instructor_id, course_id)
 );
 
@@ -23,12 +26,15 @@ CREATE TABLE student (
     first_name varchar(40) not null,
     last_name varchar(40) not null,
     email varchar(40) not null,
-    user_id int(11) not null references user(id)
+    user_id bigint(11) not null,
+    FOREIGN KEY (user_id) REFERENCES user(Id)
 );
 
 CREATE TABLE student_course (
-    student_id bigint not null references student(id),
-    course_id bigint not null references course(id),
+    student_id bigint not null,
+    course_id bigint not null,
+    FOREIGN KEY (student_id) REFERENCES student(Id),
+    FOREIGN KEY (course_id) REFERENCES course(Id),
     primary key (student_id, course_id)
 );
 
@@ -36,7 +42,8 @@ CREATE TABLE lesson (
     id bigint auto_increment primary key,
     name varchar(120) not null,
     description text(50000) not null,
-    course_id bigint not null references course(id)
+    course_id bigint not null,
+    FOREIGN KEY (course_id) REFERENCES course(Id)
 );
 
 

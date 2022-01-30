@@ -1,15 +1,15 @@
 package edu.sombra.cms.domain.dto;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.experimental.Accessors;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 public class UserDTO {
 
-    private Integer id;
+    private long id;
 
     private String username;
     private String fullName;

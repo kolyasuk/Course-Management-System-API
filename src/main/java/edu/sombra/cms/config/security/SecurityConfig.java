@@ -43,11 +43,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeRequests()
-                .antMatchers("/hello/").permitAll()
-                .antMatchers("/api/auth/*").permitAll()
-                .antMatchers("/hello/student", "/hello/student/**").hasAnyRole(ROLE_STUDENT.getValue(), ROLE_ADMIN.getValue())
-                .antMatchers("/hello/instructor", "/hello/instructor/**").hasAnyRole(ROLE_INSTRUCTOR.getValue(), ROLE_ADMIN.getValue())
-                .antMatchers("/hello/admin", "/hello/admin/**").hasRole(ROLE_ADMIN.getValue())
+                .antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/api/instructor/**", "/api/lesson/**").hasAnyRole(ROLE_INSTRUCTOR.getName(), ROLE_ADMIN.getName())
+                .antMatchers("/api/student/**").hasAnyRole(ROLE_STUDENT.getName(), ROLE_ADMIN.getName())
+                .antMatchers("/api/admin/**").hasRole(ROLE_ADMIN.getName())
                 .anyRequest().authenticated();
 
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);

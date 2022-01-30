@@ -1,15 +1,15 @@
 package edu.sombra.cms.domain.entity;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.HashSet;
-import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Entity
 public class Lesson {
 
@@ -29,8 +29,5 @@ public class Lesson {
     @ManyToOne
     @JoinColumn(name="course_id", nullable = false)
     private Course course;
-
-    @OneToOne(mappedBy = "lesson")
-    private Homework homework;
 
 }
