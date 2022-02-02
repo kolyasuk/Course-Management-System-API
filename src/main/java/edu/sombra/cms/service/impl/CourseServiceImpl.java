@@ -3,16 +3,19 @@ package edu.sombra.cms.service.impl;
 import edu.sombra.cms.domain.dto.CourseDTO;
 import edu.sombra.cms.domain.entity.Course;
 import edu.sombra.cms.domain.entity.StudentCourse;
+import edu.sombra.cms.domain.enumeration.CourseStatus;
 import edu.sombra.cms.domain.mapper.CourseMapper;
 import edu.sombra.cms.domain.payload.CourseData;
 import edu.sombra.cms.repository.CourseRepository;
 import edu.sombra.cms.repository.StudentCourseRepository;
+import edu.sombra.cms.repository.StudentLessonRepository;
 import edu.sombra.cms.service.CourseService;
 import edu.sombra.cms.service.InstructorService;
-import edu.sombra.cms.service.LessonService;
+import edu.sombra.cms.service.StudentLessonService;
 import edu.sombra.cms.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -30,13 +33,19 @@ public class CourseServiceImpl implements CourseService {
     private final InstructorService instructorService;
     private final StudentService studentService;
     private final StudentCourseRepository studentCourseRepository;
-    private final LessonService lessonService;
+    private final StudentLessonService studentLessonService;
+    private final StudentLessonRepository studentLessonRepository;
     private final CourseMapper courseMapper;
 
 
     @Override
     public Course getById(Long id) {
         return courseRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("courseId incorrect"));
+    }
+
+    @Override
+    public Course getActiveById(Long id) {
+        return courseRepository.findByIdAndStatus(id, ACTIVE).orElseThrow(() -> new IllegalArgumentException("Active course not found"));
     }
 
     @Override
@@ -55,7 +64,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public CourseDTO update(Long id, CourseData courseData) {
-        var course = getById(id);
+        var course = getActiveById(id);
 
         course.setName(courseData.getName());
         course.setDescription(courseData.getDescription());
@@ -74,6 +83,25 @@ public class CourseServiceImpl implements CourseService {
         course.setStatus(ACTIVE);
 
         courseRepository.save(course);
+    }
+
+    @Override
+    @Transactional
+    public void finish(Long courseId) {
+        var course = getActiveById(courseId);
+
+        for (StudentCourse studentCourse : course.getStudentCourses()) {
+            var student = studentCourse.getStudent();
+
+            int mark = 0;
+            if(!studentLessonRepository.existsStudentLessonByStudentAndCourseAndMarkIsNull(student, course)) {
+                mark = studentLessonRepository.getAvgMark(student, course);
+            }
+
+            studentCourseRepository.updateMark(mark, studentCourse);
+        }
+
+        courseRepository.setStatus(course, CourseStatus.FINISHED);
     }
 
     @Override
@@ -106,7 +134,7 @@ public class CourseServiceImpl implements CourseService {
 
         studentCourseRepository.save(new StudentCourse(student, course));
 
-        lessonService.saveStudentLessons(course.getLessons(), student);
+        studentLessonService.saveStudentLessons(course.getLessons(), student);
 
 
         return courseMapper.to(course);

@@ -24,7 +24,7 @@ public class S3File {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @OneToOne(mappedBy = "s3File")
+    @OneToOne(mappedBy = "homeworkFile")
     private StudentLesson homework;
 
 }

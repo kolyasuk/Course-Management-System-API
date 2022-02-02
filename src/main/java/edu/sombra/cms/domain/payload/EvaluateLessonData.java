@@ -1,5 +1,6 @@
 package edu.sombra.cms.domain.payload;
 
+import edu.sombra.cms.domain.annotation.MarkRange;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,12 +11,13 @@ import javax.validation.constraints.NotNull;
 public class EvaluateLessonData {
 
     @NotNull
-    public Long lessonId;
+    private Long lessonId;
 
     @NotNull
-    public Long studentId;
+    private Long studentId;
 
     @NotNull
-    public Integer mark;
+    @MarkRange
+    private Integer mark;
 
 }

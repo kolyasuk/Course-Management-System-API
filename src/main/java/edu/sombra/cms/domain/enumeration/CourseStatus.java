@@ -9,7 +9,7 @@ public enum CourseStatus {
 
     INACTIVE("INACTIVE"),
     ACTIVE("ACTIVE"),
-    CLOSED("CLOSED");
+    FINISHED("FINISHED");
 
     private final String name;
 

@@ -26,7 +26,7 @@ public class StudentLesson implements Serializable {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "homework_file_id", referencedColumnName = "id")
-    private S3File s3File;
+    private S3File homeworkFile;
 
     private Integer mark;
 

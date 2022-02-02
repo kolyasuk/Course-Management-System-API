@@ -8,11 +8,15 @@ public interface CourseService {
 
     Course getById(Long id);
 
+    Course getActiveById(Long id);
+
     CourseDTO create(CourseData courseData);
 
     CourseDTO update(Long id, CourseData courseData);
 
     void start(Long id);
+
+    void finish(Long id);
 
     CourseDTO assignInstructor(Long courseId, Long instructorId);
 

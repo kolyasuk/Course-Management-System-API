@@ -28,4 +28,10 @@ public class CourseController {
         courseService.start(id);
     }
 
+    @PutMapping("/{id}/finish")
+    @ResponseStatus(HttpStatus.OK)
+    public void finish(@PathVariable Long id){
+        courseService.finish(id);
+    }
+
 }

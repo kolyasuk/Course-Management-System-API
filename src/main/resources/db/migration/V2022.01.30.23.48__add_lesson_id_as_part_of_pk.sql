@@ -1,1 +1,0 @@
-alter table student_lesson drop primary key, add primary key (student_id, lesson_id);
