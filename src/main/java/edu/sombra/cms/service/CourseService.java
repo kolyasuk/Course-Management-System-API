@@ -4,19 +4,23 @@ import edu.sombra.cms.domain.dto.CourseDTO;
 import edu.sombra.cms.domain.entity.Course;
 import edu.sombra.cms.domain.payload.CourseData;
 
+import javax.validation.Valid;
+
 public interface CourseService {
 
-    Course getById(Long id);
+    Course getById(Long courseId);
 
-    Course getActiveById(Long id);
+    Course getActiveById(Long courseId);
 
-    CourseDTO create(CourseData courseData);
+    CourseDTO create(@Valid CourseData courseData);
 
-    CourseDTO update(Long id, CourseData courseData);
+    CourseDTO update(Long courseId, @Valid CourseData courseData);
 
-    void start(Long id);
+    void start(Long courseId);
 
-    void finish(Long id);
+    void finish(Long courseId);
+
+    boolean existsNotFinishedLessons(Long courseId);
 
     CourseDTO assignInstructor(Long courseId, Long instructorId);
 

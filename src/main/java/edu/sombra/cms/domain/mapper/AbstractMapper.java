@@ -9,7 +9,7 @@ public abstract class AbstractMapper<T, R> {
 
     abstract R to(T entity);
 
-    List<R> toList(Collection<T> entityList){
+    public List<R> toList(Collection<T> entityList){
         if(entityList != null){
             return entityList.stream().map(this::to).collect(Collectors.toList());
         }

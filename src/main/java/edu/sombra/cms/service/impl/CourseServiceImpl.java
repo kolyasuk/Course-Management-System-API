@@ -7,16 +7,17 @@ import edu.sombra.cms.domain.enumeration.CourseStatus;
 import edu.sombra.cms.domain.mapper.CourseMapper;
 import edu.sombra.cms.domain.payload.CourseData;
 import edu.sombra.cms.repository.CourseRepository;
+import edu.sombra.cms.repository.LessonRepository;
 import edu.sombra.cms.repository.StudentCourseRepository;
 import edu.sombra.cms.repository.StudentLessonRepository;
-import edu.sombra.cms.service.CourseService;
-import edu.sombra.cms.service.InstructorService;
-import edu.sombra.cms.service.StudentLessonService;
-import edu.sombra.cms.service.StudentService;
+import edu.sombra.cms.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Optional;
 
@@ -26,6 +27,7 @@ import static edu.sombra.cms.util.constants.SystemSettings.MINIMUM_NUMBER_OF_COU
 import static edu.sombra.cms.util.constants.SystemSettings.MINIMUM_NUMBER_OF_COURSE_LESSONS;
 
 @Service
+@Validated
 @RequiredArgsConstructor
 public class CourseServiceImpl implements CourseService {
 
@@ -36,20 +38,25 @@ public class CourseServiceImpl implements CourseService {
     private final StudentLessonService studentLessonService;
     private final StudentLessonRepository studentLessonRepository;
     private final CourseMapper courseMapper;
+    private final LessonRepository lessonRepository;
+    private final UserService userService;
 
 
     @Override
-    public Course getById(Long id) {
-        return courseRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("courseId incorrect"));
+    public Course getById(Long courseId) {
+        var course = courseRepository.findById(courseId).orElseThrow(() -> new IllegalArgumentException("courseId incorrect"));
+        userService.loggedUserHasAccess(course.getInstructorUsers());
+
+        return course;
     }
 
     @Override
-    public Course getActiveById(Long id) {
-        return courseRepository.findByIdAndStatus(id, ACTIVE).orElseThrow(() -> new IllegalArgumentException("Active course not found"));
+    public Course getActiveById(Long courseId) {
+        return courseRepository.findByIdAndStatus(courseId, ACTIVE).orElseThrow(() -> new IllegalArgumentException("Active course not found"));
     }
 
     @Override
-    public CourseDTO create(CourseData courseData) {
+    public CourseDTO create(@Valid CourseData courseData) {
         Course course = new Course();
 
         course.setName(courseData.getName());
@@ -63,8 +70,8 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public CourseDTO update(Long id, CourseData courseData) {
-        var course = getActiveById(id);
+    public CourseDTO update(Long courseId, @Valid CourseData courseData) {
+        var course = getActiveById(courseId);
 
         course.setName(courseData.getName());
         course.setDescription(courseData.getDescription());
@@ -76,12 +83,11 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public void start(Long id) {
-        var course = Optional.of(getById(id)).filter(Course::canBeActivated)
+    public void start(Long courseId) {
+        var course = Optional.of(getById(courseId)).filter(Course::canBeActivated)
                 .orElseThrow(() -> new IllegalArgumentException("Course should have at least " + MINIMUM_NUMBER_OF_COURSE_INSTRUCTORS + " instructor(s) and " + MINIMUM_NUMBER_OF_COURSE_LESSONS + " lessons"));
 
         course.setStatus(ACTIVE);
-
         courseRepository.save(course);
     }
 
@@ -89,6 +95,10 @@ public class CourseServiceImpl implements CourseService {
     @Transactional
     public void finish(Long courseId) {
         var course = getActiveById(courseId);
+
+        if(existsNotFinishedLessons(courseId)){
+            throw new IllegalArgumentException("Course lessons are not finished yet");
+        }
 
         for (StudentCourse studentCourse : course.getStudentCourses()) {
             var student = studentCourse.getStudent();
@@ -102,6 +112,12 @@ public class CourseServiceImpl implements CourseService {
         }
 
         courseRepository.setStatus(course, CourseStatus.FINISHED);
+    }
+
+    @Override
+    public boolean existsNotFinishedLessons(Long courseId) {
+        var finishDate = LocalDate.now().minusDays(1);
+        return lessonRepository.existsNotFinishedLessons(courseId, finishDate);
     }
 
     @Override
@@ -133,7 +149,6 @@ public class CourseServiceImpl implements CourseService {
         }
 
         studentCourseRepository.save(new StudentCourse(student, course));
-
         studentLessonService.saveStudentLessons(course.getLessons(), student);
 
 

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CourseMapper extends AbstractMapper<Course, CourseDTO> {
 
-    private final OverviewInstructorMapper overviewInstructorMapper;
+    private final InstructorOverviewMapper instructorOverviewMapper;
     private final LessonMapper lessonMapper;
 
     public CourseDTO to(Course course){
@@ -19,7 +19,7 @@ public class CourseMapper extends AbstractMapper<Course, CourseDTO> {
         courseDTO.setName(course.getName());
         courseDTO.setDescription(course.getDescription());
         courseDTO.setStatus(course.getStatus());
-        courseDTO.setInstructors(overviewInstructorMapper.toList(course.getInstructors()));
+        courseDTO.setInstructors(instructorOverviewMapper.toList(course.getInstructors()));
         courseDTO.setLessons(lessonMapper.toList(course.getLessons()));
 
         return courseDTO;

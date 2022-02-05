@@ -1,9 +1,12 @@
 package edu.sombra.cms.service;
 
+import edu.sombra.cms.domain.dto.CourseOverviewDTO;
 import edu.sombra.cms.domain.dto.InstructorDTO;
+import edu.sombra.cms.domain.dto.StudentOverviewDTO;
 import edu.sombra.cms.domain.entity.Instructor;
 import edu.sombra.cms.domain.payload.InstructorData;
 
+import javax.validation.Valid;
 import java.util.List;
 
 public interface InstructorService {
@@ -12,6 +15,10 @@ public interface InstructorService {
 
     List<Instructor> getByIdList(List<Long> ids);
 
-    InstructorDTO create(InstructorData instructorData, Long userId);
+    InstructorDTO create(@Valid InstructorData instructorData, Long userId);
+
+    List<CourseOverviewDTO> courseList();
+
+    List<StudentOverviewDTO> courseStudentList(Long courseId);
 
 }

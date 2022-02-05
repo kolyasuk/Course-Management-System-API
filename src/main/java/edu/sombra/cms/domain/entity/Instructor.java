@@ -7,8 +7,8 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -36,7 +36,7 @@ public class Instructor {
     private String info;
 
     @ManyToMany(mappedBy = "instructors")
-    Set<Course> courses = new HashSet<>();
+    List<Course> courses = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id")

@@ -22,7 +22,7 @@ public class AdminController {
     private final CourseService courseService;
 
     @PostMapping("/user")
-    public FullUserInfoDTO register(@RequestBody @Valid RegistrationData registrationData) {
+    public FullUserInfoDTO register(@RequestBody RegistrationData registrationData) {
         return userService.create(registrationData);
     }
 

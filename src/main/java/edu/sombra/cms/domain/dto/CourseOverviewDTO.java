@@ -4,17 +4,13 @@ import edu.sombra.cms.domain.enumeration.CourseStatus;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
-public class CourseDTO {
+public class CourseOverviewDTO {
 
     private long id;
     private String name;
-    private String description;
+    //todo: add dto for status
     private CourseStatus status;
-    private List<InstructorOverviewDTO> instructors;
-    private List<LessonDTO> lessons;
 
 }

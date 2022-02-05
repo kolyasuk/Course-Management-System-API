@@ -4,10 +4,8 @@ import edu.sombra.cms.domain.entity.Lesson;
 import edu.sombra.cms.domain.entity.Student;
 import edu.sombra.cms.domain.entity.StudentLesson;
 import edu.sombra.cms.domain.payload.EvaluateLessonData;
-import edu.sombra.cms.repository.LessonRepository;
 import edu.sombra.cms.repository.StudentLessonRepository;
 import edu.sombra.cms.service.StudentLessonService;
-import edu.sombra.cms.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +17,12 @@ import java.util.stream.Collectors;
 public class StudentLessonServiceImpl implements StudentLessonService {
 
     private final StudentLessonRepository studentLessonRepository;
-    private final StudentService studentService;
-    private final LessonRepository lessonRepository;
+
+    @Override
+    public StudentLesson getByStudentAndLesson(Long studentId, Long lessonId) {
+        return studentLessonRepository.findStudentLessonByStudentIdAndLessonId(studentId, lessonId)
+                .orElseThrow(() -> new IllegalArgumentException("StudentLesson not found"));
+    }
 
     @Override
     public void saveStudentLessons(List<Lesson> lessons, Student student) {
@@ -36,14 +38,11 @@ public class StudentLessonServiceImpl implements StudentLessonService {
 
     @Override
     public void evaluate(EvaluateLessonData evaluateLessonData) {
-        var student = studentService.getById(evaluateLessonData.getStudentId());
-        var lesson = lessonRepository.findById(evaluateLessonData.getLessonId()).orElseThrow(() -> new IllegalArgumentException("Lesson NF"));
-
-        var studentLesson = studentLessonRepository.findStudentLessonByStudentAndLesson(student, lesson)
-                .orElseThrow(() -> new IllegalArgumentException("StudentLesson not found"));
+        var studentLesson = getByStudentAndLesson(evaluateLessonData.getStudentId(), evaluateLessonData.getLessonId());
 
         if(studentLesson.getMark() == null && studentLesson.getHomeworkFile() != null){
             studentLesson.setMark(evaluateLessonData.getMark());
+            studentLesson.setFeedback(evaluateLessonData.getFeedback());
             studentLessonRepository.save(studentLesson);
         }
     }

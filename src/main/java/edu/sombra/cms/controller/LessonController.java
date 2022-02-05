@@ -21,7 +21,7 @@ public class LessonController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public LessonDTO create(@RequestBody @Valid LessonData lessonData){
+    public LessonDTO create(@RequestBody LessonData lessonData){
         return lessonService.create(lessonData);
     }
 

@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class OverviewInstructorDTO {
+public class InstructorOverviewDTO {
 
     private long id;
     private String firstName;

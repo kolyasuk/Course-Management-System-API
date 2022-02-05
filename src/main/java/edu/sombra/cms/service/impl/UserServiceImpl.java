@@ -15,7 +15,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import javax.validation.ValidationException;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +27,7 @@ import static edu.sombra.cms.domain.enumeration.RoleEnum.ROLE_ADMIN;
 
 
 @Service
+@Validated
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
@@ -33,7 +36,7 @@ public class UserServiceImpl implements UserService {
     private final RoleService roleService;
 
     @Override
-    public FullUserInfoDTO create(RegistrationData registrationData) {
+    public FullUserInfoDTO create(@Valid RegistrationData registrationData) {
         validateRegistrationData(registrationData);
 
         User userToRegister = userMapper.fromRegistrationData(registrationData);
@@ -48,7 +51,7 @@ public class UserServiceImpl implements UserService {
         System.out.println("Send message on mail to complete the registration");
     }
 
-    private void validateRegistrationData(RegistrationData registrationData) {
+    private void validateRegistrationData(@Valid RegistrationData registrationData) {
         if (userRepository.existsByUsername(registrationData.getUsername())) {
             //todo: refactor to keeps exceptions in files
             throw new ValidationException("Username exists!");
@@ -94,6 +97,15 @@ public class UserServiceImpl implements UserService {
         var loggedUser = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         return findUserById(loggedUser.getId());
+    }
+
+    @Override
+    public void loggedUserHasAccess(List<User> usersWithAccess) {
+        var loggedUser = getLoggedUser();
+
+        if(!usersWithAccess.contains(loggedUser) && !loggedUser.isAdmin()){
+            throw new AccessDeniedException("You can't get such info");
+        }
     }
 
     private void validateCreatingAdminRole(){

@@ -8,9 +8,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -34,7 +33,7 @@ public class Student {
     private String email;
 
     @OneToMany(mappedBy = "student")
-    private Set<StudentCourse> studentCourses = new HashSet<>();
+    private List<StudentCourse> studentCourses = new ArrayList<>();
 
     @OneToMany(mappedBy = "student")
     private List<StudentLesson> studentLessons = new ArrayList<>();
@@ -42,5 +41,9 @@ public class Student {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
+
+    public List<Course> getCourseList(){
+        return studentCourses.stream().map(StudentCourse::getCourse).collect(Collectors.toList());
+    }
 
 }

@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface StudentLessonRepository extends JpaRepository<StudentLesson, StudentLessonPK> {
 
-    Optional<StudentLesson> findStudentLessonByStudentAndLesson(Student student, Lesson lesson);
+    Optional<StudentLesson> findStudentLessonByStudentIdAndLessonId(Long studentId, Long lessonId);
 
     @Query("select case when count(sl) > 0 then true else false end " +
             "from StudentLesson sl where sl.student = :student and sl.lesson.course = :course and sl.mark is null")

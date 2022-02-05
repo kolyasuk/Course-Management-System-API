@@ -7,8 +7,12 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface StudentCourseRepository extends JpaRepository<StudentCourse, StudentCoursePK> {
+
+    Optional<StudentCourse> findStudentCourseByStudentIdAndCourseId(Long studentId, Long courseId);
 
     @Modifying
     @Query("update StudentCourse sc set sc.mark = :mark where sc = :studentCourse")

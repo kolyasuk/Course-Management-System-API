@@ -5,8 +5,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -17,14 +16,14 @@ public class Lesson {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotBlank
-    @Size(max = 120)
     private String name;
 
-    @NotBlank
-    @Size(max = 50000)
     @Type(type="text")
     private String description;
+
+    private String homework;
+
+    private LocalDate date;
 
     @ManyToOne
     @JoinColumn(name="course_id", nullable = false)

@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
 @RestController
 @RequestMapping("/api/course")
 @RequiredArgsConstructor
@@ -18,7 +16,7 @@ public class CourseController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CourseDTO update(@RequestBody @Valid CourseData courseData, @PathVariable Long id){
+    public CourseDTO update(@RequestBody CourseData courseData, @PathVariable Long id){
         return courseService.update(id, courseData);
     }
 

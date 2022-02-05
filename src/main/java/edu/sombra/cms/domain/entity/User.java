@@ -66,7 +66,22 @@ public class User {
 
     @JsonIgnore
     public boolean isAdmin() {
-        return getRoleEnum().equals(RoleEnum.ROLE_ADMIN);
+        return checkRole(RoleEnum.ROLE_ADMIN);
+    }
+
+    @JsonIgnore
+    public boolean isInstructor() {
+        return checkRole(RoleEnum.ROLE_INSTRUCTOR);
+    }
+
+    @JsonIgnore
+    public boolean isStudent() {
+        return checkRole(RoleEnum.ROLE_STUDENT);
+    }
+
+    @JsonIgnore
+    public boolean checkRole(RoleEnum roleEnum){
+        return getRoleEnum().equals(roleEnum);
     }
 
 }

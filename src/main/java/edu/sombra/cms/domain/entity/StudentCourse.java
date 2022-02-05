@@ -28,6 +28,8 @@ public class StudentCourse implements Serializable {
 
     private Integer mark;
 
+    private String feedback;
+
     public StudentCourse(Student student, Course course) {
         this.id = new StudentCoursePK(student, course);
         this.student = student;

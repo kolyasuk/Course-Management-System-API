@@ -1,27 +1,24 @@
 package edu.sombra.cms.domain.payload;
 
-import edu.sombra.cms.domain.annotation.MarkRange;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-public class EvaluateLessonData {
-
-    @NotNull
-    private Long lessonId;
+public class StudentCourseFeedbackData {
 
     @NotNull
     private Long studentId;
 
     @NotNull
-    @MarkRange
-    private Integer mark;
+    private Long courseId;
 
-    @Size(max =3000)
+    @NotBlank
+    @Size(max = 3000)
     private String feedback;
 
 }

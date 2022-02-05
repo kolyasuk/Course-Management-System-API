@@ -1,0 +1,1 @@
+alter table lesson modify homework varchar(5000) not null;

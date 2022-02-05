@@ -66,6 +66,10 @@ public class Course {
         return studentCourses.stream().map(StudentCourse::getStudent).collect(Collectors.toList());
     }
 
+    public List<User> getInstructorUsers(){
+        return instructors.stream().map(Instructor::getUser).collect(Collectors.toList());
+    }
+
     public boolean isActive(){
         return status.equals(CourseStatus.ACTIVE);
     }

@@ -5,11 +5,12 @@ import edu.sombra.cms.domain.entity.User;
 import edu.sombra.cms.domain.enumeration.RoleEnum;
 import edu.sombra.cms.domain.payload.RegistrationData;
 
+import javax.validation.Valid;
 import java.util.List;
 
 public interface UserService {
 
-    FullUserInfoDTO create(RegistrationData registrationData);
+    FullUserInfoDTO create(@Valid RegistrationData registrationData);
 
     void setUserRole(Long userId, RoleEnum roleEnum);
 
@@ -18,4 +19,6 @@ public interface UserService {
     List<FullUserInfoDTO> findUsersByRole(RoleEnum role);
 
     User getLoggedUser();
+
+    void loggedUserHasAccess(List<User> usersWithAccess);
 }
