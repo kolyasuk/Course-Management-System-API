@@ -4,6 +4,7 @@ import edu.sombra.cms.domain.dto.LessonDTO;
 import edu.sombra.cms.domain.entity.Lesson;
 import edu.sombra.cms.domain.mapper.LessonMapper;
 import edu.sombra.cms.domain.payload.LessonData;
+import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.repository.LessonRepository;
 import edu.sombra.cms.service.CourseService;
 import edu.sombra.cms.service.LessonService;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+
+import static edu.sombra.cms.messages.LessonMessage.NOT_FOUND;
 
 @Service
 @Validated
@@ -29,22 +32,22 @@ public class LessonServiceImpl implements LessonService {
     private final UserService userService;
 
     @Override
-    public Lesson getById(Long id) {
-        var lesson = lessonRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("lessonId incorrect"));
+    public Lesson getById(Long id) throws SomethingWentWrongException {
+        var lesson = lessonRepository.findById(id).orElseThrow(NOT_FOUND::ofException);
 
         userService.loggedUserHasAccess(lesson.getRelatedUsers());
         return lesson;
     }
 
     @Override
-    public LessonDTO getDTOById(Long id) {
+    public LessonDTO getDTOById(Long id) throws SomethingWentWrongException {
         var lesson = getById(id);
 
         return lessonMapper.to(lesson);
     }
 
     @Override
-    public LessonDTO create(@Valid LessonData lessonData) {
+    public LessonDTO create(@Valid LessonData lessonData) throws SomethingWentWrongException {
         Lesson lesson = new Lesson();
 
         lesson.setName(lessonData.getName());

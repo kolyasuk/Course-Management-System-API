@@ -10,6 +10,7 @@ import edu.sombra.cms.domain.mapper.CourseMapper;
 import edu.sombra.cms.domain.mapper.LessonOverviewMapper;
 import edu.sombra.cms.domain.mapper.StudentOverviewMapper;
 import edu.sombra.cms.domain.payload.CourseData;
+import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.repository.CourseRepository;
 import edu.sombra.cms.repository.LessonRepository;
 import edu.sombra.cms.repository.StudentCourseRepository;
@@ -29,6 +30,7 @@ import java.util.Optional;
 
 import static edu.sombra.cms.domain.enumeration.CourseStatus.ACTIVE;
 import static edu.sombra.cms.domain.enumeration.CourseStatus.INACTIVE;
+import static edu.sombra.cms.messages.CourseMessage.*;
 import static edu.sombra.cms.util.constants.SystemSettings.MINIMUM_NUMBER_OF_COURSE_INSTRUCTORS;
 import static edu.sombra.cms.util.constants.SystemSettings.MINIMUM_NUMBER_OF_COURSE_LESSONS;
 
@@ -37,6 +39,7 @@ import static edu.sombra.cms.util.constants.SystemSettings.MINIMUM_NUMBER_OF_COU
 @RequiredArgsConstructor
 public class CourseServiceImpl implements CourseService {
 
+    public static final int STUDENT_COURSES_LIMIT = 5;
     private final CourseRepository courseRepository;
     private final InstructorService instructorService;
     private final StudentService studentService;
@@ -53,25 +56,25 @@ public class CourseServiceImpl implements CourseService {
 
 
     @Override
-    public Course getById(Long courseId) {
-        var course = courseRepository.findById(courseId).orElseThrow(() -> new IllegalArgumentException("courseId incorrect"));
+    public Course getById(Long courseId) throws SomethingWentWrongException {
+        var course = courseRepository.findById(courseId).orElseThrow(NOT_FOUND::ofException);
         userService.loggedUserHasAccess(course.getRelatedUsers());
 
         return course;
     }
 
     @Override
-    public CourseDTO getDTOById(Long courseId) {
+    public CourseDTO getDTOById(Long courseId) throws SomethingWentWrongException {
         return courseMapper.to(getById(courseId));
     }
 
     @Override
-    public Course getActiveById(Long courseId) {
-        return courseRepository.findByIdAndStatus(courseId, ACTIVE).orElseThrow(() -> new IllegalArgumentException("Active course not found"));
+    public Course getActiveById(Long courseId) throws SomethingWentWrongException {
+        return courseRepository.findByIdAndStatus(courseId, ACTIVE).orElseThrow(ACTIVE_NOT_FOUND::ofException);
     }
 
     @Override
-    public CourseDTO create(@Valid CourseData courseData) {
+    public CourseDTO create(@Valid CourseData courseData) throws SomethingWentWrongException {
         Course course = new Course();
 
         course.setName(courseData.getName());
@@ -85,7 +88,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public CourseDTO update(Long courseId, @Valid CourseData courseData) {
+    public CourseDTO update(Long courseId, @Valid CourseData courseData) throws SomethingWentWrongException {
         var course = getActiveById(courseId);
 
         course.setName(courseData.getName());
@@ -98,7 +101,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public void start(Long courseId) {
+    public void start(Long courseId) throws SomethingWentWrongException {
         var course = Optional.of(getById(courseId)).filter(Course::canBeActivated)
                 .orElseThrow(() -> new IllegalArgumentException("Course should have at least " + MINIMUM_NUMBER_OF_COURSE_INSTRUCTORS + " instructor(s) and " + MINIMUM_NUMBER_OF_COURSE_LESSONS + " lessons"));
 
@@ -108,11 +111,11 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public void finish(Long courseId) {
+    public void finish(Long courseId) throws SomethingWentWrongException {
         var course = getActiveById(courseId);
 
         if(existsNotFinishedLessons(courseId)){
-            throw new IllegalArgumentException("Course lessons are not finished yet");
+            throw LESSONS_NOT_FINISHED.ofException();
         }
 
         for (StudentCourse studentCourse : course.getStudentCourses()) {
@@ -130,7 +133,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<LessonOverviewDTO> lessonList(Long courseId) {
+    public List<LessonOverviewDTO> lessonList(Long courseId) throws SomethingWentWrongException {
         var course = getById(courseId);
 
         return lessonOverviewMapper.toList(course.getLessons());
@@ -143,11 +146,11 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public CourseDTO assignInstructor(Long courseId, Long instructorId) {
+    public CourseDTO assignInstructor(Long courseId, Long instructorId) throws SomethingWentWrongException {
         var course = getById(courseId);
 
         if(course.getInstructors().stream().anyMatch(o -> o.getId() == instructorId)){
-            throw new IllegalArgumentException("Instructor is already assigned");
+            throw INSTRUCTOR_IS_ALREADY_ASSIGNED.ofException();
         }
 
         var instructor = instructorService.getById(instructorId);
@@ -157,17 +160,16 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public CourseDTO assignStudent(Long courseId, Long studentId) {
-        var course = Optional.of(getById(courseId)).filter(Course::isActive)
-                .orElseThrow(() -> new IllegalArgumentException("To assign student course should be active"));
+    public CourseDTO assignStudent(Long courseId, Long studentId) throws SomethingWentWrongException {
+        var course = getActiveById(courseId);
 
         if(course.getStudents().stream().anyMatch(o -> o.getId() == studentId)){
-            throw new IllegalArgumentException("Student is already assigned");
+            throw STUDENT_IS_ALREADY_ASSIGNED.ofException();
         }
 
         var student = studentService.getById(studentId);
-        if(student.getStudentCourses().size() >= 5){
-            throw new IllegalArgumentException("Student can't have more than 5 courses");
+        if(student.getStudentCourses().size() >= STUDENT_COURSES_LIMIT){
+            throw new IllegalArgumentException("Student can't have more than " + STUDENT_COURSES_LIMIT + " courses");
         }
 
         studentCourseRepository.save(new StudentCourse(student, course));
@@ -178,7 +180,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<StudentOverviewDTO> courseStudentList(Long courseId) {
+    public List<StudentOverviewDTO> courseStudentList(Long courseId) throws SomethingWentWrongException {
         var course = courseService.getById(courseId);
 
         return studentOverviewMapper.toList(course.getStudents());

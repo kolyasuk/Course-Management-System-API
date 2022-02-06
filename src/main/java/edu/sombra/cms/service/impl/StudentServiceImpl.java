@@ -7,6 +7,7 @@ import edu.sombra.cms.domain.entity.User;
 import edu.sombra.cms.domain.mapper.StudentCourseOverviewMapper;
 import edu.sombra.cms.domain.mapper.StudentMapper;
 import edu.sombra.cms.domain.payload.StudentData;
+import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.repository.StudentRepository;
 import edu.sombra.cms.service.StudentService;
 import edu.sombra.cms.service.UserService;
@@ -17,6 +18,8 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+
+import static edu.sombra.cms.messages.StudentMessage.*;
 
 @Service
 @Validated
@@ -29,22 +32,22 @@ public class StudentServiceImpl implements StudentService {
     private final StudentCourseOverviewMapper studentCourseOverviewMapper;
 
     @Override
-    public Student getById(Long id) {
-        return studentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Student not found"));
+    public Student getById(Long id) throws SomethingWentWrongException {
+        return studentRepository.findById(id).orElseThrow(NOT_FOUND::ofException);
     }
 
     @Override
-    public List<Student> getByIdList(List<Long> ids) {
+    public List<Student> getByIdList(List<Long> ids) throws SomethingWentWrongException {
         return Optional.of(studentRepository.findAllById(ids)).filter(o -> !o.isEmpty())
-                .orElseThrow(() -> new IllegalArgumentException("Students not found"));
+                .orElseThrow(NOT_FOUND::ofException);
     }
 
     @Override
-    public StudentDTO create(@Valid StudentData studentData, Long userId) {
+    public StudentDTO create(@Valid StudentData studentData, Long userId) throws SomethingWentWrongException {
         var user = getStudentUser(userId);
 
         if(user.getStudent() != null){
-            throw new IllegalArgumentException("Student info is already created");
+            throw INFO_ALREADY_CREATED.ofException();
         }
 
         Student student = new Student();
@@ -58,18 +61,18 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<StudentCourseOverviewDTO> courseList() {
+    public List<StudentCourseOverviewDTO> courseList() throws SomethingWentWrongException {
         var loggedUser = userService.getLoggedUser();
         if(!loggedUser.isStudent())
-            throw new IllegalArgumentException("You are not student");
+            throw USER_NOT_STUDENT.ofException();
 
         return studentCourseOverviewMapper.toList(loggedUser.getStudent().getStudentCourses());
     }
 
-    private User getStudentUser(Long userId) {
+    private User getStudentUser(Long userId) throws SomethingWentWrongException {
         if(userService.getLoggedUser().isAdmin()){
             if(userId == null)
-                throw new IllegalArgumentException("Unable to create Student, userId is null");
+                throw EMPTY_USER_ID.ofException();
 
             return userService.findUserById(userId);
         }

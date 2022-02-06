@@ -6,11 +6,11 @@ import edu.sombra.cms.domain.entity.User;
 import edu.sombra.cms.domain.enumeration.RoleEnum;
 import edu.sombra.cms.domain.mapper.UserMapper;
 import edu.sombra.cms.domain.payload.RegistrationData;
+import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.repository.UserRepository;
 import edu.sombra.cms.service.RoleService;
 import edu.sombra.cms.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,12 +18,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static edu.sombra.cms.domain.enumeration.RoleEnum.ROLE_ADMIN;
+import static edu.sombra.cms.messages.UserMessage.*;
 
 
 @Service
@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
     private final RoleService roleService;
 
     @Override
-    public FullUserInfoDTO create(@Valid RegistrationData registrationData) {
+    public FullUserInfoDTO create(@Valid RegistrationData registrationData) throws SomethingWentWrongException {
         validateRegistrationData(registrationData);
 
         User userToRegister = userMapper.fromRegistrationData(registrationData);
@@ -51,19 +51,17 @@ public class UserServiceImpl implements UserService {
         System.out.println("Send message on mail to complete the registration");
     }
 
-    private void validateRegistrationData(@Valid RegistrationData registrationData) {
+    private void validateRegistrationData(@Valid RegistrationData registrationData) throws SomethingWentWrongException {
         if (userRepository.existsByUsername(registrationData.getUsername())) {
-            //todo: refactor to keeps exceptions in files
-            throw new ValidationException("Username exists!");
+            throw USERNAME_EXISTS.ofException();
         }
         if (userRepository.existsByEmail(registrationData.getEmail())) {
-            //todo: refactor to keeps exceptions in files
-            throw new ValidationException("Email is already in use!");
+            throw EMAIL_EXISTS.ofException();
         }
     }
 
     @Override
-    public void setUserRole(Long userId, RoleEnum roleEnum) {
+    public void setUserRole(Long userId, RoleEnum roleEnum) throws SomethingWentWrongException {
         if (roleEnum.equals(ROLE_ADMIN))
             validateCreatingAdminRole();
 
@@ -75,16 +73,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findUserById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(()->new IllegalArgumentException("User not found"));
+    public User findUserById(Long userId) throws SomethingWentWrongException {
+        return userRepository.findById(userId).orElseThrow(NOT_FOUND::ofException);
     }
 
     @Override
-    public List<FullUserInfoDTO> findUsersByRole(RoleEnum role) {
-        var users = userRepository.findAllByRoles(role.getName())
-                .orElseThrow(() ->
-                new IllegalArgumentException("User not found"));
+    public List<FullUserInfoDTO> findUsersByRole(RoleEnum role) throws SomethingWentWrongException {
+        var users = userRepository.findAllByRoles(role.getName()).orElseThrow(NOT_FOUND::ofException);
 
         return users
                 .stream()
@@ -93,24 +88,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getLoggedUser() {
+    public User getLoggedUser() throws SomethingWentWrongException {
         var loggedUser = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         return findUserById(loggedUser.getId());
     }
 
     @Override
-    public void loggedUserHasAccess(List<User> usersWithAccess) {
+    public void loggedUserHasAccess(List<User> usersWithAccess) throws SomethingWentWrongException {
         var loggedUser = getLoggedUser();
 
         if(!usersWithAccess.contains(loggedUser) && !loggedUser.isAdmin()){
-            throw new AccessDeniedException("You can't get such info");
+            throw ACCESS_DENIED.ofException();
         }
     }
 
-    private void validateCreatingAdminRole(){
+    private void validateCreatingAdminRole() throws SomethingWentWrongException {
         if(!isLoggedUserAdmin())
-            throw new AccessDeniedException("You are not allowed to create admins");
+            throw CANNOT_CREATE_ADMIN.ofException();
     }
 
     private boolean isLoggedUserAdmin(){

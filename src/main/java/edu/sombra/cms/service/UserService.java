@@ -4,21 +4,22 @@ import edu.sombra.cms.domain.dto.FullUserInfoDTO;
 import edu.sombra.cms.domain.entity.User;
 import edu.sombra.cms.domain.enumeration.RoleEnum;
 import edu.sombra.cms.domain.payload.RegistrationData;
+import edu.sombra.cms.messages.SomethingWentWrongException;
 
 import javax.validation.Valid;
 import java.util.List;
 
 public interface UserService {
 
-    FullUserInfoDTO create(@Valid RegistrationData registrationData);
+    FullUserInfoDTO create(@Valid RegistrationData registrationData) throws SomethingWentWrongException;
 
-    void setUserRole(Long userId, RoleEnum roleEnum);
+    void setUserRole(Long userId, RoleEnum roleEnum) throws SomethingWentWrongException;
 
-    User findUserById(Long userId);
+    User findUserById(Long userId) throws SomethingWentWrongException;
 
-    List<FullUserInfoDTO> findUsersByRole(RoleEnum role);
+    List<FullUserInfoDTO> findUsersByRole(RoleEnum role) throws SomethingWentWrongException;
 
-    User getLoggedUser();
+    User getLoggedUser() throws SomethingWentWrongException;
 
-    void loggedUserHasAccess(List<User> usersWithAccess);
+    void loggedUserHasAccess(List<User> usersWithAccess) throws SomethingWentWrongException;
 }

@@ -5,6 +5,7 @@ import edu.sombra.cms.domain.dto.StudentCourseOverviewDTO;
 import edu.sombra.cms.domain.dto.StudentDTO;
 import edu.sombra.cms.domain.dto.StudentLessonDTO;
 import edu.sombra.cms.domain.payload.StudentData;
+import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.service.StudentCourseService;
 import edu.sombra.cms.service.StudentLessonService;
 import edu.sombra.cms.service.StudentService;
@@ -25,25 +26,25 @@ public class StudentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public StudentDTO createStudentInfo(@RequestBody StudentData studentData, @RequestParam(required = false) Long userId){
+    public StudentDTO createStudentInfo(@RequestBody StudentData studentData, @RequestParam(required = false) Long userId) throws SomethingWentWrongException {
         return studentService.create(studentData, userId);
     }
 
     @GetMapping("/course")
     @ResponseStatus(HttpStatus.OK)
-    public List<StudentCourseOverviewDTO> courseList(){
+    public List<StudentCourseOverviewDTO> courseList() throws SomethingWentWrongException {
         return studentService.courseList();
     }
 
     @GetMapping("/course/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public StudentCourseDTO getStudentCourse(@PathVariable Long id){
+    public StudentCourseDTO getStudentCourse(@PathVariable Long id) throws SomethingWentWrongException {
         return studentCourseService.getDTOByCourseId(id);
     }
 
     @GetMapping("/lesson/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public StudentLessonDTO getStudentLesson(@PathVariable Long id){
+    public StudentLessonDTO getStudentLesson(@PathVariable Long id) throws SomethingWentWrongException {
         return studentLessonService.getDTOByLessonId(id);
     }
 

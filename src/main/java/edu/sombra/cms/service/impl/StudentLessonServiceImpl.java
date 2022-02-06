@@ -7,6 +7,7 @@ import edu.sombra.cms.domain.entity.StudentLesson;
 import edu.sombra.cms.domain.entity.User;
 import edu.sombra.cms.domain.mapper.StudentLessonMapper;
 import edu.sombra.cms.domain.payload.EvaluateLessonData;
+import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.repository.StudentLessonRepository;
 import edu.sombra.cms.service.StudentLessonService;
 import edu.sombra.cms.service.UserService;
@@ -19,6 +20,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static edu.sombra.cms.messages.StudentLessonMessage.NOT_FOUND;
+import static edu.sombra.cms.messages.StudentMessage.USER_NOT_STUDENT;
+
 @Service
 @Validated
 @RequiredArgsConstructor
@@ -29,15 +33,15 @@ public class StudentLessonServiceImpl implements StudentLessonService {
     private final StudentLessonMapper lessonMapper;
 
     @Override
-    public StudentLesson getByStudentAndLesson(Long studentId, Long lessonId) {
+    public StudentLesson getByStudentAndLesson(Long studentId, Long lessonId) throws SomethingWentWrongException {
         return studentLessonRepository.findStudentLessonByStudentIdAndLessonId(studentId, lessonId)
-                .orElseThrow(() -> new IllegalArgumentException("StudentLesson not found"));
+                .orElseThrow(NOT_FOUND::ofException);
     }
 
     @Override
-    public StudentLessonDTO getDTOByLessonId(Long lessonId) {
+    public StudentLessonDTO getDTOByLessonId(Long lessonId) throws SomethingWentWrongException {
         var student = Optional.of(userService.getLoggedUser())
-                .filter(User::isStudent).map(User::getStudent).orElseThrow(() -> new IllegalArgumentException("You are not student"));
+                .filter(User::isStudent).map(User::getStudent).orElseThrow(USER_NOT_STUDENT::ofException);
 
         var studentLesson = getByStudentAndLesson(student.getId(), lessonId);
 
@@ -57,7 +61,7 @@ public class StudentLessonServiceImpl implements StudentLessonService {
     }
 
     @Override
-    public void evaluate(Long lessonId, @Valid EvaluateLessonData evaluateLessonData) {
+    public void evaluate(Long lessonId, @Valid EvaluateLessonData evaluateLessonData) throws SomethingWentWrongException {
         var studentLesson = getByStudentAndLesson(evaluateLessonData.getStudentId(), lessonId);
 
         if(studentLesson.getMark() == null && studentLesson.getHomeworkFile() != null){

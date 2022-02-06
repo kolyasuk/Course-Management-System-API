@@ -1,5 +1,6 @@
 package edu.sombra.cms.controller.advisor;
 
+import edu.sombra.cms.messages.SomethingWentWrongException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,11 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex, WebRequest request) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(SomethingWentWrongException.class)
+    public ResponseEntity<Object> handleSomethingWentWrong(SomethingWentWrongException ex, WebRequest request) {
+        return new ResponseEntity<>(ex.getMessage(), ex.getStatus());
     }
 
     @ExceptionHandler(AccessDeniedException.class)
