@@ -1,10 +1,14 @@
 package edu.sombra.cms.service.impl;
 
 import edu.sombra.cms.domain.dto.CourseDTO;
+import edu.sombra.cms.domain.dto.LessonOverviewDTO;
+import edu.sombra.cms.domain.dto.StudentOverviewDTO;
 import edu.sombra.cms.domain.entity.Course;
 import edu.sombra.cms.domain.entity.StudentCourse;
 import edu.sombra.cms.domain.enumeration.CourseStatus;
 import edu.sombra.cms.domain.mapper.CourseMapper;
+import edu.sombra.cms.domain.mapper.LessonOverviewMapper;
+import edu.sombra.cms.domain.mapper.StudentOverviewMapper;
 import edu.sombra.cms.domain.payload.CourseData;
 import edu.sombra.cms.repository.CourseRepository;
 import edu.sombra.cms.repository.LessonRepository;
@@ -12,6 +16,7 @@ import edu.sombra.cms.repository.StudentCourseRepository;
 import edu.sombra.cms.repository.StudentLessonRepository;
 import edu.sombra.cms.service.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -19,6 +24,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 import static edu.sombra.cms.domain.enumeration.CourseStatus.ACTIVE;
@@ -40,14 +46,23 @@ public class CourseServiceImpl implements CourseService {
     private final CourseMapper courseMapper;
     private final LessonRepository lessonRepository;
     private final UserService userService;
+    private final LessonOverviewMapper lessonOverviewMapper;
+    @Lazy
+    private final CourseService courseService;
+    private final StudentOverviewMapper studentOverviewMapper;
 
 
     @Override
     public Course getById(Long courseId) {
         var course = courseRepository.findById(courseId).orElseThrow(() -> new IllegalArgumentException("courseId incorrect"));
-        userService.loggedUserHasAccess(course.getInstructorUsers());
+        userService.loggedUserHasAccess(course.getRelatedUsers());
 
         return course;
+    }
+
+    @Override
+    public CourseDTO getDTOById(Long courseId) {
+        return courseMapper.to(getById(courseId));
     }
 
     @Override
@@ -115,6 +130,13 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public List<LessonOverviewDTO> lessonList(Long courseId) {
+        var course = getById(courseId);
+
+        return lessonOverviewMapper.toList(course.getLessons());
+    }
+
+    @Override
     public boolean existsNotFinishedLessons(Long courseId) {
         var finishDate = LocalDate.now().minusDays(1);
         return lessonRepository.existsNotFinishedLessons(courseId, finishDate);
@@ -153,5 +175,12 @@ public class CourseServiceImpl implements CourseService {
 
 
         return courseMapper.to(course);
+    }
+
+    @Override
+    public List<StudentOverviewDTO> courseStudentList(Long courseId) {
+        var course = courseService.getById(courseId);
+
+        return studentOverviewMapper.toList(course.getStudents());
     }
 }

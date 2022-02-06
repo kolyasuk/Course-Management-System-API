@@ -10,7 +10,8 @@ import org.springframework.stereotype.Component;
 public class CourseMapper extends AbstractMapper<Course, CourseDTO> {
 
     private final InstructorOverviewMapper instructorOverviewMapper;
-    private final LessonMapper lessonMapper;
+    private final LessonOverviewMapper lessonOverviewMapper;
+    private final StudentOverviewMapper studentOverviewMapper;
 
     public CourseDTO to(Course course){
         CourseDTO courseDTO = new CourseDTO();
@@ -20,7 +21,8 @@ public class CourseMapper extends AbstractMapper<Course, CourseDTO> {
         courseDTO.setDescription(course.getDescription());
         courseDTO.setStatus(course.getStatus());
         courseDTO.setInstructors(instructorOverviewMapper.toList(course.getInstructors()));
-        courseDTO.setLessons(lessonMapper.toList(course.getLessons()));
+        courseDTO.setLessons(lessonOverviewMapper.toList(course.getLessons()));
+        courseDTO.setStudents(studentOverviewMapper.toList(course.getStudents()));
 
         return courseDTO;
     }

@@ -15,6 +15,7 @@ public class CourseDTO {
     private String description;
     private CourseStatus status;
     private List<InstructorOverviewDTO> instructors;
-    private List<LessonDTO> lessons;
+    private List<LessonOverviewDTO> lessons;
+    private List<StudentOverviewDTO> students;
 
 }

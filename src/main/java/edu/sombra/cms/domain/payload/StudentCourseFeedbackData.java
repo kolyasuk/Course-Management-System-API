@@ -14,9 +14,6 @@ public class StudentCourseFeedbackData {
     @NotNull
     private Long studentId;
 
-    @NotNull
-    private Long courseId;
-
     @NotBlank
     @Size(max = 3000)
     private String feedback;

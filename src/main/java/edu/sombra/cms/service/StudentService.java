@@ -1,6 +1,6 @@
 package edu.sombra.cms.service;
 
-import edu.sombra.cms.domain.dto.CourseOverviewDTO;
+import edu.sombra.cms.domain.dto.StudentCourseOverviewDTO;
 import edu.sombra.cms.domain.dto.StudentDTO;
 import edu.sombra.cms.domain.entity.Student;
 import edu.sombra.cms.domain.payload.StudentData;
@@ -16,6 +16,6 @@ public interface StudentService {
 
     StudentDTO create(@Valid StudentData studentData, Long userId);
 
-    List<CourseOverviewDTO> courseList();
+    List<StudentCourseOverviewDTO> courseList();
 
 }

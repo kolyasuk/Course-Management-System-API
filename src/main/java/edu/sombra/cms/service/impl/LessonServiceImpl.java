@@ -8,6 +8,7 @@ import edu.sombra.cms.repository.LessonRepository;
 import edu.sombra.cms.service.CourseService;
 import edu.sombra.cms.service.LessonService;
 import edu.sombra.cms.service.StudentLessonService;
+import edu.sombra.cms.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -25,10 +26,21 @@ public class LessonServiceImpl implements LessonService {
     @Lazy
     private final CourseService courseService;
     private final StudentLessonService saveStudentLessons;
+    private final UserService userService;
 
     @Override
     public Lesson getById(Long id) {
-        return lessonRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("lessonId incorrect"));
+        var lesson = lessonRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("lessonId incorrect"));
+
+        userService.loggedUserHasAccess(lesson.getRelatedUsers());
+        return lesson;
+    }
+
+    @Override
+    public LessonDTO getDTOById(Long id) {
+        var lesson = getById(id);
+
+        return lessonMapper.to(lesson);
     }
 
     @Override

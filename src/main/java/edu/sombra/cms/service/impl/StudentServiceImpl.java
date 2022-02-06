@@ -1,10 +1,10 @@
 package edu.sombra.cms.service.impl;
 
-import edu.sombra.cms.domain.dto.CourseOverviewDTO;
+import edu.sombra.cms.domain.dto.StudentCourseOverviewDTO;
 import edu.sombra.cms.domain.dto.StudentDTO;
 import edu.sombra.cms.domain.entity.Student;
 import edu.sombra.cms.domain.entity.User;
-import edu.sombra.cms.domain.mapper.CourseOverviewMapper;
+import edu.sombra.cms.domain.mapper.StudentCourseOverviewMapper;
 import edu.sombra.cms.domain.mapper.StudentMapper;
 import edu.sombra.cms.domain.payload.StudentData;
 import edu.sombra.cms.repository.StudentRepository;
@@ -26,7 +26,7 @@ public class StudentServiceImpl implements StudentService {
     private final StudentRepository studentRepository;
     private final StudentMapper studentMapper;
     private final UserService userService;
-    private final CourseOverviewMapper courseOverviewMapper;
+    private final StudentCourseOverviewMapper studentCourseOverviewMapper;
 
     @Override
     public Student getById(Long id) {
@@ -58,12 +58,12 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<CourseOverviewDTO> courseList() {
+    public List<StudentCourseOverviewDTO> courseList() {
         var loggedUser = userService.getLoggedUser();
         if(!loggedUser.isStudent())
             throw new IllegalArgumentException("You are not student");
 
-        return courseOverviewMapper.toList(loggedUser.getStudent().getCourseList());
+        return studentCourseOverviewMapper.toList(loggedUser.getStudent().getStudentCourses());
     }
 
     private User getStudentUser(Long userId) {

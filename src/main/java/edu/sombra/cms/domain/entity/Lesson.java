@@ -6,6 +6,8 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -25,8 +27,15 @@ public class Lesson {
 
     private LocalDate date;
 
+    @OneToMany(mappedBy = "lesson")
+    private List<StudentLesson> studentLessons = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name="course_id", nullable = false)
     private Course course;
+
+    public List<User> getRelatedUsers(){
+        return course.getRelatedUsers();
+    }
 
 }

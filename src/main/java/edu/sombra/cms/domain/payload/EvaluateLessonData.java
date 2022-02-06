@@ -12,9 +12,6 @@ import javax.validation.constraints.Size;
 public class EvaluateLessonData {
 
     @NotNull
-    private Long lessonId;
-
-    @NotNull
     private Long studentId;
 
     @NotNull

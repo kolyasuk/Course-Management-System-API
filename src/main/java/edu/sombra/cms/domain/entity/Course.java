@@ -66,8 +66,11 @@ public class Course {
         return studentCourses.stream().map(StudentCourse::getStudent).collect(Collectors.toList());
     }
 
-    public List<User> getInstructorUsers(){
-        return instructors.stream().map(Instructor::getUser).collect(Collectors.toList());
+    public List<User> getRelatedUsers(){
+        var users = instructors.stream().map(Instructor::getUser).collect(Collectors.toList());
+
+        users.addAll(getStudents().stream().map(Student::getUser).collect(Collectors.toList()));
+        return users;
     }
 
     public boolean isActive(){

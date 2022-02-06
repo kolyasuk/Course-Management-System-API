@@ -30,6 +30,8 @@ public class StudentLesson implements Serializable {
 
     private Integer mark;
 
+    private String notes;
+
     private String feedback;
 
     public StudentLesson(Student student, Lesson lesson) {

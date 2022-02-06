@@ -1,8 +1,12 @@
 package edu.sombra.cms.controller;
 
-import edu.sombra.cms.domain.dto.CourseOverviewDTO;
+import edu.sombra.cms.domain.dto.StudentCourseDTO;
+import edu.sombra.cms.domain.dto.StudentCourseOverviewDTO;
 import edu.sombra.cms.domain.dto.StudentDTO;
+import edu.sombra.cms.domain.dto.StudentLessonDTO;
 import edu.sombra.cms.domain.payload.StudentData;
+import edu.sombra.cms.service.StudentCourseService;
+import edu.sombra.cms.service.StudentLessonService;
 import edu.sombra.cms.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +20,8 @@ import java.util.List;
 public class StudentController {
     
     private final StudentService studentService;
+    private final StudentCourseService studentCourseService;
+    private final StudentLessonService studentLessonService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
@@ -25,8 +31,20 @@ public class StudentController {
 
     @GetMapping("/course")
     @ResponseStatus(HttpStatus.OK)
-    public List<CourseOverviewDTO> courseList(){
+    public List<StudentCourseOverviewDTO> courseList(){
         return studentService.courseList();
+    }
+
+    @GetMapping("/course/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public StudentCourseDTO getStudentCourse(@PathVariable Long id){
+        return studentCourseService.getDTOByCourseId(id);
+    }
+
+    @GetMapping("/lesson/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public StudentLessonDTO getStudentLesson(@PathVariable Long id){
+        return studentLessonService.getDTOByLessonId(id);
     }
 
 }

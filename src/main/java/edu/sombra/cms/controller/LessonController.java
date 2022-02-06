@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
 @RestController
 @RequestMapping("/api/lesson")
 @RequiredArgsConstructor
@@ -19,16 +17,22 @@ public class LessonController {
     private final LessonService lessonService;
     private final StudentLessonService studentLessonService;
 
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public LessonDTO getById(@PathVariable Long id){
+        return lessonService.getDTOById(id);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public LessonDTO create(@RequestBody LessonData lessonData){
         return lessonService.create(lessonData);
     }
 
-    @PutMapping("/mark")
+    @PutMapping("/{id}/mark")
     @ResponseStatus(HttpStatus.OK)
-    public void evaluate(@RequestBody @Valid EvaluateLessonData evaluateLessonData){
-        studentLessonService.evaluate(evaluateLessonData);
+    public void evaluate(@PathVariable("id") Long lessonId, @RequestBody EvaluateLessonData evaluateLessonData){
+        studentLessonService.evaluate(lessonId, evaluateLessonData);
     }
 
 }

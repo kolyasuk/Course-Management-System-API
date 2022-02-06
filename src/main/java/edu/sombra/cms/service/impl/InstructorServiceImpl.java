@@ -2,7 +2,6 @@ package edu.sombra.cms.service.impl;
 
 import edu.sombra.cms.domain.dto.CourseOverviewDTO;
 import edu.sombra.cms.domain.dto.InstructorDTO;
-import edu.sombra.cms.domain.dto.StudentOverviewDTO;
 import edu.sombra.cms.domain.entity.Instructor;
 import edu.sombra.cms.domain.entity.User;
 import edu.sombra.cms.domain.mapper.CourseOverviewMapper;
@@ -30,10 +29,7 @@ public class InstructorServiceImpl implements InstructorService {
     private final InstructorRepository instructorRepository;
     private final InstructorMapper instructorMapper;
     private final UserService userService;
-    @Lazy
-    private final CourseService courseService;
     private final CourseOverviewMapper courseOverviewMapper;
-    private final StudentOverviewMapper studentOverviewMapper;
 
     @Override
     public Instructor getById(Long id) {
@@ -72,13 +68,6 @@ public class InstructorServiceImpl implements InstructorService {
             throw new IllegalArgumentException("You are not instructor");
 
         return courseOverviewMapper.toList(loggedUser.getInstructor().getCourses());
-    }
-
-    @Override
-    public List<StudentOverviewDTO> courseStudentList(Long courseId) {
-        var course = courseService.getById(courseId);
-
-        return studentOverviewMapper.toList(course.getStudents());
     }
 
     private User getInstructorUser(Long userId) {

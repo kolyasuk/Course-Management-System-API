@@ -10,6 +10,8 @@ public interface LessonService {
 
     Lesson getById(Long id);
 
+    LessonDTO getDTOById(Long id);
+
     LessonDTO create(@Valid LessonData lessonData);
 
     LessonDTO update(Long id, @Valid LessonData lessonData);
