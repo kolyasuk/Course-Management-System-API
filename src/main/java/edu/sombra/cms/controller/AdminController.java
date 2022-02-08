@@ -12,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
@@ -29,7 +27,7 @@ public class AdminController {
 
     @PostMapping("/course")
     @ResponseStatus(HttpStatus.OK)
-    public CourseDTO createCourse(@RequestBody @Valid CourseData courseData) throws SomethingWentWrongException {
+    public CourseDTO createCourse(@RequestBody CourseData courseData) throws SomethingWentWrongException {
         return courseService.create(courseData);
     }
 

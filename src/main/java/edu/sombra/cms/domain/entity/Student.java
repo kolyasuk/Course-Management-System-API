@@ -42,8 +42,8 @@ public class Student {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    public List<Course> getCourseList(){
-        return studentCourses.stream().map(StudentCourse::getCourse).collect(Collectors.toList());
+    public List<Course> getActiveCourseList(){
+        return studentCourses.stream().map(StudentCourse::getCourse).filter(Course::isActive).collect(Collectors.toList());
     }
 
 }

@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -12,15 +11,15 @@ import java.util.List;
 @Setter
 public class CourseData {
 
-    @NotBlank
-    @Size(max = 120)
+    @NotBlank(message = "{coursedata.name.blank}")
+    @Size(max = 120, message = "{coursedata.name.size}")
     private String name;
 
-    @NotBlank
-    @Size(max = 1000)
+    @NotBlank(message = "{coursedata.description.blank}")
+    @Size(max = 1000, message = "{coursedata.description.size}")
     private String description;
 
-    @NotNull
+    @Size(min = 1, message = "{coursedata.instructorIds.size}")
     private List<Long> instructorIds;
 
 }

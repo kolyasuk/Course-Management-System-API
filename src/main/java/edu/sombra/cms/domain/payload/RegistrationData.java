@@ -13,23 +13,23 @@ import javax.validation.constraints.Size;
 @Setter
 public class RegistrationData {
 
-    @NotBlank(message = "username should not be null")
-    @Size(min = 3, max = 20)
+    @NotBlank(message = "{registrationdata.username.blank}")
+    @Size(min = 3, max = 20, message = "{registrationdata.username.size}")
     private String username;
 
-    @NotBlank(message = "password should not be null")
-    @Size(min = 6, max = 40)
+    @NotBlank(message = "{registrationdata.password.blank}")
+    @Size(min = 6, max = 40, message = "{registrationdata.password.size}")
     private String password;
 
-    @NotBlank(message = "fullName should not be null")
-    @Size(min = 3, max = 50)
+    @NotBlank(message = "{registrationdata.fullName.blank}")
+    @Size(min = 2, max = 50, message = "{registrationdata.fullName.size}")
     private String fullName;
 
-    @NotBlank(message = "email should not be null")
-    @Size(max = 50)
-    @Email
+    @Email(message = "{registrationdata.email.email}")
+    @NotBlank(message = "{registrationdata.email.size}")
+    @Size(max = 50, message = "{registrationdata.email.blank}")
     private String email;
 
-    @NotNull
+    @NotNull(message = "{registrationdata.role.null}")
     private RoleEnum role;
 }

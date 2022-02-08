@@ -11,11 +11,11 @@ import javax.validation.constraints.Size;
 @Setter
 public class StudentCourseFeedbackData {
 
-    @NotNull
+    @NotNull(message = "{studentcoursefeedbackdata.studentId.null}")
     private Long studentId;
 
-    @NotBlank
-    @Size(max = 3000)
+    @NotBlank(message = "{studentcoursefeedbackdata.feedback.blank}")
+    @Size(max = 3000, message = "{studentcoursefeedbackdata.feedback.size}")
     private String feedback;
 
 }

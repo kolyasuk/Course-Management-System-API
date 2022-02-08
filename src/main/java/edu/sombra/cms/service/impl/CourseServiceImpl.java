@@ -31,15 +31,14 @@ import java.util.Optional;
 import static edu.sombra.cms.domain.enumeration.CourseStatus.ACTIVE;
 import static edu.sombra.cms.domain.enumeration.CourseStatus.INACTIVE;
 import static edu.sombra.cms.messages.CourseMessage.*;
-import static edu.sombra.cms.util.constants.SystemSettings.MINIMUM_NUMBER_OF_COURSE_INSTRUCTORS;
-import static edu.sombra.cms.util.constants.SystemSettings.MINIMUM_NUMBER_OF_COURSE_LESSONS;
+import static edu.sombra.cms.messages.StudentMessage.STUDENT_ACTIVE_COURSE_LIMIT;
+import static edu.sombra.cms.util.constants.SystemSettings.STUDENT_COURSES_LIMIT;
 
 @Service
 @Validated
 @RequiredArgsConstructor
 public class CourseServiceImpl implements CourseService {
 
-    public static final int STUDENT_COURSES_LIMIT = 5;
     private final CourseRepository courseRepository;
     private final InstructorService instructorService;
     private final StudentService studentService;
@@ -102,8 +101,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public void start(Long courseId) throws SomethingWentWrongException {
-        var course = Optional.of(getById(courseId)).filter(Course::canBeActivated)
-                .orElseThrow(() -> new IllegalArgumentException("Course should have at least " + MINIMUM_NUMBER_OF_COURSE_INSTRUCTORS + " instructor(s) and " + MINIMUM_NUMBER_OF_COURSE_LESSONS + " lessons"));
+        var course = Optional.of(getById(courseId)).filter(Course::canBeActivated).orElseThrow(MINIMUM_NUMBER_OF_INSTRUCTORS_AND_LESSONS::ofException);
 
         course.setStatus(ACTIVE);
         courseRepository.save(course);
@@ -168,8 +166,8 @@ public class CourseServiceImpl implements CourseService {
         }
 
         var student = studentService.getById(studentId);
-        if(student.getStudentCourses().size() >= STUDENT_COURSES_LIMIT){
-            throw new IllegalArgumentException("Student can't have more than " + STUDENT_COURSES_LIMIT + " courses");
+        if(student.getActiveCourseList().size() >= STUDENT_COURSES_LIMIT){
+            throw STUDENT_ACTIVE_COURSE_LIMIT.ofException();
         }
 
         studentCourseRepository.save(new StudentCourse(student, course));

@@ -3,6 +3,7 @@ package edu.sombra.cms.domain.payload;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -10,20 +11,21 @@ import javax.validation.constraints.Size;
 @Setter
 public class InstructorData {
 
-    @NotBlank
-    @Size(max = 40)
+    @NotBlank(message = "{instructordata.firstName.blank}")
+    @Size(max = 40, message = "{instructordata.firstName.size}")
     private String firstName;
 
-    @NotBlank
-    @Size(max = 40)
+    @NotBlank(message = "{instructordata.lastName.blank}")
+    @Size(max = 40, message = "{instructordata.lastName.size}")
     private String lastName;
 
-    @NotBlank
-    @Size(max = 40)
+    @Email
+    @NotBlank(message = "{instructordata.email.blank}")
+    @Size(max = 40, message = "{instructordata.email.size}")
     private String email;
 
-    @NotBlank
-    @Size(max = 500)
+    @NotBlank(message = "{instructordata.info.blank}")
+    @Size(max = 500, message = "{instructordata.info.size}")
     private String info;
 
 }

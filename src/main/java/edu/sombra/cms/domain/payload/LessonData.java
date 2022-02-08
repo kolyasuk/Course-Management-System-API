@@ -12,22 +12,22 @@ import java.time.LocalDate;
 @Setter
 public class LessonData {
 
-    @NotBlank
-    @Size(max = 120)
+    @NotBlank(message = "{lessondata.name.blank}")
+    @Size(max = 120, message = "{lessondata.name.size}")
     private String name;
 
-    @NotBlank
-    @Size(max = 5000)
+    @NotBlank(message = "{lessondata.description.blank}")
+    @Size(max = 5000, message = "{lessondata.description.size}")
     private String description;
 
-    @NotNull
+    @NotNull(message = "{lessondata.courseId.null}")
     private Long courseId;
 
-    @NotBlank
-    @Size(max = 5000)
+    @NotBlank(message = "{lessondata.homework.blank}")
+    @Size(max = 5000, message = "{lessondata.homework.size}")
     private String homework;
 
-    @NotNull
+    @NotNull(message = "{lessondata.date.null}")
     private LocalDate date;
 
 }
