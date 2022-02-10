@@ -9,6 +9,7 @@ import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.repository.StudentCourseRepository;
 import edu.sombra.cms.service.StudentCourseService;
 import edu.sombra.cms.service.UserService;
+import edu.sombra.cms.util.LoggingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -27,6 +28,9 @@ public class StudentCourseServiceImpl implements StudentCourseService {
     private final StudentCourseRepository studentCourseRepository;
     private final UserService userService;
     private final StudentCourseMapper studentCourseMapper;
+
+
+    private static final LoggingService LOGGER = new LoggingService(StudentCourseServiceImpl.class);
 
     @Override
     public StudentCourse getByStudentAndCourse(Long studentId, Long courseId) throws SomethingWentWrongException {
@@ -49,5 +53,7 @@ public class StudentCourseServiceImpl implements StudentCourseService {
 
         studentCourse.setFeedback(studentCourseFeedbackData.getFeedback());
         studentCourseRepository.save(studentCourse);
+
+        LOGGER.info("Created feedback to student with id: {}, for course with id: {} ", studentCourseFeedbackData.getStudentId(), courseId);
     }
 }

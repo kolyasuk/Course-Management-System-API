@@ -1,6 +1,5 @@
 package edu.sombra.cms.service.impl;
 
-import edu.sombra.cms.config.security.UserDetailsImpl;
 import edu.sombra.cms.domain.dto.FullUserInfoDTO;
 import edu.sombra.cms.domain.entity.User;
 import edu.sombra.cms.domain.enumeration.RoleEnum;
@@ -10,6 +9,8 @@ import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.repository.UserRepository;
 import edu.sombra.cms.service.RoleService;
 import edu.sombra.cms.service.UserService;
+import edu.sombra.cms.util.LoggingService;
+import edu.sombra.cms.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -35,15 +36,19 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final RoleService roleService;
 
+    private static final LoggingService LOGGER = new LoggingService(UserServiceImpl.class);
+
     @Override
     public FullUserInfoDTO create(@Valid RegistrationData registrationData) throws SomethingWentWrongException {
         validateRegistrationData(registrationData);
 
         User userToRegister = userMapper.fromRegistrationData(registrationData);
-        var registeredUser = userMapper.toView(userRepository.save(userToRegister));
+        userRepository.save(userToRegister);
+        var registeredUser = userMapper.toView(userToRegister);
 
         sendWelcomeEmail(registeredUser.getEmail());
 
+        LOGGER.info("Created user {} with id: {}", registeredUser.getUsername(), registeredUser.getId());
         return registeredUser;
     }
 
@@ -70,6 +75,8 @@ public class UserServiceImpl implements UserService {
         user.setRole(roleService.findRoleByName(roleEnum));
 
         userRepository.save(user);
+
+        LOGGER.info("Set role {} to user with id: {}", roleEnum.getName(), user.getId());
     }
 
     @Override
@@ -89,7 +96,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getLoggedUser() throws SomethingWentWrongException {
-        var loggedUser = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var loggedUser = SecurityUtil.getLoggedUser();
 
         return findUserById(loggedUser.getId());
     }

@@ -10,6 +10,7 @@ import edu.sombra.cms.service.CourseService;
 import edu.sombra.cms.service.LessonService;
 import edu.sombra.cms.service.StudentLessonService;
 import edu.sombra.cms.service.UserService;
+import edu.sombra.cms.util.LoggingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,8 @@ public class LessonServiceImpl implements LessonService {
     private final CourseService courseService;
     private final StudentLessonService saveStudentLessons;
     private final UserService userService;
+
+    private static final LoggingService LOGGER = new LoggingService(LessonServiceImpl.class);
 
     @Override
     public Lesson getById(Long id) throws SomethingWentWrongException {
@@ -60,6 +63,7 @@ public class LessonServiceImpl implements LessonService {
 
         saveStudentLessons.saveStudentLessons(lesson, result.getCourse().getStudents());
 
+        LOGGER.info("Created Lesson with id: {}", lesson.getId());
         return lessonMapper.to(result);
     }
 

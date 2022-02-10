@@ -11,6 +11,7 @@ import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.repository.StudentLessonRepository;
 import edu.sombra.cms.service.StudentLessonService;
 import edu.sombra.cms.service.UserService;
+import edu.sombra.cms.util.LoggingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -32,6 +33,8 @@ public class StudentLessonServiceImpl implements StudentLessonService {
     private final UserService userService;
     private final StudentLessonMapper lessonMapper;
 
+    private static final LoggingService LOGGER = new LoggingService(StudentLessonServiceImpl.class);
+
     @Override
     public StudentLesson getByStudentAndLesson(Long studentId, Long lessonId) throws SomethingWentWrongException {
         return studentLessonRepository.findStudentLessonByStudentIdAndLessonId(studentId, lessonId)
@@ -52,12 +55,16 @@ public class StudentLessonServiceImpl implements StudentLessonService {
     public void saveStudentLessons(List<Lesson> lessons, Student student) {
         var studentLessons = lessons.stream().map(l -> new StudentLesson(student, l)).collect(Collectors.toList());
         studentLessonRepository.saveAll(studentLessons);
+
+        LOGGER.info("Created lessons for student with id: {}", student.getId());
     }
 
     @Override
     public void saveStudentLessons(Lesson lesson, List<Student> students) {
         var studentLessons = students.stream().map(s -> new StudentLesson(s, lesson)).collect(Collectors.toList());
         studentLessonRepository.saveAll(studentLessons);
+
+        LOGGER.info("Created lesson with id: {} for all related students", lesson.getId());
     }
 
     @Override
@@ -69,6 +76,8 @@ public class StudentLessonServiceImpl implements StudentLessonService {
             studentLesson.setFeedback(evaluateLessonData.getFeedback());
             studentLessonRepository.save(studentLesson);
         }
+
+        LOGGER.info("Evaluated lesson with id: {} for student with id: {}", lessonId, evaluateLessonData.getStudentId());
     }
 
 }

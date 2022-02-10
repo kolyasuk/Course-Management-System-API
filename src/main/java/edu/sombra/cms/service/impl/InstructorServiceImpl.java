@@ -11,6 +11,7 @@ import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.repository.InstructorRepository;
 import edu.sombra.cms.service.InstructorService;
 import edu.sombra.cms.service.UserService;
+import edu.sombra.cms.util.LoggingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -30,6 +31,8 @@ public class InstructorServiceImpl implements InstructorService {
     private final InstructorMapper instructorMapper;
     private final UserService userService;
     private final CourseOverviewMapper courseOverviewMapper;
+
+    private static final LoggingService LOGGER = new LoggingService(InstructorServiceImpl.class);
 
     @Override
     public Instructor getById(Long id) throws SomethingWentWrongException {
@@ -58,7 +61,10 @@ public class InstructorServiceImpl implements InstructorService {
         instructor.setInfo(instructorData.getInfo());
         instructor.setUser(user);
 
-        return instructorMapper.to(instructorRepository.save(instructor));
+        instructorRepository.save(instructor);
+
+        LOGGER.info("Created instructor with id: {}", instructor.getId());
+        return instructorMapper.to(instructor);
     }
 
     @Override

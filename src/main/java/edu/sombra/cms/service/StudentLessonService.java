@@ -16,7 +16,7 @@ public interface StudentLessonService {
 
     StudentLessonDTO getDTOByLessonId(Long lessonId) throws SomethingWentWrongException;
 
-    void saveStudentLessons(List<Lesson> lessons, Student student);
+    void saveStudentLessons(List<Lesson> lessons, Student student) throws SomethingWentWrongException;
 
     void saveStudentLessons(Lesson lesson, List<Student> students);
 

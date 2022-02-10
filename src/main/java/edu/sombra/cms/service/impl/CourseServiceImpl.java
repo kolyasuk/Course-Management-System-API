@@ -16,6 +16,7 @@ import edu.sombra.cms.repository.LessonRepository;
 import edu.sombra.cms.repository.StudentCourseRepository;
 import edu.sombra.cms.repository.StudentLessonRepository;
 import edu.sombra.cms.service.*;
+import edu.sombra.cms.util.LoggingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,8 @@ public class CourseServiceImpl implements CourseService {
     private final StudentOverviewMapper studentOverviewMapper;
 
 
+    private static final LoggingService LOGGER = new LoggingService(CourseServiceImpl.class);
+
     @Override
     public Course getById(Long courseId) throws SomethingWentWrongException {
         var course = courseRepository.findById(courseId).orElseThrow(NOT_FOUND::ofException);
@@ -73,6 +76,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Transactional
     public CourseDTO create(@Valid CourseData courseData) throws SomethingWentWrongException {
         Course course = new Course();
 
@@ -83,10 +87,14 @@ public class CourseServiceImpl implements CourseService {
         var instructors = instructorService.getByIdList(courseData.getInstructorIds());
         course.setInstructors(new HashSet<>(instructors));
 
-        return courseMapper.to(courseRepository.save(course));
+        courseRepository.save(course);
+
+        LOGGER.info("Created course with name: {} and id: {}", course.getName(), course.getId());
+        return courseMapper.to(course);
     }
 
     @Override
+    @Transactional
     public CourseDTO update(Long courseId, @Valid CourseData courseData) throws SomethingWentWrongException {
         var course = getActiveById(courseId);
 
@@ -96,15 +104,21 @@ public class CourseServiceImpl implements CourseService {
         var instructors = instructorService.getByIdList(courseData.getInstructorIds());
         course.setInstructors(new HashSet<>(instructors));
 
-        return courseMapper.to(courseRepository.save(course));
+        courseRepository.save(course);
+
+        LOGGER.info("Updated course with id: {}", course.getId());
+        return courseMapper.to(course);
     }
 
     @Override
+    @Transactional
     public void start(Long courseId) throws SomethingWentWrongException {
         var course = Optional.of(getById(courseId)).filter(Course::canBeActivated).orElseThrow(MINIMUM_NUMBER_OF_INSTRUCTORS_AND_LESSONS::ofException);
 
         course.setStatus(ACTIVE);
         courseRepository.save(course);
+
+        LOGGER.info("Started course with id: {}", course.getId());
     }
 
     @Override
@@ -128,6 +142,8 @@ public class CourseServiceImpl implements CourseService {
         }
 
         courseRepository.setStatus(course, CourseStatus.FINISHED);
+
+        LOGGER.info("Finished course with id: {}", course.getId());
     }
 
     @Override
@@ -144,6 +160,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Transactional
     public CourseDTO assignInstructor(Long courseId, Long instructorId) throws SomethingWentWrongException {
         var course = getById(courseId);
 
@@ -154,10 +171,14 @@ public class CourseServiceImpl implements CourseService {
         var instructor = instructorService.getById(instructorId);
         course.addInstructor(instructor);
 
-        return courseMapper.to(courseRepository.save(course));
+        courseRepository.save(course);
+
+        LOGGER.info("Assign instructor with id: {} to course with id: {}", instructor.getId(), course.getId());
+        return courseMapper.to(course);
     }
 
     @Override
+    @Transactional
     public CourseDTO assignStudent(Long courseId, Long studentId) throws SomethingWentWrongException {
         var course = getActiveById(courseId);
 
@@ -173,7 +194,7 @@ public class CourseServiceImpl implements CourseService {
         studentCourseRepository.save(new StudentCourse(student, course));
         studentLessonService.saveStudentLessons(course.getLessons(), student);
 
-
+        LOGGER.info("Assign student with id: {} to course with id: {}", student.getId(), course.getId());
         return courseMapper.to(course);
     }
 
