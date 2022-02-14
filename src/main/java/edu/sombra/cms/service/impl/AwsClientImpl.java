@@ -13,8 +13,11 @@ import com.amazonaws.util.IOUtils;
 import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.service.AwsClient;
 import edu.sombra.cms.util.LoggingService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,20 +25,28 @@ import java.io.IOException;
 import static edu.sombra.cms.messages.StudentLessonMessage.NO_FILE_FOUND_WITH_SUCH_KEY;
 
 @Service
+@RequiredArgsConstructor
 public class AwsClientImpl implements AwsClient {
 
+    @Value("${s3.homework.bucket.accessKey}")
+    private String access;
+    @Value("${s3.homework.bucket.secretKey}")
+    private String s3Secret;
+
+    private AmazonS3 s3client;
+
+    @PostConstruct
+    private void postConstruct() {
+        AWSCredentials credentials = new BasicAWSCredentials(access, s3Secret);
+
+        s3client = AmazonS3ClientBuilder
+                .standard()
+                .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                .withRegion(Regions.EU_CENTRAL_1)
+                .build();
+    }
+
     private static final LoggingService LOGGER = new LoggingService(AwsClientImpl.class);
-
-    private static final AWSCredentials credentials = new BasicAWSCredentials(
-            "AKIA5EQS75LJ7HIS3BW5",
-            "bvwMwj+GnLfFwhqmElqnVjsvCP9qG3RneQlZxzgK"
-    );
-
-    private static final AmazonS3 s3client = AmazonS3ClientBuilder
-            .standard()
-            .withCredentials(new AWSStaticCredentialsProvider(credentials))
-            .withRegion(Regions.EU_CENTRAL_1)
-            .build();
 
     @Override
     public void upload(final String bucketName, final String key, final File file) throws SdkClientException {
