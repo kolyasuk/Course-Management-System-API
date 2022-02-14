@@ -2,6 +2,7 @@ package edu.sombra.cms.repository;
 
 
 import edu.sombra.cms.domain.entity.Course;
+import edu.sombra.cms.domain.entity.Lesson;
 import edu.sombra.cms.domain.enumeration.CourseStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

@@ -5,7 +5,9 @@ import edu.sombra.cms.domain.entity.Lesson;
 import edu.sombra.cms.domain.entity.Student;
 import edu.sombra.cms.domain.entity.StudentLesson;
 import edu.sombra.cms.domain.payload.EvaluateLessonData;
+import edu.sombra.cms.domain.payload.HomeworkData;
 import edu.sombra.cms.messages.SomethingWentWrongException;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -13,6 +15,8 @@ import java.util.List;
 public interface StudentLessonService {
 
     StudentLesson getByStudentAndLesson(Long studentId, Long lessonId) throws SomethingWentWrongException;
+
+    StudentLesson getByLessonId(Long lessonId) throws SomethingWentWrongException;
 
     StudentLessonDTO getDTOByLessonId(Long lessonId) throws SomethingWentWrongException;
 
@@ -22,4 +26,5 @@ public interface StudentLessonService {
 
     void evaluate(Long lessonId, @Valid EvaluateLessonData evaluateLessonData) throws SomethingWentWrongException;
 
+    void addHomework(Long lessonId, @Valid HomeworkData homeworkData, MultipartFile homeworkFile) throws SomethingWentWrongException;
 }

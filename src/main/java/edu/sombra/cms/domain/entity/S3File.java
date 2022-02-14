@@ -18,7 +18,10 @@ public class S3File {
 
     private String fileKey;
 
-    @OneToOne
+    private String filename;
+
+    @ManyToOne
+    @JoinColumn(name="user_id", nullable = false)
     private User user;
 
     @CreationTimestamp

@@ -52,6 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/student/**").hasAnyRole(ROLE_STUDENT.getName(), ROLE_ADMIN.getName())
                 .antMatchers("/api/instructor/**", "/api/lesson/**", "/api/course/**").hasAnyRole(ROLE_INSTRUCTOR.getName(), ROLE_ADMIN.getName())
                 .antMatchers("/api/admin/**").hasRole(ROLE_ADMIN.getName())
+                .antMatchers("/api/homework/**").authenticated()
                 .anyRequest().hasRole(ROLE_ADMIN.getName());
 
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);

@@ -46,14 +46,8 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userToRegister);
         var registeredUser = userMapper.toView(userToRegister);
 
-        sendWelcomeEmail(registeredUser.getEmail());
-
         LOGGER.info("Created user {} with id: {}", registeredUser.getUsername(), registeredUser.getId());
         return registeredUser;
-    }
-
-    private void sendWelcomeEmail(String email){
-        System.out.println("Send message on mail to complete the registration");
     }
 
     private void validateRegistrationData(@Valid RegistrationData registrationData) throws SomethingWentWrongException {

@@ -57,9 +57,6 @@ public class User {
     @OneToOne(mappedBy = "user")
     private Instructor instructor;
 
-    @OneToOne(mappedBy = "user")
-    private S3File s3File;
-
     public RoleEnum getRoleEnum() {
         return role.getRole();
     }

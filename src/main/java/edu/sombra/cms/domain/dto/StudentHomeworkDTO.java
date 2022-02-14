@@ -12,6 +12,7 @@ public class StudentHomeworkDTO {
     private String notes;
     private String feedback;
     private Integer mark;
-    private String file;
+    private String fileKey;
+    private String filename;
 
 }

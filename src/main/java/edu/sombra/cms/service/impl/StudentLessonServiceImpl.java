@@ -7,21 +7,24 @@ import edu.sombra.cms.domain.entity.StudentLesson;
 import edu.sombra.cms.domain.entity.User;
 import edu.sombra.cms.domain.mapper.StudentLessonMapper;
 import edu.sombra.cms.domain.payload.EvaluateLessonData;
+import edu.sombra.cms.domain.payload.HomeworkData;
 import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.repository.StudentLessonRepository;
+import edu.sombra.cms.service.HomeworkUploadService;
 import edu.sombra.cms.service.StudentLessonService;
 import edu.sombra.cms.service.UserService;
 import edu.sombra.cms.util.LoggingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static edu.sombra.cms.messages.StudentLessonMessage.NOT_FOUND;
+import static edu.sombra.cms.messages.StudentLessonMessage.*;
 import static edu.sombra.cms.messages.StudentMessage.USER_NOT_STUDENT;
 
 @Service
@@ -32,6 +35,7 @@ public class StudentLessonServiceImpl implements StudentLessonService {
     private final StudentLessonRepository studentLessonRepository;
     private final UserService userService;
     private final StudentLessonMapper lessonMapper;
+    private final HomeworkUploadService homeworkUploadService;
 
     private static final LoggingService LOGGER = new LoggingService(StudentLessonServiceImpl.class);
 
@@ -42,13 +46,16 @@ public class StudentLessonServiceImpl implements StudentLessonService {
     }
 
     @Override
-    public StudentLessonDTO getDTOByLessonId(Long lessonId) throws SomethingWentWrongException {
+    public StudentLesson getByLessonId(Long lessonId) throws SomethingWentWrongException {
         var student = Optional.of(userService.getLoggedUser())
                 .filter(User::isStudent).map(User::getStudent).orElseThrow(USER_NOT_STUDENT::ofException);
 
-        var studentLesson = getByStudentAndLesson(student.getId(), lessonId);
+        return getByStudentAndLesson(student.getId(), lessonId);
+    }
 
-        return lessonMapper.to(studentLesson);
+    @Override
+    public StudentLessonDTO getDTOByLessonId(Long lessonId) throws SomethingWentWrongException {
+        return lessonMapper.to(getByLessonId(lessonId));
     }
 
     @Override
@@ -69,7 +76,8 @@ public class StudentLessonServiceImpl implements StudentLessonService {
 
     @Override
     public void evaluate(Long lessonId, @Valid EvaluateLessonData evaluateLessonData) throws SomethingWentWrongException {
-        var studentLesson = getByStudentAndLesson(evaluateLessonData.getStudentId(), lessonId);
+        var studentLesson = Optional.of(getByStudentAndLesson(evaluateLessonData.getStudentId(), lessonId))
+                .filter(s -> s.getHomeworkFile() == null).orElseThrow(HOMEWORK_IS_NOT_UPLOADED::ofException);
 
         if(studentLesson.getMark() == null && studentLesson.getHomeworkFile() != null){
             studentLesson.setMark(evaluateLessonData.getMark());
@@ -80,4 +88,17 @@ public class StudentLessonServiceImpl implements StudentLessonService {
         LOGGER.info("Evaluated lesson with id: {} for student with id: {}", lessonId, evaluateLessonData.getStudentId());
     }
 
+    @Override
+    public void addHomework(Long lessonId, HomeworkData homeworkData, MultipartFile homeworkFile) throws SomethingWentWrongException {
+        var studentLesson = Optional.of(getByLessonId(lessonId))
+                .filter(s -> s.getHomeworkFile() == null).orElseThrow(HOMEWORK_IS_ALREADY_UPLOADED::ofException);
+
+        var s3file = homeworkUploadService.uploadStudentHomework(studentLesson.getStudent(), homeworkFile);
+        s3file.map(studentLesson::setHomeworkFile).orElseThrow(UNABLE_TO_UPLOAD_HOMEWORK::ofException);
+
+        studentLesson.setNotes(homeworkData.getNote());
+
+        studentLessonRepository.save(studentLesson);
+        LOGGER.info("Added homework to lesson with id: {} for student with id: {}", lessonId, studentLesson.getStudent().getId());
+    }
 }
