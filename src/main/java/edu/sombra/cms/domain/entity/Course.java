@@ -45,13 +45,13 @@ public class Course {
     @UpdateTimestamp
     private LocalDateTime modifiedAt;
 
-    @OneToMany(mappedBy = "course", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private Set<StudentCourse> studentCourses = new HashSet<>();
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<Lesson> lessons = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "instructor_course",
             joinColumns = @JoinColumn(name = "course_id"),

@@ -27,10 +27,10 @@ public class Lesson {
 
     private LocalDate date;
 
-    @OneToMany(mappedBy = "lesson")
+    @OneToMany(mappedBy = "lesson", fetch = FetchType.LAZY)
     private List<StudentLesson> studentLessons = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="course_id", nullable = false)
     private Course course;
 

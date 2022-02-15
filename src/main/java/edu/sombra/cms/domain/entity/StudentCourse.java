@@ -16,12 +16,12 @@ public class StudentCourse implements Serializable {
     @EmbeddedId
     private StudentCoursePK id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("student_id")
     @JoinColumn(name = "student_id")
     private Student student;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("course_id")
     @JoinColumn(name = "course_id")
     private Course course;

@@ -20,7 +20,7 @@ public class S3File {
 
     private String filename;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id", nullable = false)
     private User user;
 

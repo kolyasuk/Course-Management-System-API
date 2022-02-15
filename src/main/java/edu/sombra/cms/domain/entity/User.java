@@ -42,7 +42,7 @@ public class User {
 
     private String fullName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Role role;
 
     @CreationTimestamp

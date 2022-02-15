@@ -35,10 +35,10 @@ public class Instructor {
     @Size(max = 500)
     private String info;
 
-    @ManyToMany(mappedBy = "instructors")
+    @ManyToMany(mappedBy = "instructors", fetch = FetchType.LAZY)
     List<Course> courses = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
