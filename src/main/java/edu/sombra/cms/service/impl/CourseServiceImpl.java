@@ -168,7 +168,7 @@ public class CourseServiceImpl implements CourseService {
             throw INSTRUCTOR_IS_ALREADY_ASSIGNED.ofException();
         }
 
-        var instructor = instructorService.getById(instructorId);
+        var instructor = instructorService.getByStudentId(instructorId);
         course.addInstructor(instructor);
 
         courseRepository.save(course);
@@ -186,7 +186,7 @@ public class CourseServiceImpl implements CourseService {
             throw STUDENT_IS_ALREADY_ASSIGNED.ofException();
         }
 
-        var student = studentService.getById(studentId);
+        var student = studentService.getByStudentId(studentId);
         if(student.getActiveCourseList().size() >= STUDENT_COURSES_LIMIT){
             throw STUDENT_ACTIVE_COURSE_LIMIT.ofException();
         }

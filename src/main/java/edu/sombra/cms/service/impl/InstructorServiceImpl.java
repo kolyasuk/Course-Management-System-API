@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static edu.sombra.cms.messages.InstructorMessage.*;
+import static edu.sombra.cms.messages.StudentMessage.INFO_ALREADY_CREATED;
 
 @Service
 @Validated
@@ -35,8 +36,13 @@ public class InstructorServiceImpl implements InstructorService {
     private static final LoggingService LOGGER = new LoggingService(InstructorServiceImpl.class);
 
     @Override
-    public Instructor getById(Long id) throws SomethingWentWrongException {
+    public Instructor getByStudentId(Long id) throws SomethingWentWrongException {
         return instructorRepository.findById(id).orElseThrow(NOT_FOUND::ofException);
+    }
+
+    @Override
+    public Instructor getByUserId(Long id) throws SomethingWentWrongException {
+        return instructorRepository.findByUserId(id).orElseThrow(NOT_FOUND::ofException);
     }
 
     @Override
@@ -46,10 +52,16 @@ public class InstructorServiceImpl implements InstructorService {
     }
 
     @Override
-    public InstructorDTO create(@Valid InstructorData instructorData, Long userId) throws SomethingWentWrongException {
-        var user = getInstructorUser(userId);
+    public Instructor getLoggedInstructor() throws SomethingWentWrongException {
+        var user = Optional.of(userService.getLoggedUser())
+                .filter(User::isStudent).orElseThrow(USER_IS_NOT_INSTRUCTOR::ofException);
 
-        if(user.getInstructor() != null){
+        return getByUserId(user.getId());
+    }
+
+    @Override
+    public InstructorDTO create(@Valid InstructorData instructorData, Long userId) throws SomethingWentWrongException {
+        if(instructorRepository.findByUserId(userId).isPresent()){
             throw INFO_ALREADY_CREATED.ofException();
         }
 
@@ -59,7 +71,7 @@ public class InstructorServiceImpl implements InstructorService {
         instructor.setLastName(instructorData.getLastName());
         instructor.setEmail(instructorData.getEmail());
         instructor.setInfo(instructorData.getInfo());
-        instructor.setUser(user);
+        instructor.setUser(getInstructorUser(userId));
 
         instructorRepository.save(instructor);
 
@@ -69,11 +81,9 @@ public class InstructorServiceImpl implements InstructorService {
 
     @Override
     public List<CourseOverviewDTO> courseList() throws SomethingWentWrongException {
-        var loggedUser = userService.getLoggedUser();
-        if(!loggedUser.isInstructor())
-            throw USER_IS_NOT_INSTRUCTOR.ofException();
+        var instructor = getLoggedInstructor();
 
-        return courseOverviewMapper.toList(loggedUser.getInstructor().getCourses());
+        return courseOverviewMapper.toList(instructor.getCourses());
     }
 
     private User getInstructorUser(Long userId) throws SomethingWentWrongException {

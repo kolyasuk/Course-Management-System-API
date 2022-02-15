@@ -11,7 +11,11 @@ import java.util.List;
 
 public interface StudentService {
 
-    Student getById(Long id) throws SomethingWentWrongException;
+    Student getByStudentId(Long id) throws SomethingWentWrongException;
+
+    Student getByUserId(Long id) throws SomethingWentWrongException;
+
+    Student getLoggedStudent() throws SomethingWentWrongException;
 
     List<Student> getByIdList(List<Long> ids) throws SomethingWentWrongException;
 

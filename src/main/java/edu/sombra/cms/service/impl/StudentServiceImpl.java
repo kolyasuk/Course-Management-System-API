@@ -35,8 +35,21 @@ public class StudentServiceImpl implements StudentService {
     private static final LoggingService LOGGER = new LoggingService(StudentServiceImpl.class);
 
     @Override
-    public Student getById(Long id) throws SomethingWentWrongException {
+    public Student getByStudentId(Long id) throws SomethingWentWrongException {
         return studentRepository.findById(id).orElseThrow(NOT_FOUND::ofException);
+    }
+
+    @Override
+    public Student getByUserId(Long id) throws SomethingWentWrongException {
+        return studentRepository.findByUserId(id).orElseThrow(NOT_FOUND::ofException);
+    }
+
+    @Override
+    public Student getLoggedStudent() throws SomethingWentWrongException {
+        var user = Optional.of(userService.getLoggedUser())
+                .filter(User::isStudent).orElseThrow(USER_NOT_STUDENT::ofException);
+
+        return getByUserId(user.getId());
     }
 
     @Override
@@ -47,9 +60,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public StudentDTO create(@Valid StudentData studentData, Long userId) throws SomethingWentWrongException {
-        var user = getStudentUser(userId);
-
-        if(user.getStudent() != null){
+        if(studentRepository.findByUserId(userId).isPresent()){
             throw INFO_ALREADY_CREATED.ofException();
         }
 
@@ -58,7 +69,7 @@ public class StudentServiceImpl implements StudentService {
         student.setFirstName(studentData.getFirstName());
         student.setLastName(studentData.getLastName());
         student.setEmail(studentData.getEmail());
-        student.setUser(user);
+        student.setUser(getStudentUser(userId));
 
         studentRepository.save(student);
 
@@ -68,11 +79,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<StudentCourseOverviewDTO> courseList() throws SomethingWentWrongException {
-        var loggedUser = userService.getLoggedUser();
-        if(!loggedUser.isStudent())
-            throw USER_NOT_STUDENT.ofException();
+        var student = getLoggedStudent();
 
-        return studentCourseOverviewMapper.toList(loggedUser.getStudent().getStudentCourses());
+        return studentCourseOverviewMapper.toList(student.getStudentCourses());
     }
 
     private User getStudentUser(Long userId) throws SomethingWentWrongException {

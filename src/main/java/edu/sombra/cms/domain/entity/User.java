@@ -51,12 +51,6 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime modifiedAt;
 
-    @OneToOne(mappedBy = "user")
-    private Student student;
-
-    @OneToOne(mappedBy = "user")
-    private Instructor instructor;
-
     public RoleEnum getRoleEnum() {
         return role.getRole();
     }

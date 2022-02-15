@@ -6,6 +6,7 @@ import edu.sombra.cms.domain.entity.S3File;
 import edu.sombra.cms.domain.entity.Student;
 import edu.sombra.cms.domain.entity.User;
 import edu.sombra.cms.messages.SomethingWentWrongException;
+import edu.sombra.cms.repository.InstructorRepository;
 import edu.sombra.cms.service.AwsClient;
 import edu.sombra.cms.service.HomeworkUploadService;
 import edu.sombra.cms.service.S3FileService;
@@ -33,6 +34,7 @@ public class HomeworkUploadServiceImpl implements HomeworkUploadService {
     private final AwsClient awsClient;
     private final S3FileService s3FileService;
     private final UserService userService;
+    private final InstructorRepository instructorRepository;
 
     @Value("${s3.homework.bucket.name}")
     private String s3BucketName;
@@ -78,7 +80,7 @@ public class HomeworkUploadServiceImpl implements HomeworkUploadService {
         var s3File = s3FileService.getByKey(fileKey);
 
         usersWithAccessToFile.add(s3File.getUser());
-        usersWithAccessToFile.addAll(s3File.getHomework().getLesson().getCourse().getInstructors().stream().map(Instructor::getUser).collect(Collectors.toList()));
+        usersWithAccessToFile.addAll(instructorRepository.findInstructorsByHomeworkFile(s3File).stream().map(Instructor::getUser).collect(Collectors.toList()));
 
         return usersWithAccessToFile;
     }

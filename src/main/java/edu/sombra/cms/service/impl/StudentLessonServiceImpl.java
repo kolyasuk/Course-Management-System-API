@@ -4,7 +4,6 @@ import edu.sombra.cms.domain.dto.StudentLessonDTO;
 import edu.sombra.cms.domain.entity.Lesson;
 import edu.sombra.cms.domain.entity.Student;
 import edu.sombra.cms.domain.entity.StudentLesson;
-import edu.sombra.cms.domain.entity.User;
 import edu.sombra.cms.domain.mapper.StudentLessonMapper;
 import edu.sombra.cms.domain.payload.EvaluateLessonData;
 import edu.sombra.cms.domain.payload.HomeworkData;
@@ -12,7 +11,7 @@ import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.repository.StudentLessonRepository;
 import edu.sombra.cms.service.HomeworkUploadService;
 import edu.sombra.cms.service.StudentLessonService;
-import edu.sombra.cms.service.UserService;
+import edu.sombra.cms.service.StudentService;
 import edu.sombra.cms.util.LoggingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static edu.sombra.cms.messages.StudentLessonMessage.*;
-import static edu.sombra.cms.messages.StudentMessage.USER_NOT_STUDENT;
 
 @Service
 @Validated
@@ -33,7 +31,7 @@ import static edu.sombra.cms.messages.StudentMessage.USER_NOT_STUDENT;
 public class StudentLessonServiceImpl implements StudentLessonService {
 
     private final StudentLessonRepository studentLessonRepository;
-    private final UserService userService;
+    private final StudentService studentService;
     private final StudentLessonMapper lessonMapper;
     private final HomeworkUploadService homeworkUploadService;
 
@@ -47,8 +45,7 @@ public class StudentLessonServiceImpl implements StudentLessonService {
 
     @Override
     public StudentLesson getByLessonId(Long lessonId) throws SomethingWentWrongException {
-        var student = Optional.of(userService.getLoggedUser())
-                .filter(User::isStudent).map(User::getStudent).orElseThrow(USER_NOT_STUDENT::ofException);
+        var student = studentService.getLoggedStudent();
 
         return getByStudentAndLesson(student.getId(), lessonId);
     }

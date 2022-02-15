@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import static edu.sombra.cms.util.constants.SystemSettings.MINIMUM_NUMBER_OF_COURSE_INSTRUCTORS;
 import static edu.sombra.cms.util.constants.SystemSettings.MINIMUM_NUMBER_OF_COURSE_LESSONS;
+import static javax.persistence.FetchType.LAZY;
 
 @Getter
 @Setter
@@ -45,13 +46,13 @@ public class Course {
     @UpdateTimestamp
     private LocalDateTime modifiedAt;
 
-    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "course", fetch = LAZY)
     private Set<StudentCourse> studentCourses = new HashSet<>();
 
-    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "course", fetch = LAZY)
     private List<Lesson> lessons = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = LAZY)
     @JoinTable(
             name = "instructor_course",
             joinColumns = @JoinColumn(name = "course_id"),

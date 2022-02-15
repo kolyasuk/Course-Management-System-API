@@ -11,9 +11,13 @@ import java.util.List;
 
 public interface InstructorService {
 
-    Instructor getById(Long id) throws SomethingWentWrongException;
+    Instructor getByStudentId(Long id) throws SomethingWentWrongException;
+
+    Instructor getByUserId(Long id) throws SomethingWentWrongException;
 
     List<Instructor> getByIdList(List<Long> ids) throws SomethingWentWrongException;
+
+    Instructor getLoggedInstructor() throws SomethingWentWrongException;
 
     InstructorDTO create(@Valid InstructorData instructorData, Long userId) throws SomethingWentWrongException;
 
