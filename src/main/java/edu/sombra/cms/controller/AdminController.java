@@ -2,7 +2,7 @@ package edu.sombra.cms.controller;
 
 import edu.sombra.cms.domain.dto.CourseDTO;
 import edu.sombra.cms.domain.dto.FullUserInfoDTO;
-import edu.sombra.cms.domain.enumeration.RoleEnum;
+import edu.sombra.cms.domain.enumeration.Role;
 import edu.sombra.cms.domain.payload.CourseData;
 import edu.sombra.cms.domain.payload.RegistrationData;
 import edu.sombra.cms.messages.SomethingWentWrongException;
@@ -45,7 +45,7 @@ public class AdminController {
 
     @PutMapping("/user/role/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public void assignUserRole(@PathVariable Long userId, @RequestParam("role") RoleEnum role) throws SomethingWentWrongException {
+    public void assignUserRole(@PathVariable Long userId, @RequestParam("role") Role role) throws SomethingWentWrongException {
         userService.setUserRole(userId, role);
     }
 

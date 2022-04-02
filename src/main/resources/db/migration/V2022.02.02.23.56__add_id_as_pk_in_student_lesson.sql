@@ -1,9 +1,7 @@
 alter table student_lesson
     add id bigint not null;
 
-alter table student_lesson drop foreign key student_lesson_ibfk_5;
-
-alter table student_lesson drop foreign key student_lesson_ibfk_6;
+alter table student_lesson drop foreign key student_lesson_ibfk_1;
 
 alter table student_lesson drop primary key, add primary key (id);
 

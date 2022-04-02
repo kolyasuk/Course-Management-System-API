@@ -1,7 +1,10 @@
 package edu.sombra.cms.util;
 
+import edu.sombra.cms.config.security.UserDetailsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
 
 public class LoggingService {
 
@@ -20,8 +23,8 @@ public class LoggingService {
     }
 
     private String addUserInfo(String message){
-        var loggedUser = SecurityUtil.getLoggedUser();
+        var loggerUsername = Optional.ofNullable(SecurityUtil.getLoggedUser()).map(UserDetailsImpl::getUsername).orElse(null);
 
-        return message + " by user: " + loggedUser.getUsername();
+        return message + " by user: " + loggerUsername;
     }
 }

@@ -1,8 +1,6 @@
 package edu.sombra.cms.domain.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -34,5 +32,23 @@ public class StudentCourse implements Serializable {
         this.id = new StudentCoursePK(student, course);
         this.student = student;
         this.course = course;
+    }
+
+    @Data
+    @Embeddable
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class StudentCoursePK implements Serializable {
+
+        @Column(name = "student_id")
+        private long studentId;
+
+        @Column(name = "course_id")
+        private long courseId;
+
+        public StudentCoursePK(Student student, Course course) {
+            this.studentId = student.getId();
+            this.courseId = course.getId();
+        }
     }
 }

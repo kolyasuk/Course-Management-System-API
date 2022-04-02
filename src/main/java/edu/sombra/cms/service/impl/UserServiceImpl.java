@@ -2,12 +2,11 @@ package edu.sombra.cms.service.impl;
 
 import edu.sombra.cms.domain.dto.FullUserInfoDTO;
 import edu.sombra.cms.domain.entity.User;
-import edu.sombra.cms.domain.enumeration.RoleEnum;
+import edu.sombra.cms.domain.enumeration.Role;
 import edu.sombra.cms.domain.mapper.UserMapper;
 import edu.sombra.cms.domain.payload.RegistrationData;
 import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.repository.UserRepository;
-import edu.sombra.cms.service.RoleService;
 import edu.sombra.cms.service.UserService;
 import edu.sombra.cms.util.LoggingService;
 import edu.sombra.cms.util.SecurityUtil;
@@ -23,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static edu.sombra.cms.domain.enumeration.RoleEnum.ROLE_ADMIN;
+import static edu.sombra.cms.domain.enumeration.Role.ROLE_ADMIN;
 import static edu.sombra.cms.messages.UserMessage.*;
 
 
@@ -34,7 +33,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final RoleService roleService;
 
     private static final LoggingService LOGGER = new LoggingService(UserServiceImpl.class);
 
@@ -60,17 +58,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void setUserRole(Long userId, RoleEnum roleEnum) throws SomethingWentWrongException {
-        if (roleEnum.equals(ROLE_ADMIN))
+    public void setUserRole(Long userId, Role role) throws SomethingWentWrongException {
+        if (role.equals(ROLE_ADMIN))
             validateCreatingAdminRole();
 
 
         User user = findUserById(userId);
-        user.setRole(roleService.findRoleByName(roleEnum));
+        user.setRole(role);
 
         userRepository.save(user);
 
-        LOGGER.info("Set role {} to user with id: {}", roleEnum.getName(), user.getId());
+        LOGGER.info("Set role {} to user with id: {}", role.getName(), user.getId());
     }
 
     @Override
@@ -79,7 +77,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<FullUserInfoDTO> findUsersByRole(RoleEnum role) throws SomethingWentWrongException {
+    public List<FullUserInfoDTO> findUsersByRole(Role role) throws SomethingWentWrongException {
         var users = userRepository.findAllByRoles(role.getName()).orElseThrow(NOT_FOUND::ofException);
 
         return users
@@ -114,7 +112,7 @@ public class UserServiceImpl implements UserService {
                 .map(Authentication::getAuthorities).orElse(null);
 
         if(authentication != null){
-            return authentication.stream().map(GrantedAuthority::getAuthority).anyMatch(RoleEnum.ROLE_ADMIN::isEqual);
+            return authentication.stream().map(GrantedAuthority::getAuthority).anyMatch(Role.ROLE_ADMIN::isEqual);
         }
 
         return false;

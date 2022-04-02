@@ -1,7 +1,7 @@
 package edu.sombra.cms.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import edu.sombra.cms.domain.enumeration.RoleEnum;
+import edu.sombra.cms.domain.enumeration.Role;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -42,7 +42,7 @@ public class User {
 
     private String fullName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @CreationTimestamp
@@ -51,28 +51,24 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime modifiedAt;
 
-    public RoleEnum getRoleEnum() {
-        return role.getRole();
-    }
-
     @JsonIgnore
     public boolean isAdmin() {
-        return checkRole(RoleEnum.ROLE_ADMIN);
+        return checkRole(Role.ROLE_ADMIN);
     }
 
     @JsonIgnore
     public boolean isInstructor() {
-        return checkRole(RoleEnum.ROLE_INSTRUCTOR);
+        return checkRole(Role.ROLE_INSTRUCTOR);
     }
 
     @JsonIgnore
     public boolean isStudent() {
-        return checkRole(RoleEnum.ROLE_STUDENT);
+        return checkRole(Role.ROLE_STUDENT);
     }
 
     @JsonIgnore
-    public boolean checkRole(RoleEnum roleEnum){
-        return getRoleEnum().equals(roleEnum);
+    public boolean checkRole(Role role){
+        return getRole().equals(role);
     }
 
 }

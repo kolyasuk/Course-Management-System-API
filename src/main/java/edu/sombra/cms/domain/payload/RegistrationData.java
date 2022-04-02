@@ -1,6 +1,6 @@
 package edu.sombra.cms.domain.payload;
 
-import edu.sombra.cms.domain.enumeration.RoleEnum;
+import edu.sombra.cms.domain.enumeration.Role;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,5 +31,5 @@ public class RegistrationData {
     private String email;
 
     @NotNull(message = "{registrationdata.role.null}")
-    private RoleEnum role;
+    private Role role;
 }

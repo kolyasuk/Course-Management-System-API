@@ -5,8 +5,6 @@ import edu.sombra.cms.domain.dto.FullUserInfoDTO;
 import edu.sombra.cms.domain.dto.UserDTO;
 import edu.sombra.cms.domain.entity.User;
 import edu.sombra.cms.domain.payload.RegistrationData;
-import edu.sombra.cms.messages.SomethingWentWrongException;
-import edu.sombra.cms.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Component;
 public class UserMapper {
 
     private final PasswordEncoder passwordEncoder;
-    private final RoleService roleService;
 
     public UserDTO toDTO(User user){
         return new UserDTO()
@@ -49,12 +46,12 @@ public class UserMapper {
                 .setPassword(passwordEncoder.encode(userDTO.getPassword()));
     }
 
-    public User fromRegistrationData(RegistrationData registrationData) throws SomethingWentWrongException {
+    public User fromRegistrationData(RegistrationData registrationData) {
         return new User()
                 .setUsername(registrationData.getUsername())
                 .setFullName(registrationData.getFullName())
                 .setEmail(registrationData.getEmail())
-                .setRole(roleService.findRoleByName(registrationData.getRole()))
+                .setRole(registrationData.getRole())
                 .setPassword(passwordEncoder.encode(registrationData.getPassword()));
     }
 }

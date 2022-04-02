@@ -39,4 +39,21 @@ public class StudentLesson implements Serializable {
         this.student = student;
         this.lesson = lesson;
     }
+
+    @Data
+    @Embeddable
+    @NoArgsConstructor
+    public static class StudentLessonPK implements Serializable {
+
+        @Column(name = "student_id")
+        private long studentId;
+
+        @Column(name = "lesson_id")
+        private long lessonId;
+
+        public StudentLessonPK(Student student, Lesson lesson) {
+            this.studentId = student.getId();
+            this.lessonId = lesson.getId();
+        }
+    }
 }

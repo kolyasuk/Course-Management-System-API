@@ -14,7 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static edu.sombra.cms.domain.enumeration.RoleEnum.*;
+import static edu.sombra.cms.domain.enumeration.Role.*;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
