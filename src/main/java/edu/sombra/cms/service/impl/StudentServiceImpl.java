@@ -3,6 +3,7 @@ package edu.sombra.cms.service.impl;
 import edu.sombra.cms.domain.dto.StudentCourseOverviewDTO;
 import edu.sombra.cms.domain.dto.StudentDTO;
 import edu.sombra.cms.domain.entity.Student;
+import edu.sombra.cms.domain.entity.StudentCourse;
 import edu.sombra.cms.domain.entity.User;
 import edu.sombra.cms.domain.mapper.StudentCourseOverviewMapper;
 import edu.sombra.cms.domain.mapper.StudentMapper;
@@ -12,11 +13,13 @@ import edu.sombra.cms.repository.StudentRepository;
 import edu.sombra.cms.service.StudentService;
 import edu.sombra.cms.service.UserService;
 import edu.sombra.cms.util.LoggingService;
+import edu.sombra.cms.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,10 +49,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student getLoggedStudent() throws SomethingWentWrongException {
-        var user = Optional.of(userService.getLoggedUser())
-                .filter(User::isStudent).orElseThrow(USER_NOT_STUDENT::ofException);
-
-        return getByUserId(user.getId());
+        return getByUserId(SecurityUtil.getLoggedUserId());
     }
 
     @Override
@@ -74,24 +74,31 @@ public class StudentServiceImpl implements StudentService {
         studentRepository.save(student);
 
         LOGGER.info("Created student {} {} with id: {}", student.getFirstName(), student.getLastName(), student.getId());
-        return studentMapper.to(student);
+        return studentMapper.to(student.getId());
     }
 
     @Override
     public List<StudentCourseOverviewDTO> courseList() throws SomethingWentWrongException {
         var student = getLoggedStudent();
 
-        return studentCourseOverviewMapper.toList(student.getStudentCourses());
+        return getStudentCourse(student.getStudentCourses());
+    }
+
+    private List<StudentCourseOverviewDTO> getStudentCourse(List<StudentCourse> studentCourses) throws SomethingWentWrongException {
+        List<StudentCourseOverviewDTO> res = new ArrayList<>();
+        for (StudentCourse studentCourse : studentCourses) {
+            res.add(studentCourseOverviewMapper.to(studentCourse.getStudent().getId(), studentCourse.getCourse().getId()));
+        }
+        return res;
     }
 
     private User getStudentUser(Long userId) throws SomethingWentWrongException {
-        if(userService.getLoggedUser().isAdmin()){
-            if(userId == null)
-                throw EMPTY_USER_ID.ofException();
+        User studentUser = userService.findUserById(userId);
 
-            return userService.findUserById(userId);
+        if(!studentUser.isStudent()){
+            throw USER_IS_NOT_STUDENT.ofException();
         }
 
-        return userService.getLoggedUser();
+        return studentUser;
     }
 }

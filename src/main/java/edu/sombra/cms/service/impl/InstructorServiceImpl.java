@@ -12,6 +12,7 @@ import edu.sombra.cms.repository.InstructorRepository;
 import edu.sombra.cms.service.InstructorService;
 import edu.sombra.cms.service.UserService;
 import edu.sombra.cms.util.LoggingService;
+import edu.sombra.cms.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -46,6 +47,11 @@ public class InstructorServiceImpl implements InstructorService {
     }
 
     @Override
+    public Instructor getById(Long id) throws SomethingWentWrongException {
+        return instructorRepository.findById(id).orElseThrow(NOT_FOUND::ofException);
+    }
+
+    @Override
     public List<Instructor> getByIdList(List<Long> ids) throws SomethingWentWrongException {
         return Optional.of(instructorRepository.findAllById(ids)).filter(o -> !o.isEmpty())
                 .orElseThrow(NOT_FOUND::ofException);
@@ -53,10 +59,7 @@ public class InstructorServiceImpl implements InstructorService {
 
     @Override
     public Instructor getLoggedInstructor() throws SomethingWentWrongException {
-        var user = Optional.of(userService.getLoggedUser())
-                .filter(User::isStudent).orElseThrow(USER_IS_NOT_INSTRUCTOR::ofException);
-
-        return getByUserId(user.getId());
+        return getByUserId(SecurityUtil.getLoggedUserId());
     }
 
     @Override
@@ -76,7 +79,7 @@ public class InstructorServiceImpl implements InstructorService {
         instructorRepository.save(instructor);
 
         LOGGER.info("Created instructor with id: {}", instructor.getId());
-        return instructorMapper.to(instructor);
+        return instructorMapper.to(instructor.getId());
     }
 
     @Override
@@ -87,13 +90,12 @@ public class InstructorServiceImpl implements InstructorService {
     }
 
     private User getInstructorUser(Long userId) throws SomethingWentWrongException {
-        if(userService.getLoggedUser().isAdmin()){
-            if(userId == null)
-                throw EMPTY_USER_ID.ofException();
+        User instructorUser = userService.findUserById(userId);
 
-            return userService.findUserById(userId);
+        if(!instructorUser.isInstructor()){
+            throw USER_IS_NOT_INSTRUCTOR.ofException();
         }
 
-        return userService.getLoggedUser();
+        return instructorUser;
     }
 }

@@ -88,9 +88,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getLoggedUser() throws SomethingWentWrongException {
-        var loggedUser = SecurityUtil.getLoggedUser();
+        var loggedUserId = SecurityUtil.getLoggedUserId();
 
-        return findUserById(loggedUser.getId());
+        return findUserById(loggedUserId);
     }
 
     @Override

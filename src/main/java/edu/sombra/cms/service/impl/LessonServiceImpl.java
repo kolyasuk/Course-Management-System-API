@@ -46,7 +46,7 @@ public class LessonServiceImpl implements LessonService {
     public LessonDTO getDTOById(Long id) throws SomethingWentWrongException {
         var lesson = getById(id);
 
-        return lessonMapper.to(lesson);
+        return lessonMapper.to(lesson.getId());
     }
 
     @Override
@@ -59,12 +59,11 @@ public class LessonServiceImpl implements LessonService {
         lesson.setDate(lessonData.getDate());
         lesson.setCourse(courseService.getById(lessonData.getCourseId()));
 
-        var result = lessonRepository.save(lesson);
-
-        saveStudentLessons.saveStudentLessons(lesson, result.getCourse().getStudents());
+        lessonRepository.save(lesson);
+        saveStudentLessons.saveStudentLessons(lesson, lesson.getCourse().getStudents());
 
         LOGGER.info("Created Lesson with id: {}", lesson.getId());
-        return lessonMapper.to(result);
+        return lessonMapper.to(lesson.getId());
     }
 
     @Override

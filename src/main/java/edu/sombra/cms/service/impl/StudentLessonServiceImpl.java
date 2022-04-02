@@ -32,7 +32,7 @@ public class StudentLessonServiceImpl implements StudentLessonService {
 
     private final StudentLessonRepository studentLessonRepository;
     private final StudentService studentService;
-    private final StudentLessonMapper lessonMapper;
+    private final StudentLessonMapper studentLessonMapper;
     private final HomeworkUploadService homeworkUploadService;
 
     private static final LoggingService LOGGER = new LoggingService(StudentLessonServiceImpl.class);
@@ -52,7 +52,9 @@ public class StudentLessonServiceImpl implements StudentLessonService {
 
     @Override
     public StudentLessonDTO getDTOByLessonId(Long lessonId) throws SomethingWentWrongException {
-        return lessonMapper.to(getByLessonId(lessonId));
+        StudentLesson studentLesson = getByLessonId(lessonId);
+
+        return studentLessonMapper.to(studentLesson.getStudent().getId(), studentLesson.getLesson().getId());
     }
 
     @Override

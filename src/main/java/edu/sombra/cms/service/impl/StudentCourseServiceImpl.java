@@ -39,8 +39,7 @@ public class StudentCourseServiceImpl implements StudentCourseService {
     public StudentCourseDTO getDTOByCourseId(Long courseId) throws SomethingWentWrongException {
         var student = studentService.getLoggedStudent();
 
-        var studentCourse = getByStudentAndCourse(student.getId(), courseId);
-        return studentCourseMapper.to(studentCourse);
+        return studentCourseMapper.to(student.getId(), courseId);
     }
 
     @Override

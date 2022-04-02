@@ -31,6 +31,7 @@ import java.util.Optional;
 
 import static edu.sombra.cms.domain.enumeration.CourseStatus.ACTIVE;
 import static edu.sombra.cms.domain.enumeration.CourseStatus.INACTIVE;
+import static edu.sombra.cms.domain.mapper.AbstractMapper.entitiesToIds;
 import static edu.sombra.cms.messages.CourseMessage.*;
 import static edu.sombra.cms.messages.StudentMessage.STUDENT_ACTIVE_COURSE_LIMIT;
 import static edu.sombra.cms.util.constants.SystemSettings.STUDENT_COURSES_LIMIT;
@@ -67,7 +68,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public CourseDTO getDTOById(Long courseId) throws SomethingWentWrongException {
-        return courseMapper.to(getById(courseId));
+        return courseMapper.to(courseId);
     }
 
     @Override
@@ -90,7 +91,7 @@ public class CourseServiceImpl implements CourseService {
         courseRepository.save(course);
 
         LOGGER.info("Created course with name: {} and id: {}", course.getName(), course.getId());
-        return courseMapper.to(course);
+        return courseMapper.to(course.getId());
     }
 
     @Override
@@ -107,7 +108,7 @@ public class CourseServiceImpl implements CourseService {
         courseRepository.save(course);
 
         LOGGER.info("Updated course with id: {}", course.getId());
-        return courseMapper.to(course);
+        return courseMapper.to(course.getId());
     }
 
     @Override
@@ -150,7 +151,7 @@ public class CourseServiceImpl implements CourseService {
     public List<LessonOverviewDTO> lessonList(Long courseId) throws SomethingWentWrongException {
         var course = getById(courseId);
 
-        return lessonOverviewMapper.toList(course.getLessons());
+        return lessonOverviewMapper.toList(entitiesToIds(course.getLessons()));
     }
 
     @Override
@@ -164,7 +165,7 @@ public class CourseServiceImpl implements CourseService {
     public CourseDTO assignInstructor(Long courseId, Long instructorId) throws SomethingWentWrongException {
         var course = getById(courseId);
 
-        if(course.getInstructors().stream().anyMatch(o -> o.getId() == instructorId)){
+        if(course.getInstructors().stream().anyMatch(o -> o.getId().equals(instructorId))){
             throw INSTRUCTOR_IS_ALREADY_ASSIGNED.ofException();
         }
 
@@ -174,7 +175,7 @@ public class CourseServiceImpl implements CourseService {
         courseRepository.save(course);
 
         LOGGER.info("Assign instructor with id: {} to course with id: {}", instructor.getId(), course.getId());
-        return courseMapper.to(course);
+        return courseMapper.to(course.getId());
     }
 
     @Override
@@ -195,13 +196,13 @@ public class CourseServiceImpl implements CourseService {
         studentLessonService.saveStudentLessons(course.getLessons(), student);
 
         LOGGER.info("Assign student with id: {} to course with id: {}", student.getId(), course.getId());
-        return courseMapper.to(course);
+        return courseMapper.to(course.getId());
     }
 
     @Override
     public List<StudentOverviewDTO> courseStudentList(Long courseId) throws SomethingWentWrongException {
         var course = courseService.getById(courseId);
 
-        return studentOverviewMapper.toList(course.getStudents());
+        return studentOverviewMapper.toList(entitiesToIds(course.getStudents()));
     }
 }

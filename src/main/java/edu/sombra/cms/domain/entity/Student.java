@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @Entity
-public class Student {
+public class Student implements EntityClass {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @NotBlank
     @Size(max = 40)

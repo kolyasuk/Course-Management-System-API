@@ -15,6 +15,8 @@ public interface InstructorService {
 
     Instructor getByUserId(Long id) throws SomethingWentWrongException;
 
+    Instructor getById(Long id) throws SomethingWentWrongException;
+
     List<Instructor> getByIdList(List<Long> ids) throws SomethingWentWrongException;
 
     Instructor getLoggedInstructor() throws SomethingWentWrongException;

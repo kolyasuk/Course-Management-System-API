@@ -8,4 +8,8 @@ public class SecurityUtil {
     public static UserDetailsImpl getLoggedUser(){
         return (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
+
+    public static long getLoggedUserId(){
+        return getLoggedUser().getId();
+    }
 }

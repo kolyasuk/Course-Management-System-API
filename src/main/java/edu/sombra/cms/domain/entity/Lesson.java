@@ -12,11 +12,11 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-public class Lesson {
+public class Lesson implements EntityClass {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     private String name;
 

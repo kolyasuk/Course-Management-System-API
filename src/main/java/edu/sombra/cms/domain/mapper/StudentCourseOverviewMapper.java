@@ -1,17 +1,24 @@
 package edu.sombra.cms.domain.mapper;
 
 import edu.sombra.cms.domain.dto.StudentCourseOverviewDTO;
-import edu.sombra.cms.domain.entity.StudentCourse;
 import edu.sombra.cms.domain.enumeration.StudentCourseStatus;
+import edu.sombra.cms.messages.SomethingWentWrongException;
+import edu.sombra.cms.service.StudentCourseService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
-public class StudentCourseOverviewMapper extends AbstractMapper<StudentCourse, StudentCourseOverviewDTO> {
+@RequiredArgsConstructor
+public class StudentCourseOverviewMapper {
 
-    @Override
-    public StudentCourseOverviewDTO to(StudentCourse studentCourse){
+    @Lazy
+    private final StudentCourseService studentCourseService;
+
+    public StudentCourseOverviewDTO to(Long studentId, Long courseId) throws SomethingWentWrongException {
+        var studentCourse = studentCourseService.getByStudentAndCourse(studentId, courseId);
         var course = studentCourse.getCourse();
 
         StudentCourseOverviewDTO studentCourseOverviewDTO = new StudentCourseOverviewDTO();
@@ -25,4 +32,5 @@ public class StudentCourseOverviewMapper extends AbstractMapper<StudentCourse, S
 
         return studentCourseOverviewDTO;
     }
+
 }

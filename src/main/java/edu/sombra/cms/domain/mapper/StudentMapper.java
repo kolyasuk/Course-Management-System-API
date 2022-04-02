@@ -2,17 +2,27 @@ package edu.sombra.cms.domain.mapper;
 
 import edu.sombra.cms.domain.dto.StudentDTO;
 import edu.sombra.cms.domain.entity.Student;
+import edu.sombra.cms.messages.SomethingWentWrongException;
+import edu.sombra.cms.service.StudentService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
-public class StudentMapper extends AbstractMapper<Student, StudentDTO> {
+@RequiredArgsConstructor
+public class StudentMapper extends AbstractMapper<Long, StudentDTO> {
 
-    public StudentDTO to(Student Student){
+    @Lazy
+    private final StudentService studentService;
+
+    public StudentDTO to(Long id) throws SomethingWentWrongException {
+        Student student = studentService.getByStudentId(id);
+
         StudentDTO studentDTO = new StudentDTO();
-        studentDTO.setId(Student.getId());
-        studentDTO.setFirstName(Student.getFirstName());
-        studentDTO.setLastName(Student.getLastName());
-        studentDTO.setEmail(Student.getEmail());
+        studentDTO.setId(student.getId());
+        studentDTO.setFirstName(student.getFirstName());
+        studentDTO.setLastName(student.getLastName());
+        studentDTO.setEmail(student.getEmail());
 
         return studentDTO;
     }

@@ -13,11 +13,11 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-public class Instructor {
+public class Instructor implements EntityClass {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @NotBlank
     @Size(max = 40)
