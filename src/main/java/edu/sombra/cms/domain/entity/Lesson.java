@@ -34,6 +34,10 @@ public class Lesson implements EntityClass {
     @JoinColumn(name="course_id", nullable = false)
     private Course course;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="instructor_id", nullable = false)
+    private Instructor instructor;
+
     public List<User> getRelatedUsers(){
         return course.getRelatedUsers();
     }

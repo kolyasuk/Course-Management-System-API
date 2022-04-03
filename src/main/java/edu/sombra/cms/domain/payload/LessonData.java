@@ -23,6 +23,9 @@ public class LessonData {
     @NotNull(message = "{lessondata.courseId.null}")
     private Long courseId;
 
+    @NotNull(message = "{lessondata.instructorId.null}")
+    private Long instructorId;
+
     @NotBlank(message = "{lessondata.homework.blank}")
     @Size(max = 5000, message = "{lessondata.homework.size}")
     private String homework;
