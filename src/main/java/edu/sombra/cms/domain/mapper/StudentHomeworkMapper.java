@@ -1,5 +1,6 @@
 package edu.sombra.cms.domain.mapper;
 
+import edu.sombra.cms.domain.dto.FileDTO;
 import edu.sombra.cms.domain.dto.StudentHomeworkDTO;
 import edu.sombra.cms.domain.entity.S3File;
 import edu.sombra.cms.domain.entity.StudentLesson;
@@ -9,7 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -28,10 +30,17 @@ public class StudentHomeworkMapper {
         studentHomeworkDTO.setNotes(studentLesson.getNotes());
         studentHomeworkDTO.setFeedback(studentLesson.getFeedback());
         studentHomeworkDTO.setMark(studentLesson.getMark());
-
-        Optional.ofNullable(studentLesson.getHomeworkFile()).map(S3File::getFileKey).map(studentHomeworkDTO::setFileKey);
-        Optional.ofNullable(studentLesson.getHomeworkFile()).map(S3File::getFilename).map(studentHomeworkDTO::setFilename);
+        studentHomeworkDTO.setHomeworks(getHomeworkFiles(studentLesson));
 
         return studentHomeworkDTO;
+    }
+
+    private List<FileDTO> getHomeworkFiles(StudentLesson studentLesson) {
+        List<FileDTO> homeworks = new ArrayList<>();
+        for (S3File homeworkFile : studentLesson.getHomeworkFiles()) {
+            homeworks.add(FileDTO.of(homeworkFile));
+        }
+
+        return homeworks;
     }
 }

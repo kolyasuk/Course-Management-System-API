@@ -60,6 +60,8 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public StudentDTO create(@Valid StudentData studentData, Long userId) throws SomethingWentWrongException {
+        userId = Optional.ofNullable(userId).orElse(SecurityUtil.getLoggedUserId());
+
         if(studentRepository.findByUserId(userId).isPresent()){
             throw INFO_ALREADY_CREATED.ofException();
         }

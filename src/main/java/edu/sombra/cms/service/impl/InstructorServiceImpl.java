@@ -64,6 +64,7 @@ public class InstructorServiceImpl implements InstructorService {
 
     @Override
     public InstructorDTO create(@Valid InstructorData instructorData, Long userId) throws SomethingWentWrongException {
+        userId = Optional.ofNullable(userId).orElse(SecurityUtil.getLoggedUserId());
         if(instructorRepository.findByUserId(userId).isPresent()){
             throw INFO_ALREADY_CREATED.ofException();
         }

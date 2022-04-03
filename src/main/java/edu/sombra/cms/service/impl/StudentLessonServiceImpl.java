@@ -76,9 +76,9 @@ public class StudentLessonServiceImpl implements StudentLessonService {
     @Override
     public void evaluate(Long lessonId, @Valid EvaluateLessonData evaluateLessonData) throws SomethingWentWrongException {
         var studentLesson = Optional.of(getByStudentAndLesson(evaluateLessonData.getStudentId(), lessonId))
-                .filter(s -> s.getHomeworkFile() == null).orElseThrow(HOMEWORK_IS_NOT_UPLOADED::ofException);
+                .filter(s -> s.getHomeworkFiles().isEmpty()).orElseThrow(HOMEWORK_IS_NOT_UPLOADED::ofException);
 
-        if(studentLesson.getMark() == null && studentLesson.getHomeworkFile() != null){
+        if(studentLesson.getMark() == null){
             studentLesson.setMark(evaluateLessonData.getMark());
             studentLesson.setFeedback(evaluateLessonData.getFeedback());
             studentLessonRepository.save(studentLesson);
@@ -89,12 +89,10 @@ public class StudentLessonServiceImpl implements StudentLessonService {
 
     @Override
     public void addHomework(Long lessonId, HomeworkData homeworkData, MultipartFile homeworkFile) throws SomethingWentWrongException {
-        var studentLesson = Optional.of(getByLessonId(lessonId))
-                .filter(s -> s.getHomeworkFile() == null).orElseThrow(HOMEWORK_IS_ALREADY_UPLOADED::ofException);
+        var studentLesson = getByLessonId(lessonId);
+        var s3file = homeworkUploadService.uploadStudentHomework(studentLesson.getStudent(), homeworkFile).orElseThrow(UNABLE_TO_UPLOAD_HOMEWORK::ofException);
 
-        var s3file = homeworkUploadService.uploadStudentHomework(studentLesson.getStudent(), homeworkFile);
-        s3file.map(studentLesson::setHomeworkFile).orElseThrow(UNABLE_TO_UPLOAD_HOMEWORK::ofException);
-
+        studentLesson.addHomework(s3file);
         studentLesson.setNotes(homeworkData.getNote());
 
         studentLessonRepository.save(studentLesson);

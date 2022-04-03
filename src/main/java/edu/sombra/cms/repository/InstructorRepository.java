@@ -17,7 +17,7 @@ public interface InstructorRepository extends JpaRepository<Instructor, Long> {
 
 	Optional<Instructor> findByUserId(Long userId);
 
-	@Query("select c.instructors from Course c inner join c.lessons l inner join l.studentLessons sl where sl.homeworkFile = :homeworkFile")
+	@Query("select c.instructors from Course c inner join c.lessons l inner join l.studentLessons sl where sl.homeworkFiles = :homeworkFile")
 	List<Instructor> findInstructorsByHomeworkFile(S3File homeworkFile);
 
 

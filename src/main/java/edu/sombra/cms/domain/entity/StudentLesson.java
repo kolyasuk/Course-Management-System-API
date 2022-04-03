@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -24,15 +26,24 @@ public class StudentLesson implements Serializable {
     @JoinColumn(name = "lesson_id")
     private Lesson lesson;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "homework_file_id", referencedColumnName = "id")
-    private S3File homeworkFile;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name="homework_file",
+            joinColumns = {
+                    @JoinColumn(name="student_id"),
+                    @JoinColumn(name="lesson_id")
+            },
+            inverseJoinColumns = @JoinColumn(name="homework_file_id"))
+    private Set<S3File> homeworkFiles = new HashSet<>();
 
     private Integer mark;
 
     private String notes;
 
     private String feedback;
+
+    public void addHomework(S3File s3File){
+        homeworkFiles.add(s3File);
+    }
 
     public StudentLesson(Student student, Lesson lesson) {
         this.id = new StudentLessonPK(student, lesson);
