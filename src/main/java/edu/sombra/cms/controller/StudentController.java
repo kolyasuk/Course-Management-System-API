@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -30,6 +31,11 @@ public class StudentController {
     @ResponseStatus(HttpStatus.OK)
     public StudentDTO createStudentInfo(@RequestBody StudentData studentData, @RequestParam(required = false) Long userId) throws SomethingWentWrongException {
         return studentService.create(studentData, userId);
+    }
+
+    @GetMapping("/validateUser")
+    public Principal user(Principal user) {
+        return user;
     }
 
     @GetMapping("/course")
