@@ -12,8 +12,9 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.service.AwsClient;
-import edu.sombra.cms.util.LoggingService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +47,7 @@ public class AwsClientImpl implements AwsClient {
                 .build();
     }
 
-    private static final LoggingService LOGGER = new LoggingService(AwsClientImpl.class);
+    private static final Logger LOGGER =  LoggerFactory.getLogger(AwsClientImpl.class);
 
     @Override
     public void upload(final String bucketName, final String key, final File file) throws SdkClientException {

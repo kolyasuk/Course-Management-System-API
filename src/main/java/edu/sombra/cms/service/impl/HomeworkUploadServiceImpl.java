@@ -11,8 +11,9 @@ import edu.sombra.cms.service.AwsClient;
 import edu.sombra.cms.service.HomeworkUploadService;
 import edu.sombra.cms.service.S3FileService;
 import edu.sombra.cms.service.UserService;
-import edu.sombra.cms.util.LoggingService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,7 +40,7 @@ public class HomeworkUploadServiceImpl implements HomeworkUploadService {
     @Value("${s3.homework.bucket.name}")
     private String s3BucketName;
 
-    private static final LoggingService LOGGER = new LoggingService(HomeworkUploadServiceImpl.class);
+    private static final Logger LOGGER =  LoggerFactory.getLogger(HomeworkUploadServiceImpl.class);
 
     @Override
     public Optional<S3File> uploadStudentHomework(Student student, MultipartFile homeworkFile) {

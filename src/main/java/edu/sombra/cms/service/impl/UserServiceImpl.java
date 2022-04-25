@@ -8,9 +8,10 @@ import edu.sombra.cms.domain.payload.RegistrationData;
 import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.repository.UserRepository;
 import edu.sombra.cms.service.UserService;
-import edu.sombra.cms.util.LoggingService;
 import edu.sombra.cms.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,7 +35,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    private static final LoggingService LOGGER = new LoggingService(UserServiceImpl.class);
+    private static final Logger LOGGER =  LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Override
     public FullUserInfoDTO create(@Valid RegistrationData registrationData) throws SomethingWentWrongException {

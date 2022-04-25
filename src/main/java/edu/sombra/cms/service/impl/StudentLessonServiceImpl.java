@@ -12,8 +12,9 @@ import edu.sombra.cms.repository.StudentLessonRepository;
 import edu.sombra.cms.service.HomeworkUploadService;
 import edu.sombra.cms.service.StudentLessonService;
 import edu.sombra.cms.service.StudentService;
-import edu.sombra.cms.util.LoggingService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,7 +36,7 @@ public class StudentLessonServiceImpl implements StudentLessonService {
     private final StudentLessonMapper studentLessonMapper;
     private final HomeworkUploadService homeworkUploadService;
 
-    private static final LoggingService LOGGER = new LoggingService(StudentLessonServiceImpl.class);
+    private static final Logger LOGGER =  LoggerFactory.getLogger(StudentLessonServiceImpl.class);
 
     @Override
     public StudentLesson getByStudentAndLesson(Long studentId, Long lessonId) throws SomethingWentWrongException {

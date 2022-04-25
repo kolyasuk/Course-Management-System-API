@@ -9,8 +9,9 @@ import edu.sombra.cms.domain.payload.LessonData;
 import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.repository.LessonRepository;
 import edu.sombra.cms.service.*;
-import edu.sombra.cms.util.LoggingService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -33,7 +34,7 @@ public class LessonServiceImpl implements LessonService {
     private final StudentLessonService saveStudentLessons;
     private final UserService userService;
 
-    private static final LoggingService LOGGER = new LoggingService(LessonServiceImpl.class);
+    private static final Logger LOGGER =  LoggerFactory.getLogger(LessonServiceImpl.class);
 
     @Override
     public Lesson getById(Long id) throws SomethingWentWrongException {

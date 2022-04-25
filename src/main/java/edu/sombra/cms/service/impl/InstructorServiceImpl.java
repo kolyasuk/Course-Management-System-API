@@ -11,9 +11,10 @@ import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.repository.InstructorRepository;
 import edu.sombra.cms.service.InstructorService;
 import edu.sombra.cms.service.UserService;
-import edu.sombra.cms.util.LoggingService;
 import edu.sombra.cms.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -21,7 +22,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
-import static edu.sombra.cms.messages.InstructorMessage.*;
+import static edu.sombra.cms.messages.InstructorMessage.NOT_FOUND;
+import static edu.sombra.cms.messages.InstructorMessage.USER_IS_NOT_INSTRUCTOR;
 import static edu.sombra.cms.messages.StudentMessage.INFO_ALREADY_CREATED;
 
 @Service
@@ -34,7 +36,7 @@ public class InstructorServiceImpl implements InstructorService {
     private final UserService userService;
     private final CourseOverviewMapper courseOverviewMapper;
 
-    private static final LoggingService LOGGER = new LoggingService(InstructorServiceImpl.class);
+    private static final Logger LOGGER =  LoggerFactory.getLogger(InstructorServiceImpl.class);
 
     @Override
     public Instructor getByStudentId(Long id) throws SomethingWentWrongException {

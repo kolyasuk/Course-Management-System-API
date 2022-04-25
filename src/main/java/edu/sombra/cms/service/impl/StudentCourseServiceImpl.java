@@ -8,8 +8,9 @@ import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.repository.StudentCourseRepository;
 import edu.sombra.cms.service.StudentCourseService;
 import edu.sombra.cms.service.StudentService;
-import edu.sombra.cms.util.LoggingService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -27,7 +28,7 @@ public class StudentCourseServiceImpl implements StudentCourseService {
     private final StudentCourseMapper studentCourseMapper;
 
 
-    private static final LoggingService LOGGER = new LoggingService(StudentCourseServiceImpl.class);
+    private static final Logger LOGGER =  LoggerFactory.getLogger(StudentCourseServiceImpl.class);
 
     @Override
     public StudentCourse getByStudentAndCourse(Long studentId, Long courseId) throws SomethingWentWrongException {

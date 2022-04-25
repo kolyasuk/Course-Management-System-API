@@ -16,8 +16,9 @@ import edu.sombra.cms.repository.LessonRepository;
 import edu.sombra.cms.repository.StudentCourseRepository;
 import edu.sombra.cms.repository.StudentLessonRepository;
 import edu.sombra.cms.service.*;
-import edu.sombra.cms.util.LoggingService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,7 +57,7 @@ public class CourseServiceImpl implements CourseService {
     private final StudentOverviewMapper studentOverviewMapper;
 
 
-    private static final LoggingService LOGGER = new LoggingService(CourseServiceImpl.class);
+    private static final Logger LOGGER =  LoggerFactory.getLogger(CourseServiceImpl.class);
 
     @Override
     public Course getById(Long courseId) throws SomethingWentWrongException {

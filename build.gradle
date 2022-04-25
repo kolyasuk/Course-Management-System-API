@@ -5,7 +5,7 @@ plugins {
     id "io.freefair.lombok" version "5.3.0"
 }
 
-ext['log4j2.version'] = '2.17.1'
+ext['log4j2.version'] = '2.17.2'
 
 ext {
     activeProfile = findProperty('env') ?: 'dev'
@@ -20,11 +20,10 @@ repositories {
 }
 
 dependencies {
-    compileOnly "org.projectlombok:lombok:1.18.16"
-    annotationProcessor "org.projectlombok:lombok:1.18.16"
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation ('org.springframework.boot:spring-boot-starter-web') {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -32,6 +31,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.flywaydb:flyway-core'
     implementation 'com.amazonaws:aws-java-sdk:1.12.158'
+
+    annotationProcessor "org.projectlombok:lombok:1.18.16"
+    compileOnly "org.projectlombok:lombok:1.18.16"
     runtimeOnly 'mysql:mysql-connector-java'
 
     testAnnotationProcessor "org.projectlombok:lombok:1.18.16"
