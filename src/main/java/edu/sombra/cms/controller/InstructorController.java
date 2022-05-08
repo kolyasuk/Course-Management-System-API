@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -20,7 +21,7 @@ public class InstructorController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public InstructorDTO createInstructorInfo(@RequestBody InstructorData instructorData, @RequestParam(required = false) Long userId) throws SomethingWentWrongException {
+    public InstructorDTO createInstructorInfo(@RequestBody @Valid InstructorData instructorData, @RequestParam(required = false) Long userId) throws SomethingWentWrongException {
         return instructorService.create(instructorData, userId);
     }
 

@@ -20,31 +20,29 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception, HttpHeaders headers,
                                                                   HttpStatus status, WebRequest request) {
-//        LOG.error(exception);
-        String bodyOfResponse = exception.getAllErrors().get(0).getDefaultMessage();
-        return new ResponseEntity(bodyOfResponse, headers, status);
+        ErrorResponse errorResponse = new ErrorResponse(exception.getAllErrors().get(0).getDefaultMessage());
+        return new ResponseEntity<>(errorResponse, headers, status);
     }
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers,
                                                                   HttpStatus status, WebRequest request) {
-        String bodyOfResponse = ex.getMessage();
-        return new ResponseEntity(bodyOfResponse, headers, status);
+        return new ResponseEntity<>(new ErrorResponse(ex), headers, status);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex, WebRequest request) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponse(ex), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(SomethingWentWrongException.class)
     public ResponseEntity<Object> handleSomethingWentWrong(SomethingWentWrongException ex, WebRequest request) {
-        return new ResponseEntity<>(ex.getMessage(), ex.getStatus());
+        return new ResponseEntity<>(new ErrorResponse(ex), ex.getStatus());
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Object> handleAccessDenied(AccessDeniedException ex, WebRequest request) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponse(ex), HttpStatus.FORBIDDEN);
     }
 
 }

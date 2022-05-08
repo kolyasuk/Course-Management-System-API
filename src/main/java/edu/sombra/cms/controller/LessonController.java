@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/lesson")
 @RequiredArgsConstructor
@@ -26,13 +28,13 @@ public class LessonController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public LessonDTO create(@RequestBody LessonData lessonData) throws SomethingWentWrongException {
+    public LessonDTO create(@RequestBody @Valid LessonData lessonData) throws SomethingWentWrongException {
         return lessonService.create(lessonData);
     }
 
     @PutMapping("/{id}/mark")
     @ResponseStatus(HttpStatus.OK)
-    public void evaluate(@PathVariable("id") Long lessonId, @RequestBody EvaluateLessonData evaluateLessonData) throws SomethingWentWrongException {
+    public void evaluate(@PathVariable("id") Long lessonId, @RequestBody @Valid EvaluateLessonData evaluateLessonData) throws SomethingWentWrongException {
         studentLessonService.evaluate(lessonId, evaluateLessonData);
     }
 

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -29,7 +30,7 @@ public class CourseController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CourseDTO update(@RequestBody CourseData courseData, @PathVariable Long id) throws SomethingWentWrongException {
+    public CourseDTO update(@RequestBody @Valid CourseData courseData, @PathVariable Long id) throws SomethingWentWrongException {
         return courseService.update(id, courseData);
     }
 
@@ -47,7 +48,7 @@ public class CourseController {
 
     @PutMapping("/{id}/feedback")
     @ResponseStatus(HttpStatus.OK)
-    public void studentCourseFeedback(@PathVariable("id") Long courseId, @RequestBody StudentCourseFeedbackData studentCourseFeedbackData) throws SomethingWentWrongException {
+    public void studentCourseFeedback(@PathVariable("id") Long courseId, @RequestBody @Valid StudentCourseFeedbackData studentCourseFeedbackData) throws SomethingWentWrongException {
         studentCourseService.feedback(courseId, studentCourseFeedbackData);
     }
 

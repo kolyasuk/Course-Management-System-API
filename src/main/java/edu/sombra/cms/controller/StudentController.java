@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class StudentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public StudentDTO createStudentInfo(@RequestBody StudentData studentData, @RequestParam(required = false) Long userId) throws SomethingWentWrongException {
+    public StudentDTO createStudentInfo(@RequestBody @Valid StudentData studentData, @RequestParam(required = false) Long userId) throws SomethingWentWrongException {
         return studentService.create(studentData, userId);
     }
 
