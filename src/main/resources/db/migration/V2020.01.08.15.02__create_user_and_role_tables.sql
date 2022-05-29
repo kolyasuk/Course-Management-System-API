@@ -7,7 +7,6 @@ VALUES ('ROLE_STUDENT'),
        ('ROLE_ADMIN');
 
 CREATE TABLE user (id bigint AUTO_INCREMENT PRIMARY KEY,
-                   username varchar(25) not null unique,
                    password varchar(500) not null,
                    full_name varchar(500) not null,
                    email varchar(40) not null,

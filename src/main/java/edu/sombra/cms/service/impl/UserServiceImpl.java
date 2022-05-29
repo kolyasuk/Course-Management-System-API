@@ -16,12 +16,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static edu.sombra.cms.domain.enumeration.Role.ROLE_ADMIN;
 import static edu.sombra.cms.messages.UserMessage.*;
@@ -38,27 +39,26 @@ public class UserServiceImpl implements UserService {
     private static final Logger LOGGER =  LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public FullUserInfoDTO create(@Valid RegistrationData registrationData) throws SomethingWentWrongException {
         validateRegistrationData(registrationData);
 
         User userToRegister = userMapper.fromRegistrationData(registrationData);
         userRepository.save(userToRegister);
-        var registeredUser = userMapper.toView(userToRegister);
+        var registeredUser = userMapper.toView(userToRegister.getId());
 
-        LOGGER.info("Created user {} with id: {}", registeredUser.getUsername(), registeredUser.getId());
+        LOGGER.info("Created user {} with id: {}", registeredUser.getEmail(), registeredUser.getId());
         return registeredUser;
     }
 
     private void validateRegistrationData(@Valid RegistrationData registrationData) throws SomethingWentWrongException {
-        if (userRepository.existsByUsername(registrationData.getUsername())) {
-            throw USERNAME_EXISTS.ofException();
-        }
         if (userRepository.existsByEmail(registrationData.getEmail())) {
             throw EMAIL_EXISTS.ofException();
         }
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public void setUserRole(Long userId, Role role) throws SomethingWentWrongException {
         if (role.equals(ROLE_ADMIN))
             validateCreatingAdminRole();
@@ -73,21 +73,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public User findUserById(Long userId) throws SomethingWentWrongException {
         return userRepository.findById(userId).orElseThrow(NOT_FOUND::ofException);
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public List<FullUserInfoDTO> findUsersByRole(Role role) throws SomethingWentWrongException {
         var users = userRepository.findAllByRoles(role.getName()).orElseThrow(NOT_FOUND::ofException);
 
-        return users
-                .stream()
-                .map(userMapper::toView)
-                .collect(Collectors.toList());
+        List<FullUserInfoDTO> res = new ArrayList<>();
+        for (User user : users) {
+            res.add(userMapper.toView(user.getId()));
+        }
+
+        return res;
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public User getLoggedUser() throws SomethingWentWrongException {
         var loggedUserId = SecurityUtil.getLoggedUserId();
 
@@ -95,6 +100,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public void loggedUserHasAccess(List<User> usersWithAccess) throws SomethingWentWrongException {
         var loggedUser = getLoggedUser();
 

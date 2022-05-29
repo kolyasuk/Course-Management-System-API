@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -39,32 +40,38 @@ public class InstructorServiceImpl implements InstructorService {
     private static final Logger LOGGER =  LoggerFactory.getLogger(InstructorServiceImpl.class);
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public Instructor getByStudentId(Long id) throws SomethingWentWrongException {
         return instructorRepository.findById(id).orElseThrow(NOT_FOUND::ofException);
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public Instructor getByUserId(Long id) throws SomethingWentWrongException {
         return instructorRepository.findByUserId(id).orElseThrow(NOT_FOUND::ofException);
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public Instructor getById(Long id) throws SomethingWentWrongException {
         return instructorRepository.findById(id).orElseThrow(NOT_FOUND::ofException);
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public List<Instructor> getByIdList(List<Long> ids) throws SomethingWentWrongException {
         return Optional.of(instructorRepository.findAllById(ids)).filter(o -> !o.isEmpty())
                 .orElseThrow(NOT_FOUND::ofException);
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public Instructor getLoggedInstructor() throws SomethingWentWrongException {
         return getByUserId(SecurityUtil.getLoggedUserId());
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public InstructorDTO create(@Valid InstructorData instructorData, Long userId) throws SomethingWentWrongException {
         userId = Optional.ofNullable(userId).orElse(SecurityUtil.getLoggedUserId());
         if(instructorRepository.findByUserId(userId).isPresent()){
@@ -86,6 +93,7 @@ public class InstructorServiceImpl implements InstructorService {
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public List<CourseOverviewDTO> courseList() throws SomethingWentWrongException {
         var instructor = getLoggedInstructor();
 

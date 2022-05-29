@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -43,6 +44,7 @@ public class HomeworkUploadServiceImpl implements HomeworkUploadService {
     private static final Logger LOGGER =  LoggerFactory.getLogger(HomeworkUploadServiceImpl.class);
 
     @Override
+    @Transactional
     public Optional<S3File> uploadStudentHomework(Student student, MultipartFile homeworkFile) {
         File file = null;
 
@@ -68,6 +70,7 @@ public class HomeworkUploadServiceImpl implements HomeworkUploadService {
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public byte[] getStudentHomework(String fileKey) throws SomethingWentWrongException {
         List<User> usersWithAccessToFile = getUsersWithAccessToFile(fileKey);
 

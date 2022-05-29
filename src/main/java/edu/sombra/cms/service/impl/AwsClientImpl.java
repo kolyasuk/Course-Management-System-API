@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -50,11 +51,13 @@ public class AwsClientImpl implements AwsClient {
     private static final Logger LOGGER =  LoggerFactory.getLogger(AwsClientImpl.class);
 
     @Override
+    @Transactional(rollbackFor = SdkClientException.class)
     public void upload(final String bucketName, final String key, final File file) throws SdkClientException {
         s3client.putObject(bucketName, key, file);
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public byte[] get(final String bucketName, final String key) throws SomethingWentWrongException {
         try {
             S3Object object = s3client.getObject(bucketName, key);

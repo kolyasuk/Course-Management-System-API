@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -31,12 +32,14 @@ public class StudentCourseServiceImpl implements StudentCourseService {
     private static final Logger LOGGER =  LoggerFactory.getLogger(StudentCourseServiceImpl.class);
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public StudentCourse getByStudentAndCourse(Long studentId, Long courseId) throws SomethingWentWrongException {
         return studentCourseRepository.findStudentCourseByStudentIdAndCourseId(studentId, courseId)
                 .orElseThrow(NOT_FOUND::ofException);
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public StudentCourseDTO getDTOByCourseId(Long courseId) throws SomethingWentWrongException {
         var student = studentService.getLoggedStudent();
 
@@ -44,6 +47,7 @@ public class StudentCourseServiceImpl implements StudentCourseService {
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public void feedback(Long courseId, @Valid StudentCourseFeedbackData studentCourseFeedbackData) throws SomethingWentWrongException {
         var studentCourse = getByStudentAndCourse(studentCourseFeedbackData.getStudentId(), courseId);
 

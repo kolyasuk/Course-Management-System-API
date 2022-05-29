@@ -2,10 +2,12 @@ package edu.sombra.cms.domain.mapper;
 
 import edu.sombra.cms.config.security.UserDetailsImpl;
 import edu.sombra.cms.domain.dto.FullUserInfoDTO;
-import edu.sombra.cms.domain.dto.UserDTO;
 import edu.sombra.cms.domain.entity.User;
 import edu.sombra.cms.domain.payload.RegistrationData;
+import edu.sombra.cms.messages.SomethingWentWrongException;
+import edu.sombra.cms.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -14,41 +16,26 @@ import org.springframework.stereotype.Component;
 public class UserMapper {
 
     private final PasswordEncoder passwordEncoder;
-
-    public UserDTO toDTO(User user){
-        return new UserDTO()
-                .setId(user.getId())
-                .setUsername(user.getUsername())
-                .setFullName(user.getFullName());
-    }
+    @Lazy
+    private final UserService userService;
 
     public FullUserInfoDTO toView(UserDetailsImpl userDetails){
         return new FullUserInfoDTO()
                 .setId(userDetails.getId())
-                .setUsername(userDetails.getUsername())
                 .setFullName(userDetails.getFullName())
                 .setEmail(userDetails.getEmail());
     }
 
-    public FullUserInfoDTO toView(User user){
+    public FullUserInfoDTO toView(Long userId) throws SomethingWentWrongException {
+        User user = userService.findUserById(userId);
         return new FullUserInfoDTO()
                 .setId(user.getId())
-                .setUsername(user.getUsername())
                 .setFullName(user.getFullName())
                 .setEmail(user.getEmail());
     }
 
-    public User fromDTO(UserDTO userDTO){
-        return new User()
-                .setId(userDTO.getId())
-                .setUsername(userDTO.getUsername())
-                .setFullName(userDTO.getFullName())
-                .setPassword(passwordEncoder.encode(userDTO.getPassword()));
-    }
-
     public User fromRegistrationData(RegistrationData registrationData) {
         return new User()
-                .setUsername(registrationData.getUsername())
                 .setFullName(registrationData.getFullName())
                 .setEmail(registrationData.getEmail())
                 .setRole(registrationData.getRole())

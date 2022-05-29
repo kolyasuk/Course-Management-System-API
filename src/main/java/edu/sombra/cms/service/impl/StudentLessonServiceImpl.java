@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,12 +40,14 @@ public class StudentLessonServiceImpl implements StudentLessonService {
     private static final Logger LOGGER =  LoggerFactory.getLogger(StudentLessonServiceImpl.class);
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public StudentLesson getByStudentAndLesson(Long studentId, Long lessonId) throws SomethingWentWrongException {
         return studentLessonRepository.findStudentLessonByStudentIdAndLessonId(studentId, lessonId)
                 .orElseThrow(NOT_FOUND::ofException);
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public StudentLesson getByLessonId(Long lessonId) throws SomethingWentWrongException {
         var student = studentService.getLoggedStudent();
 
@@ -52,6 +55,7 @@ public class StudentLessonServiceImpl implements StudentLessonService {
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public StudentLessonDTO getDTOByLessonId(Long lessonId) throws SomethingWentWrongException {
         StudentLesson studentLesson = getByLessonId(lessonId);
 
@@ -59,6 +63,7 @@ public class StudentLessonServiceImpl implements StudentLessonService {
     }
 
     @Override
+    @Transactional
     public void saveStudentLessons(List<Lesson> lessons, Student student) {
         var studentLessons = lessons.stream().map(l -> new StudentLesson(student, l)).collect(Collectors.toList());
         studentLessonRepository.saveAll(studentLessons);
@@ -67,6 +72,7 @@ public class StudentLessonServiceImpl implements StudentLessonService {
     }
 
     @Override
+    @Transactional
     public void saveStudentLessons(Lesson lesson, List<Student> students) {
         var studentLessons = students.stream().map(s -> new StudentLesson(s, lesson)).collect(Collectors.toList());
         studentLessonRepository.saveAll(studentLessons);
@@ -75,6 +81,7 @@ public class StudentLessonServiceImpl implements StudentLessonService {
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public void evaluate(Long lessonId, @Valid EvaluateLessonData evaluateLessonData) throws SomethingWentWrongException {
         var studentLesson = Optional.of(getByStudentAndLesson(evaluateLessonData.getStudentId(), lessonId))
                 .filter(s -> s.getHomeworkFiles().isEmpty()).orElseThrow(HOMEWORK_IS_NOT_UPLOADED::ofException);
@@ -89,6 +96,7 @@ public class StudentLessonServiceImpl implements StudentLessonService {
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public void addHomework(Long lessonId, HomeworkData homeworkData, MultipartFile homeworkFile) throws SomethingWentWrongException {
         var studentLesson = getByLessonId(lessonId);
         var s3file = homeworkUploadService.uploadStudentHomework(studentLesson.getStudent(), homeworkFile).orElseThrow(UNABLE_TO_UPLOAD_HOMEWORK::ofException);

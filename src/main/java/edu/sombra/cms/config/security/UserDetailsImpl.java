@@ -2,6 +2,7 @@ package edu.sombra.cms.config.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import edu.sombra.cms.domain.entity.User;
+import edu.sombra.cms.domain.enumeration.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +19,6 @@ import java.util.Collections;
 public class UserDetailsImpl implements UserDetails {
 
     private long id;
-    private String username;
     private String email;
     private String fullName;
     @JsonIgnore
@@ -28,7 +28,6 @@ public class UserDetailsImpl implements UserDetails {
     public static UserDetailsImpl build(User user) {
         return new UserDetailsImpl(
                 user.getId(),
-                user.getUsername(),
                 user.getEmail(),
                 user.getFullName(),
                 user.getPassword(),
@@ -38,6 +37,15 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(authority);
+    }
+
+    public String getRole(){
+       return getAuthorities().stream().map(o -> Role.ofName(o.getAuthority())).findFirst().orElseThrow(() -> new RuntimeException("")).name();
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
     }
 
     @Override

@@ -9,8 +9,8 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class LoginRequestData {
 
-    @NotNull(message = "{loginrequestdata.username.null}")
-    private String username;
+    @NotNull(message = "{loginrequestdata.email.null}")
+    private String email;
     @NotNull(message = "{loginrequestdata.password.null}")
     private String password;
 

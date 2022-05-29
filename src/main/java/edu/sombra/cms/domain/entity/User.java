@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(	name = "user",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = "username"),
                 @UniqueConstraint(columnNames = "email")
         })
 public class User {
@@ -26,10 +25,6 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    @NotBlank
-    @Size(max = 20)
-    private String username;
 
     @NotBlank
     @Size(max = 120)

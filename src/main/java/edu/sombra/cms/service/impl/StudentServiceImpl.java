@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -39,27 +40,32 @@ public class StudentServiceImpl implements StudentService {
     private static final Logger LOGGER =  LoggerFactory.getLogger(StudentServiceImpl.class);
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public Student getByStudentId(Long id) throws SomethingWentWrongException {
         return studentRepository.findById(id).orElseThrow(NOT_FOUND::ofException);
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public Student getByUserId(Long id) throws SomethingWentWrongException {
         return studentRepository.findByUserId(id).orElseThrow(NOT_FOUND::ofException);
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public Student getLoggedStudent() throws SomethingWentWrongException {
         return getByUserId(SecurityUtil.getLoggedUserId());
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public List<Student> getByIdList(List<Long> ids) throws SomethingWentWrongException {
         return Optional.of(studentRepository.findAllById(ids)).filter(o -> !o.isEmpty())
                 .orElseThrow(NOT_FOUND::ofException);
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public StudentDTO create(@Valid StudentData studentData, Long userId) throws SomethingWentWrongException {
         userId = Optional.ofNullable(userId).orElse(SecurityUtil.getLoggedUserId());
 
@@ -81,6 +87,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public List<StudentCourseOverviewDTO> courseList() throws SomethingWentWrongException {
         var student = getLoggedStudent();
         return getStudentCourse(student.getStudentCourses());

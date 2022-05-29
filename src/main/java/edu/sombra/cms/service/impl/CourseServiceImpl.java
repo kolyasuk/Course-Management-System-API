@@ -60,6 +60,7 @@ public class CourseServiceImpl implements CourseService {
     private static final Logger LOGGER =  LoggerFactory.getLogger(CourseServiceImpl.class);
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public Course getById(Long courseId) throws SomethingWentWrongException {
         var course = courseRepository.findById(courseId).orElseThrow(NOT_FOUND::ofException);
         userService.loggedUserHasAccess(course.getRelatedUsers());
@@ -68,17 +69,19 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public CourseDTO getDTOById(Long courseId) throws SomethingWentWrongException {
         return courseMapper.to(courseId);
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public Course getActiveById(Long courseId) throws SomethingWentWrongException {
         return courseRepository.findByIdAndStatus(courseId, ACTIVE).orElseThrow(ACTIVE_NOT_FOUND::ofException);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public CourseDTO create(@Valid CourseData courseData) throws SomethingWentWrongException {
         Course course = new Course();
 
@@ -96,7 +99,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public CourseDTO update(Long courseId, @Valid CourseData courseData) throws SomethingWentWrongException {
         var course = getActiveById(courseId);
 
@@ -113,7 +116,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public void start(Long courseId) throws SomethingWentWrongException {
         var course = Optional.of(getById(courseId)).filter(Course::canBeActivated).orElseThrow(MINIMUM_NUMBER_OF_INSTRUCTORS_AND_LESSONS::ofException);
 
@@ -124,7 +127,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public void finish(Long courseId) throws SomethingWentWrongException {
         var course = getActiveById(courseId);
 
@@ -149,6 +152,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public List<LessonOverviewDTO> lessonList(Long courseId) throws SomethingWentWrongException {
         var course = getById(courseId);
 
@@ -156,13 +160,14 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public boolean existsNotFinishedLessons(Long courseId) {
         var finishDate = LocalDate.now().minusDays(1);
         return lessonRepository.existsNotFinishedLessons(courseId, finishDate);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public CourseDTO assignInstructor(Long courseId, Long instructorId) throws SomethingWentWrongException {
         var course = getById(courseId);
 
@@ -180,7 +185,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public CourseDTO assignStudent(Long courseId, Long studentId) throws SomethingWentWrongException {
         var course = getActiveById(courseId);
 
@@ -201,6 +206,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public List<StudentOverviewDTO> courseStudentList(Long courseId) throws SomethingWentWrongException {
         var course = courseService.getById(courseId);
 

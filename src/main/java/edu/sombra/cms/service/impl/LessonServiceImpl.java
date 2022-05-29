@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -37,6 +38,7 @@ public class LessonServiceImpl implements LessonService {
     private static final Logger LOGGER =  LoggerFactory.getLogger(LessonServiceImpl.class);
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public Lesson getById(Long id) throws SomethingWentWrongException {
         var lesson = lessonRepository.findById(id).orElseThrow(NOT_FOUND::ofException);
 
@@ -45,6 +47,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public LessonDTO getDTOById(Long id) throws SomethingWentWrongException {
         var lesson = getById(id);
 
@@ -52,6 +55,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public LessonDTO create(@Valid LessonData lessonData) throws SomethingWentWrongException {
         Lesson lesson = new Lesson();
 
@@ -71,6 +75,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public LessonDTO update(Long id, @Valid LessonData lessonData) {
         return null;
     }

@@ -42,7 +42,7 @@ public class AdminControllerTest {
     @DisplayName("Create user valid input returns code 200")
     @WithMockUser
     void whenValidInput_thenReturns200() throws Exception {
-        RegistrationData instructor = new RegistrationData("instructor1", "password", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
+        RegistrationData instructor = new RegistrationData("password", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
 
         mockMvc.perform(post("/api/admin/user")
                 .contentType("application/json")
@@ -54,7 +54,7 @@ public class AdminControllerTest {
     @DisplayName("Create user invalid input returns code 400")
     @WithMockUser
     void whenInvalidInput_thenReturns400() throws Exception {
-        RegistrationData instructor = new RegistrationData("", "password", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
+        RegistrationData instructor = new RegistrationData("", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
 
         mockMvc.perform(post("/api/admin/user")
                 .contentType("application/json")
@@ -63,23 +63,23 @@ public class AdminControllerTest {
     }
 
     @Test
-    @DisplayName("Create user invalid input returns code and ErrorResponse")
+    @DisplayName("Create user invalid input returns code 400 and ErrorResponse")
     @WithMockUser
     void whenInvalidInput_thenReturns400AndErrorResponse() throws Exception {
-        RegistrationData instructor = new RegistrationData("", "password", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
+        RegistrationData instructor = new RegistrationData("", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
 
         mockMvc.perform(post("/api/admin/user")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(instructor)))
                 .andExpect(status().isBadRequest())
-                .andExpect(responseBody().containsError("Username size should be between 3 and 20 characters"));
+                .andExpect(responseBody().containsError("Password size should be between 3 and 40 characters"));
     }
 
     @Test
     @DisplayName("Create user valid input maps to business model")
     @WithMockUser
     void whenValidInput_thenMapsToBusinessModel() throws Exception {
-        RegistrationData instructor = new RegistrationData("instructor1", "password", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
+        RegistrationData instructor = new RegistrationData("password", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
 
         mockMvc.perform(post("/api/admin/user")
                 .contentType("application/json")
@@ -89,7 +89,6 @@ public class AdminControllerTest {
         ArgumentCaptor<RegistrationData> registrationDataCaptor = ArgumentCaptor.forClass(RegistrationData.class);
 
         verify(userService, times(1)).create(registrationDataCaptor.capture());
-        assertThat(registrationDataCaptor.getValue().getUsername()).isEqualTo("instructor1");
         assertThat(registrationDataCaptor.getValue().getPassword()).isEqualTo("password");
         assertThat(registrationDataCaptor.getValue().getFullName()).isEqualTo("Instructor1 Instructor1");
         assertThat(registrationDataCaptor.getValue().getEmail()).isEqualTo("instructor1@gmail.com");
@@ -100,9 +99,9 @@ public class AdminControllerTest {
     @DisplayName("Create user valid input returns FullUserInfoDTO")
     @WithMockUser
     void whenValidInput_thenReturnsFullUserInfoDTO() throws Exception {
-        RegistrationData instructor = new RegistrationData("instructor1", "password", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
-        FullUserInfoDTO userServiceReturn = new FullUserInfoDTO(1,"instructor1", "instructor1@gmail.com", "Instructor1 Instructor1");
-        FullUserInfoDTO expected = new FullUserInfoDTO(1,"instructor1", "instructor1@gmail.com", "Instructor1 Instructor1");
+        RegistrationData instructor = new RegistrationData("password", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
+        FullUserInfoDTO userServiceReturn = new FullUserInfoDTO(1, "instructor1@gmail.com", "Instructor1 Instructor1");
+        FullUserInfoDTO expected = new FullUserInfoDTO(1, "instructor1@gmail.com", "Instructor1 Instructor1");
 
         when(userService.create(any(RegistrationData.class))).thenReturn(userServiceReturn);
 

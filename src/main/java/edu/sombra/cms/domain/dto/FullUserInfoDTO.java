@@ -12,7 +12,6 @@ import lombok.Setter;
 public class FullUserInfoDTO {
 
     private long id;
-    private String username;
     private String email;
     private String fullName;
 

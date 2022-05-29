@@ -15,12 +15,8 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 public class RegistrationData {
 
-    @Size(min = 3, max = 20, message = "{registrationdata.username.size}")
-    private String username;
-
     @Size(min = 6, max = 40, message = "{registrationdata.password.size}")
     private String password;
-
 
     @Size(min = 2, max = 50, message = "{registrationdata.fullName.size}")
     private String fullName;

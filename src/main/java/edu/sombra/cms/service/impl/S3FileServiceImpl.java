@@ -7,6 +7,7 @@ import edu.sombra.cms.repository.S3FileRepository;
 import edu.sombra.cms.service.S3FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static edu.sombra.cms.messages.StudentLessonMessage.NO_FILE_FOUND_WITH_SUCH_KEY;
 import static edu.sombra.cms.util.FileUtil.getFileNameWithoutExtension;
@@ -22,11 +23,13 @@ public class S3FileServiceImpl implements S3FileService {
     }
 
     @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
     public User getS3FileOwner(String key) throws SomethingWentWrongException {
         return getByKey(key).getUser();
     }
 
     @Override
+    @Transactional
     public S3File create(User user, String key, String filename) {
         S3File s3File = new S3File();
         s3File.setFileKey(key);
