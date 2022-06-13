@@ -26,8 +26,7 @@ public class CourseManagementSystemAPIIntegrationTest {
      @Test
      @Transactional
      void registerNewUser() throws Exception {
-         RegistrationData instructor = new RegistrationData("instructor1", "password", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
-
+         RegistrationData instructor = new RegistrationData("password", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
 
          mockMvc.perform(post("/api/auth/signup")
                  .contentType("application/json")
