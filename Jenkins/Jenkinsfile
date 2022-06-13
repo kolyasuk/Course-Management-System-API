@@ -2,9 +2,9 @@ node() {
     checkout scm
     if (env.BRANCH_NAME =~ 'develop') {
         echo 'loading Jenkinsfile-develop'
-        load 'Jenkinsfile-develop'
+        load 'Jenkins/Jenkinsfile-develop'
     } else if (env.BRANCH_NAME =~ 'master') {
             echo 'loading Jenkinsfile-master'
-            load 'Jenkinsfile-master'
+            load 'Jenkins/Jenkinsfile-master'
     }
 }
