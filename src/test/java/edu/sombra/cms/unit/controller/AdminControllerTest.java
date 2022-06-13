@@ -1,11 +1,13 @@
 package edu.sombra.cms.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.sombra.cms.config.security.JwtTokenUtil;
 import edu.sombra.cms.controller.AdminController;
 import edu.sombra.cms.domain.dto.FullUserInfoDTO;
 import edu.sombra.cms.domain.payload.RegistrationData;
 import edu.sombra.cms.service.CourseService;
 import edu.sombra.cms.service.UserService;
+import edu.sombra.cms.service.impl.UserDetailsServiceImpl;
 import edu.sombra.cms.util.UnsecuredWebMvcTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,6 +38,12 @@ public class AdminControllerTest {
 
     @MockBean
     private CourseService courseService;
+
+    @MockBean
+    private JwtTokenUtil jwtTokenUtil;
+
+    @MockBean
+    private UserDetailsServiceImpl userDetailsService;
 
 
     @Test
@@ -72,7 +80,7 @@ public class AdminControllerTest {
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(instructor)))
                 .andExpect(status().isBadRequest())
-                .andExpect(responseBody().containsError("Password size should be between 3 and 40 characters"));
+                .andExpect(responseBody().containsError("Password size should be between 6 and 40 characters"));
     }
 
     @Test
