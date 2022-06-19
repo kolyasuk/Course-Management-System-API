@@ -4,13 +4,6 @@ pipeline{
         gradle 'gradle 6.3'
     }
     stages{
-        stage("test ssh"){
-            steps{
-                echo 'building the staging application...'
-                sh 'gcloud compute scp --recurse --zone=europe-west3-c boot cms-api-prod:~/cms-api/'
-                sh 'gcloud compute ssh --zone=europe-west3-c cms-api-prod --command="sh /home/dzioba99/cms-api/boot/run.sh"'
-               }
-        }
         stage("Build jar"){
             steps{
                 echo 'building the staging application...'
@@ -37,8 +30,8 @@ pipeline{
         stage('Run Docker container') {
             steps {
                 echo 'running docker container...'
-                sh 'gcloud compute scp --recurse --zone=europe-west3-c boot cms-api-prod:/home/dzioba99/cms-api/'
-                sh 'gcloud compute ssh --zone=europe-west3-c cms-api-prod --command="sudo sh /home/dzioba99/cms-api/boot/run.sh"'
+                sh 'gcloud compute scp --recurse --zone=europe-west3-c boot cms-api-prod:~/cms-api/'
+                sh 'gcloud compute ssh --zone=europe-west3-c cms-api-prod --command="sh /home/dzioba99/cms-api/boot/run.sh"'
             }
         }
     }
