@@ -30,7 +30,7 @@ pipeline{
         stage('Run Docker container') {
             steps {
                 echo 'running docker container...'
-                gcloud compute scp --recurse --zone=europe-west3-c Course-Management-System-API/boot $2:/home/dzioba99/cms-api/
+                gcloud compute scp --recurse --zone=europe-west3-c boot $2:/home/dzioba99/cms-api/
                 gcloud compute ssh --zone=europe-west3-c cms-api-prod --command="sudo sh ~/boot/run.sh $3 $4 $5"
             }
         }
