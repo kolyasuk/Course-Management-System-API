@@ -30,12 +30,8 @@ pipeline{
         stage('Run Docker container') {
             steps {
                 echo 'running docker container...'
-                sh '''ssh -tt -i C://Users//dziob//Desktop//aws//awskey.pem ec2-user@ec2-18-184-98-187.eu-central-1.compute.amazonaws.com << EOT
-                docker stop cms-api
-                docker rm cms-api
-                docker run --name cms-api -d -p 8080:8080 dzioba/cms-api
-                exit
-                EOF'''
+                gcloud compute scp --recurse --zone=europe-west3-c Course-Management-System-API/boot $2:/home/dzioba99/cms-api/
+                gcloud compute ssh --zone=europe-west3-c cms-api-prod --command="sudo sh ~/boot/run.sh $3 $4 $5"
             }
         }
     }
