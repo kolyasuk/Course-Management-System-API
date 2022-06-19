@@ -1,21 +1,38 @@
 pipeline{
     agent any
+    tools{
+        gradle 'gradle 6.3'
+    }
     stages{
-        stage("build"){
+        stage("Build jar"){
             steps{
-                echo 'building the production application...'
+                echo 'building the staging application...'
+                sh 'sudo cp application-prod.properties /var/lib/jenkins/workspace/build_docker_image_develop'
+                sh './gradlew clean build'
             }
         }
 
-        stage("test"){
+       stage("Build docker"){
             steps{
-                echo 'testing the production application...'
+                echo 'building docker...'
+                sh 'docker build -f src/main/docker/Dockerfile -t cms-api:latest .'
+                sh 'docker tag cms-api dzioba/cms-api:latest'
             }
         }
 
-        stage("deploy"){
+       stage("Publish image to Docker Hub"){
             steps{
-                echo 'deploying the production application...'
+                echo 'publishing docker...'
+                withDockerRegistry([ credentialsId: "docker-hub-credentials", url: "" ]) {
+                    sh 'docker push dzioba/cms-api:latest'
+                }
+            }
+        }
+        stage('Run Docker container') {
+            steps {
+                echo 'running docker container...'
+                sh 'gcloud compute scp --recurse --zone=europe-west3-c boot cms-api-prod:~/cms-api/'
+                sh 'gcloud compute ssh --zone=europe-west3-c cms-api-prod --command="sh /home/dzioba99/cms-api/boot/run.sh prod"'
             }
         }
     }

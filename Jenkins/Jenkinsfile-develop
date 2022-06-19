@@ -7,6 +7,7 @@ pipeline{
         stage("Build jar"){
             steps{
                 echo 'building the staging application...'
+                sh 'sudo cp application-test.properties /var/lib/jenkins/workspace/build_docker_image_develop'
                 sh './gradlew clean build'
             }
         }
@@ -31,7 +32,7 @@ pipeline{
             steps {
                 echo 'running docker container...'
                 sh 'gcloud compute scp --recurse --zone=europe-west3-c boot cms-api-prod:~/cms-api/'
-                sh 'gcloud compute ssh --zone=europe-west3-c cms-api-prod --command="sh /home/dzioba99/cms-api/boot/run.sh"'
+                sh 'gcloud compute ssh --zone=europe-west3-c cms-api-prod --command="sh /home/dzioba99/cms-api/boot/run.sh test"'
             }
         }
     }
