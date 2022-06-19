@@ -7,7 +7,7 @@ pipeline{
         stage("Build jar"){
             steps{
                 echo 'building the staging application...'
-                sh 'cp application-test.properties /var/lib/jenkins/workspace/build_docker_image_develop'
+                sh 'cp /home/dzioba99/cms-api-config/application-test.properties /var/lib/jenkins/workspace/build_docker_image_develop'
                 sh './gradlew clean build'
             }
         }
