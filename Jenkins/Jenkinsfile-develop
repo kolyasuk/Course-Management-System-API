@@ -30,10 +30,8 @@ pipeline{
         stage('Run Docker container') {
             steps {
                 echo 'running docker container...'
-                withEnv(['GCLOUD_PATH=/var/jenkins_home/google-cloud-sdk/bin']) {
-                    sh 'gcloud compute scp --recurse --zone=europe-west3-c boot cms-api-prod:/home/dzioba99/cms-api/'
-                    sh 'gcloud compute ssh --zone=europe-west3-c cms-api-prod --command="sudo sh /home/dzioba99/cms-api/boot/run.sh"'
-                }
+                sh 'gcloud compute scp --recurse --zone=europe-west3-c boot cms-api-prod:/home/dzioba99/cms-api/'
+                sh 'gcloud compute ssh --zone=europe-west3-c cms-api-prod --command="sudo sh /home/dzioba99/cms-api/boot/run.sh"'
             }
         }
     }
