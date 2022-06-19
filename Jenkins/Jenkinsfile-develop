@@ -30,8 +30,9 @@ pipeline{
         stage('Run Docker container') {
             steps {
                 echo 'running docker container...'
-                gcloud compute scp --recurse --zone=europe-west3-c boot $2:/home/dzioba99/cms-api/
-                gcloud compute ssh --zone=europe-west3-c cms-api-prod --command="sudo sh ~/boot/run.sh $3 $4 $5"
+                withEnv(['GCLOUD_PATH=/var/jenkins_home/google-cloud-sdk/bin']) {
+                    sh '$GCLOUD_PATH/gcloud --version'
+                }
             }
         }
     }
