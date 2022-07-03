@@ -30,10 +30,10 @@ pipeline{
         }
         stage('Run Docker container') {
             steps {
-                withDockerRegistry([ credentialsId: "docker-hub-credentials", passwordVariable: 'DOCKER_REGISTRY_PWD', usernameVariable: 'DOCKER_REGISTRY_USER']) {
+               withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     echo 'running docker container...'
                     sh 'gcloud compute scp --recurse --zone=europe-west3-c boot cms-api-prod:~/cms-api/'
-                    sh 'gcloud compute ssh --zone=europe-west3-c cms-api-prod --command="sudo sh /home/jenkins/cms-api/boot/run.sh \'test\' '${DOCKER_REGISTRY_USER}' '${DOCKER_REGISTRY_PWD}'"'
+                    sh 'gcloud compute ssh --zone=europe-west3-c cms-api-prod --command="sudo sh /home/jenkins/cms-api/boot/run.sh \'test\' '$USERNAME' '$PASSWORD'"'
                 }
             }
         }
