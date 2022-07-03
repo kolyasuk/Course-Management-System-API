@@ -7,6 +7,7 @@ pipeline{
         stage("Build jar"){
             steps{
                 echo 'building the staging application...'
+                sh 'pwd'
                 sh './gradlew clean build'
             }
         }
