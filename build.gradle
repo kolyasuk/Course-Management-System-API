@@ -7,9 +7,9 @@ plugins {
 
 ext['log4j2.version'] = '2.17.2'
 
-ext {
-    activeProfile = findProperty('env') ?: 'dev'
-}
+//ext {
+//    activeProfile = findProperty('env') ?: 'dev'
+//}
 
 group 'edu.sombra.cms'
 version '1.0-SNAPSHOT'
