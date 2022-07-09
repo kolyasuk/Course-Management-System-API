@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @PropertySources({
         @PropertySource(value = "classpath:app_config/application.properties", ignoreResourceNotFound = true),
-        @PropertySource(value = "classpath:app_config/application-${spring.profiles.active}.properties", ignoreResourceNotFound = true)
+        @PropertySource(value = "classpath:app_config/application-${SPRING_PROFILE}.properties", ignoreResourceNotFound = true)
 })
 public class Application {
     public static void main(String[] args) {
