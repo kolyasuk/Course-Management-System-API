@@ -16,6 +16,8 @@ services:
     restart: on-failure
     depends_on:
       - cms-db
+    environment:
+      - SPRING_PROFILE=${PROFILE_NAME}
     ports:
       - 8080:8080
     command:
