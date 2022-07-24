@@ -37,7 +37,7 @@ public class StudentServiceImpl implements StudentService {
     private final UserService userService;
     private final StudentCourseOverviewMapper studentCourseOverviewMapper;
 
-    private static final Logger LOGGER =  LoggerFactory.getLogger(StudentServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StudentServiceImpl.class);
 
     @Override
     @Transactional(rollbackFor = SomethingWentWrongException.class)

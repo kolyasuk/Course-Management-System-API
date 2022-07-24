@@ -1,5 +1,6 @@
 package edu.sombra.cms.domain.payload;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class CourseData {
 
     @NotBlank(message = "{coursedata.name.blank}")

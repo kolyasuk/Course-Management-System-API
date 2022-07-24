@@ -22,9 +22,9 @@ public interface CourseService {
 
     CourseDTO update(Long courseId, @Valid CourseData courseData) throws SomethingWentWrongException;
 
-    void start(Long courseId) throws SomethingWentWrongException;
+    Course start(Long courseId) throws SomethingWentWrongException;
 
-    void finish(Long courseId) throws SomethingWentWrongException;
+    Course finish(Long courseId) throws SomethingWentWrongException;
 
     List<LessonOverviewDTO> lessonList(Long courseId) throws SomethingWentWrongException;
 

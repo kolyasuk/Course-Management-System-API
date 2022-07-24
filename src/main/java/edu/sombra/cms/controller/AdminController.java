@@ -9,7 +9,6 @@ import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.service.CourseService;
 import edu.sombra.cms.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,10 +19,8 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class AdminController {
 
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private CourseService courseService;
+    private final UserService userService;
+    private final CourseService courseService;
 
     @PostMapping("/user")
     public FullUserInfoDTO register(@RequestBody @Valid RegistrationData registrationData) throws SomethingWentWrongException {

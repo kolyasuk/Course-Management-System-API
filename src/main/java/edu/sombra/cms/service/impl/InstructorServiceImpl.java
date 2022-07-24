@@ -37,7 +37,7 @@ public class InstructorServiceImpl implements InstructorService {
     private final UserService userService;
     private final CourseOverviewMapper courseOverviewMapper;
 
-    private static final Logger LOGGER =  LoggerFactory.getLogger(InstructorServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InstructorServiceImpl.class);
 
     @Override
     @Transactional(rollbackFor = SomethingWentWrongException.class)

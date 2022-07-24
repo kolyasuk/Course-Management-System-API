@@ -35,7 +35,7 @@ public class LessonServiceImpl implements LessonService {
     private final StudentLessonService saveStudentLessons;
     private final UserService userService;
 
-    private static final Logger LOGGER =  LoggerFactory.getLogger(LessonServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LessonServiceImpl.class);
 
     @Override
     @Transactional(rollbackFor = SomethingWentWrongException.class)

@@ -27,7 +27,6 @@ public class CourseMapper extends AbstractMapper<Long, CourseDTO> {
         courseDTO.setDescription(course.getDescription());
         courseDTO.setStatus(course.getStatus());
 
-
         courseDTO.setInstructors(instructorOverviewMapper.toList(entitiesToIds(course.getInstructors())));
         courseDTO.setLessons(lessonOverviewMapper.toList(entitiesToIds(course.getLessons())));
         courseDTO.setStudents(studentOverviewMapper.toList(entitiesToIds(course.getStudents())));

@@ -19,7 +19,6 @@ import edu.sombra.cms.service.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -52,12 +51,10 @@ public class CourseServiceImpl implements CourseService {
     private final LessonRepository lessonRepository;
     private final UserService userService;
     private final LessonOverviewMapper lessonOverviewMapper;
-    @Lazy
-    private final CourseService courseService;
     private final StudentOverviewMapper studentOverviewMapper;
 
 
-    private static final Logger LOGGER =  LoggerFactory.getLogger(CourseServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CourseServiceImpl.class);
 
     @Override
     @Transactional(rollbackFor = SomethingWentWrongException.class)
@@ -117,38 +114,50 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional(rollbackFor = SomethingWentWrongException.class)
-    public void start(Long courseId) throws SomethingWentWrongException {
+    public Course start(Long courseId) throws SomethingWentWrongException {
         var course = Optional.of(getById(courseId)).filter(Course::canBeActivated).orElseThrow(MINIMUM_NUMBER_OF_INSTRUCTORS_AND_LESSONS::ofException);
 
         course.setStatus(ACTIVE);
         courseRepository.save(course);
 
         LOGGER.info("Started course with id: {}", course.getId());
+
+        return course;
     }
 
     @Override
     @Transactional(rollbackFor = SomethingWentWrongException.class)
-    public void finish(Long courseId) throws SomethingWentWrongException {
+    public Course finish(Long courseId) throws SomethingWentWrongException {
         var course = getActiveById(courseId);
 
         if(existsNotFinishedLessons(courseId)){
             throw LESSONS_NOT_FINISHED.ofException();
         }
 
-        for (StudentCourse studentCourse : course.getStudentCourses()) {
-            var student = studentCourse.getStudent();
-
-            int mark = 0;
-            if(!studentLessonRepository.existsStudentLessonByStudentAndCourseAndMarkIsNull(student, course)) {
-                mark = studentLessonRepository.getAvgMark(student, course);
-            }
-
-            studentCourseRepository.updateMark(mark, studentCourse);
-        }
+        calculateStudentCourceMarks(course);
 
         courseRepository.setStatus(course, CourseStatus.FINISHED);
 
         LOGGER.info("Finished course with id: {}", course.getId());
+
+        return course;
+    }
+
+    private void calculateStudentCourceMarks(Course course) {
+        for (StudentCourse studentCourse : course.getStudentCourses()) {
+            var student = studentCourse.getStudent();
+
+            int studentCourceMark = calculateStudentCourceMark(course, student);
+            studentCourseRepository.updateMark(studentCourceMark, studentCourse);
+        }
+    }
+
+    private int calculateStudentCourceMark(Course course, edu.sombra.cms.domain.entity.Student student) {
+        int mark = 0;
+        if(!studentLessonRepository.existsStudentLessonByStudentAndCourseAndMarkIsNull(student, course)) {
+            mark = studentLessonRepository.getAvgMark(student, course);
+        }
+        return mark;
     }
 
     @Override
@@ -208,8 +217,6 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @Transactional(rollbackFor = SomethingWentWrongException.class)
     public List<StudentOverviewDTO> courseStudentList(Long courseId) throws SomethingWentWrongException {
-        var course = courseService.getById(courseId);
-
-        return studentOverviewMapper.toList(entitiesToIds(course.getStudents()));
+        return studentOverviewMapper.toList(entitiesToIds(getById(courseId).getStudents()));
     }
 }

@@ -48,7 +48,7 @@ public class AwsClientImpl implements AwsClient {
                 .build();
     }
 
-    private static final Logger LOGGER =  LoggerFactory.getLogger(AwsClientImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AwsClientImpl.class);
 
     @Override
     @Transactional(rollbackFor = SdkClientException.class)

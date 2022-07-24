@@ -26,7 +26,7 @@ public class AuthController {
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
 
-    private static final Logger LOGGER =  LoggerFactory.getLogger(AuthController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
 
     @GetMapping("/token/refresh")
     public ResponseEntity<?> refreshToken(HttpServletRequest request) {

@@ -41,7 +41,7 @@ public class HomeworkUploadServiceImpl implements HomeworkUploadService {
     @Value("${s3.homework.bucket.name}")
     private String s3BucketName;
 
-    private static final Logger LOGGER =  LoggerFactory.getLogger(HomeworkUploadServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HomeworkUploadServiceImpl.class);
 
     @Override
     @Transactional
