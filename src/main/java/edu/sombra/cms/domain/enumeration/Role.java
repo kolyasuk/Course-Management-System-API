@@ -13,14 +13,14 @@ public enum Role {
     ROLE_INSTRUCTOR("INSTRUCTOR"),
     ROLE_ADMIN("ADMIN");
 
-    private final String name;
+    private final String roleName;
 
     public boolean isEqual(String s){
-        return name.equals(s);
+        return roleName.equals(s);
     }
 
     public static Role ofName(String roleName){
-        return Arrays.stream(values()).filter(o -> o.name.equals(roleName)).findFirst().orElseThrow(() -> new RuntimeException(""));
+        return Arrays.stream(values()).filter(o -> o.roleName.equals(roleName)).findFirst().orElseThrow(() -> new RuntimeException(""));
     }
 
 }

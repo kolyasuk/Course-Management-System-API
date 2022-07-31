@@ -2,7 +2,6 @@ CREATE TABLE instructor (
     id bigint auto_increment primary key,
     first_name varchar(40) not null,
     last_name varchar(40) not null,
-    email varchar(40) not null,
     info varchar(500) not null,
     user_id bigint(11) not null,
     FOREIGN KEY (user_id) REFERENCES user(Id)
@@ -41,7 +40,7 @@ CREATE TABLE student_course (
 CREATE TABLE lesson (
     id bigint auto_increment primary key,
     name varchar(120) not null,
-    description text(50000) not null,
+    description longtext not null,
     course_id bigint not null,
     FOREIGN KEY (course_id) REFERENCES course(Id)
 );

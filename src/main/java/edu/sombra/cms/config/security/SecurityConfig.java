@@ -54,11 +54,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/student/**").hasAnyRole(ROLE_STUDENT.getName(), ROLE_ADMIN.getName())
-                .antMatchers("/api/instructor/**", "/api/lesson/**", "/api/course/**").hasAnyRole(ROLE_INSTRUCTOR.getName(), ROLE_ADMIN.getName())
-                .antMatchers("/api/admin/**").hasRole(ROLE_ADMIN.getName())
+                .antMatchers("/api/student/**").hasAnyRole(ROLE_STUDENT.getRoleName(), ROLE_ADMIN.getRoleName())
+                .antMatchers("/api/instructor/**", "/api/lesson/**", "/api/course/**").hasAnyRole(ROLE_INSTRUCTOR.getRoleName(), ROLE_ADMIN.getRoleName())
+                .antMatchers("/api/admin/**").hasRole(ROLE_ADMIN.getRoleName())
                 .antMatchers("/api/homework/**").authenticated()
-                .anyRequest().hasRole(ROLE_ADMIN.getName());
+                .anyRequest().hasRole(ROLE_ADMIN.getRoleName());
 
 
     }

@@ -82,7 +82,6 @@ public class InstructorServiceImpl implements InstructorService {
 
         instructor.setFirstName(instructorData.getFirstName());
         instructor.setLastName(instructorData.getLastName());
-        instructor.setEmail(instructorData.getEmail());
         instructor.setInfo(instructorData.getInfo());
         instructor.setUser(getInstructorUser(userId));
 

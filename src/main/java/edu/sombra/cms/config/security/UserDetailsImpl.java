@@ -31,7 +31,7 @@ public class UserDetailsImpl implements UserDetails {
                 user.getEmail(),
                 user.getFullName(),
                 user.getPassword(),
-                new SimpleGrantedAuthority(user.getRole().getName()));
+                new SimpleGrantedAuthority(user.getRole().getRoleName()));
     }
 
     @Override

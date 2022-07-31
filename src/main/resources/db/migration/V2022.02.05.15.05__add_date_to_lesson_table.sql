@@ -1,1 +1,1 @@
-alter table lesson add date date not null;
+alter table lesson add finish_date date not null;

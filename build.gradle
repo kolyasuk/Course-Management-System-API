@@ -35,6 +35,7 @@ dependencies {
     compileOnly "org.projectlombok:lombok:1.18.16"
     runtimeOnly 'mysql:mysql-connector-java'
 
+    runtime('com.h2database:h2')
     testAnnotationProcessor "org.projectlombok:lombok:1.18.16"
     testCompileOnly "org.projectlombok:lombok:1.18.16"
     testImplementation('org.springframework.boot:spring-boot-starter-test') {

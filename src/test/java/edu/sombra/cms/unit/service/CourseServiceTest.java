@@ -25,7 +25,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Set;
@@ -111,7 +110,7 @@ public class CourseServiceTest {
     @Test
     void courseIsNotFinishedBecauseExistNotFinishedLessons() {
         when(courseRepository.findByIdAndStatus(any(Long.class), any(CourseStatus.class))).thenReturn(Optional.of(inactiveCourseEntityForTest()));
-        when(lessonRepository.existsNotFinishedLessons(any(Long.class), any(LocalDate.class))).thenReturn(Boolean.TRUE);
+        when(lessonRepository.existsNotFinishedLessons(any(Long.class))).thenReturn(Boolean.TRUE);
         SomethingWentWrongException somethingWentWrongException = assertThrows(SomethingWentWrongException.class, () -> courseService.finish(1L));
 
         String expectedMessage = "Course lessons are not finished yet";

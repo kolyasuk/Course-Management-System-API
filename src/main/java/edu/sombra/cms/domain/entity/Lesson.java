@@ -2,7 +2,6 @@ package edu.sombra.cms.domain.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -20,12 +19,13 @@ public class Lesson implements EntityClass {
 
     private String name;
 
-    @Type(type="text")
+    @Lob
     private String description;
 
     private String homework;
 
-    private LocalDate date;
+    @Column(name = "finish_date")
+    private LocalDate finishDate;
 
     @OneToMany(mappedBy = "lesson", fetch = FetchType.LAZY)
     private List<StudentLesson> studentLessons = new ArrayList<>();

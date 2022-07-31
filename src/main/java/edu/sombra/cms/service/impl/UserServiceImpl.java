@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
 
-        LOGGER.info("Set role {} to user with id: {}", role.getName(), user.getId());
+        LOGGER.info("Set role {} to user with id: {}", role.getRoleName(), user.getId());
     }
 
     @Override
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = SomethingWentWrongException.class)
     public List<FullUserInfoDTO> findUsersByRole(Role role) throws SomethingWentWrongException {
-        var users = userRepository.findAllByRoles(role.getName()).orElseThrow(NOT_FOUND::ofException);
+        var users = userRepository.findAllByRole(role);
 
         List<FullUserInfoDTO> res = new ArrayList<>();
         for (User user : users) {

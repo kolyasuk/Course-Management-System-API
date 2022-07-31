@@ -1,8 +1,8 @@
 package edu.sombra.cms.repository;
 
 import edu.sombra.cms.domain.entity.User;
+import edu.sombra.cms.domain.enumeration.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,10 +15,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Boolean existsByEmail(String email);
 
-    @Query(value = "select * from user " +
-            "join user_roles ur on user.id = ur.user_id " +
-            "join role r on r.id = ur.role_id " +
-            "and  r.name = :role",nativeQuery = true)
-    Optional<List<User>> findAllByRoles(String role);
+    List<User> findAllByRole(Role role);
 
 }

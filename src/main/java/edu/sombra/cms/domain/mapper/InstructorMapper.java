@@ -22,7 +22,6 @@ public class InstructorMapper extends AbstractMapper<Long, InstructorDTO> {
         instructorDTO.setId(instructor.getId());
         instructorDTO.setFirstName(instructor.getFirstName());
         instructorDTO.setLastName(instructor.getLastName());
-        instructorDTO.setEmail(instructor.getEmail());
         instructorDTO.setInfo(instructor.getInfo());
 
         return instructorDTO;

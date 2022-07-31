@@ -62,7 +62,7 @@ public class LessonServiceImpl implements LessonService {
         lesson.setName(lessonData.getName());
         lesson.setDescription(lessonData.getDescription());
         lesson.setHomework(lessonData.getHomework());
-        lesson.setDate(lessonData.getDate());
+        lesson.setFinishDate(lessonData.getDate());
 
         lesson.setCourse(courseService.getById(lessonData.getCourseId()));
         lesson.setInstructor(getInstructor(lessonData.getCourseId(), lessonData.getInstructorId()));

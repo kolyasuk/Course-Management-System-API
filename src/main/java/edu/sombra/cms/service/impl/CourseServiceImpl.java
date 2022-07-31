@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -171,8 +170,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @Transactional(rollbackFor = SomethingWentWrongException.class)
     public boolean existsNotFinishedLessons(Long courseId) {
-        var finishDate = LocalDate.now().minusDays(1);
-        return lessonRepository.existsNotFinishedLessons(courseId, finishDate);
+        return lessonRepository.existsNotFinishedLessons(courseId);
     }
 
     @Override

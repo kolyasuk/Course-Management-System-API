@@ -21,11 +21,6 @@ public class InstructorData {
     @Size(max = 40, message = "{instructordata.lastName.size}")
     private String lastName;
 
-    @Email
-    @NotBlank(message = "{instructordata.email.blank}")
-    @Size(max = 40, message = "{instructordata.email.size}")
-    private String email;
-
     @NotBlank(message = "{instructordata.info.blank}")
     @Size(max = 500, message = "{instructordata.info.size}")
     private String info;
