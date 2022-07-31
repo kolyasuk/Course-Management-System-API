@@ -14,7 +14,6 @@ public class HomeworkController {
 
     @GetMapping(value = "/file/{key}", produces = "multipart/form-data")
     public @ResponseBody byte[] getFileByKey(@PathVariable String key) throws SomethingWentWrongException {
-
         return homeworkUploadService.getStudentHomework(key);
     }
 }

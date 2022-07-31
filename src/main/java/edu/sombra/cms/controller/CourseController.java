@@ -7,12 +7,15 @@ import edu.sombra.cms.domain.payload.StudentCourseFeedbackData;
 import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.service.CourseService;
 import edu.sombra.cms.service.StudentCourseService;
+import edu.sombra.cms.service.impl.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+
+import static edu.sombra.cms.service.impl.UserAccessService.AccessEntity.COURSE;
 
 @RestController
 @RequestMapping("/api/course")
@@ -21,40 +24,47 @@ public class CourseController {
 
     private final CourseService courseService;
     private final StudentCourseService studentCourseService;
+    private final UserAccessService userAccessService;
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public CourseDTO getById(@PathVariable Long id) throws SomethingWentWrongException {
+        userAccessService.checkAccess(COURSE, id);
         return courseService.getDTOById(id);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public CourseDTO update(@RequestBody @Valid CourseData courseData, @PathVariable Long id) throws SomethingWentWrongException {
+        userAccessService.checkAccess(COURSE, id);
         return courseService.update(id, courseData);
     }
 
     @PutMapping("/{id}/start")
     @ResponseStatus(HttpStatus.OK)
     public void start(@PathVariable Long id) throws SomethingWentWrongException {
+        userAccessService.checkAccess(COURSE, id);
         courseService.start(id);
     }
 
     @PutMapping("/{id}/finish")
     @ResponseStatus(HttpStatus.OK)
     public void finish(@PathVariable Long id) throws SomethingWentWrongException {
+        userAccessService.checkAccess(COURSE, id);
         courseService.finish(id);
     }
 
     @PutMapping("/{id}/feedback")
     @ResponseStatus(HttpStatus.OK)
     public void studentCourseFeedback(@PathVariable("id") Long courseId, @RequestBody @Valid StudentCourseFeedbackData studentCourseFeedbackData) throws SomethingWentWrongException {
+        userAccessService.checkAccess(COURSE, courseId);
         studentCourseService.feedback(courseId, studentCourseFeedbackData);
     }
 
     @GetMapping("/{id}/student")
     @ResponseStatus(HttpStatus.OK)
     public List<StudentOverviewDTO> courseStudentList(@PathVariable Long id) throws SomethingWentWrongException {
+        userAccessService.checkAccess(COURSE, id);
         return courseService.courseStudentList(id);
     }
 }

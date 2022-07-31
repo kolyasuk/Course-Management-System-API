@@ -8,13 +8,14 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
 @Setter
 @Entity
-public class Student implements EntityClass {
+public class Student extends Owners implements EntityClass {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,4 +47,8 @@ public class Student implements EntityClass {
         return studentCourses.stream().map(StudentCourse::getCourse).filter(Course::isActive).collect(Collectors.toList());
     }
 
+    @Override
+    public List<Long> getOwnersIds() {
+        return Collections.singletonList(user.getId());
+    }
 }

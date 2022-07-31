@@ -40,10 +40,7 @@ public class LessonServiceImpl implements LessonService {
     @Override
     @Transactional(rollbackFor = SomethingWentWrongException.class)
     public Lesson getById(Long id) throws SomethingWentWrongException {
-        var lesson = lessonRepository.findById(id).orElseThrow(NOT_FOUND::ofException);
-
-        userService.loggedUserHasAccess(lesson.getRelatedUsers());
-        return lesson;
+        return lessonRepository.findById(id).orElseThrow(NOT_FOUND::ofException);
     }
 
     @Override

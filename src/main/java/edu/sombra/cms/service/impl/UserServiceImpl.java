@@ -99,16 +99,6 @@ public class UserServiceImpl implements UserService {
         return findUserById(loggedUserId);
     }
 
-    @Override
-    @Transactional(rollbackFor = SomethingWentWrongException.class)
-    public void loggedUserHasAccess(List<User> usersWithAccess) throws SomethingWentWrongException {
-        var loggedUser = getLoggedUser();
-
-        if(!usersWithAccess.contains(loggedUser) && !loggedUser.isAdmin()){
-            throw ACCESS_DENIED.ofException();
-        }
-    }
-
     private void validateCreatingAdminRole() throws SomethingWentWrongException {
         if(!isLoggedUserAdmin())
             throw CANNOT_CREATE_ADMIN.ofException();

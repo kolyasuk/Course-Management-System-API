@@ -4,12 +4,13 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @NoArgsConstructor
-public class StudentCourse implements Serializable {
+public class StudentCourse extends Owners implements Serializable {
 
     @EmbeddedId
     private StudentCoursePK id;
@@ -32,6 +33,11 @@ public class StudentCourse implements Serializable {
         this.id = new StudentCoursePK(student, course);
         this.student = student;
         this.course = course;
+    }
+
+    @Override
+    public List<Long> getOwnersIds() {
+        return student.getOwnersIds();
     }
 
     @Data

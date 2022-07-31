@@ -5,6 +5,7 @@ import edu.sombra.cms.domain.dto.InstructorDTO;
 import edu.sombra.cms.domain.payload.InstructorData;
 import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.service.InstructorService;
+import edu.sombra.cms.service.impl.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,16 +13,20 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+import static edu.sombra.cms.service.impl.UserAccessService.AccessEntity.INSTRUCTOR;
+
 @RestController
 @RequestMapping("/api/instructor")
 @RequiredArgsConstructor
 public class InstructorController {
 
     private final InstructorService instructorService;
+    private final UserAccessService userAccessService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public InstructorDTO createInstructorInfo(@RequestBody @Valid InstructorData instructorData, @RequestParam(required = false) Long userId) throws SomethingWentWrongException {
+        userAccessService.checkAccess(INSTRUCTOR, userId);
         return instructorService.create(instructorData, userId);
     }
 

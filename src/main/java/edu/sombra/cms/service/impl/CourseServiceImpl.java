@@ -58,10 +58,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @Transactional(rollbackFor = SomethingWentWrongException.class)
     public Course getById(Long courseId) throws SomethingWentWrongException {
-        var course = courseRepository.findById(courseId).orElseThrow(NOT_FOUND::ofException);
-        userService.loggedUserHasAccess(course.getRelatedUsers());
-
-        return course;
+        return courseRepository.findById(courseId).orElseThrow(NOT_FOUND::ofException);
     }
 
     @Override

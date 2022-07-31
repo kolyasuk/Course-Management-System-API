@@ -6,12 +6,16 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Stream.concat;
 
 @Data
 @Entity
 @NoArgsConstructor
-public class StudentLesson implements Serializable {
+public class StudentLesson extends Owners implements Serializable {
 
     @EmbeddedId
     private StudentLessonPK id;
@@ -49,6 +53,11 @@ public class StudentLesson implements Serializable {
         this.id = new StudentLessonPK(student, lesson);
         this.student = student;
         this.lesson = lesson;
+    }
+
+    @Override
+    public List<Long> getOwnersIds() {
+        return concat(lesson.getOwnersIds().stream(), student.getOwnersIds().stream()).collect(toList());
     }
 
     @Data

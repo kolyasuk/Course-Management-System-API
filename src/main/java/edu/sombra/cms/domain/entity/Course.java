@@ -23,7 +23,7 @@ import static javax.persistence.FetchType.LAZY;
 @Getter
 @Setter
 @Entity
-public class Course {
+public class Course extends Owners {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -82,4 +82,8 @@ public class Course {
         return instructors.size() >= MINIMUM_NUMBER_OF_COURSE_INSTRUCTORS && lessons.size() >= MINIMUM_NUMBER_OF_COURSE_LESSONS;
     }
 
+    @Override
+    public List<Long> getOwnersIds() {
+        return instructors.stream().flatMap(i -> i.getOwnersIds().stream()).collect(Collectors.toList());
+    }
 }

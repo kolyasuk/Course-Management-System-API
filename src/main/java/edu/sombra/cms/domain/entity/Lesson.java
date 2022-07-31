@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-public class Lesson implements EntityClass {
+public class Lesson extends Owners implements EntityClass {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,4 +42,8 @@ public class Lesson implements EntityClass {
         return course.getRelatedUsers();
     }
 
+    @Override
+    public List<Long> getOwnersIds() {
+        return course.getOwnersIds();
+    }
 }

@@ -7,12 +7,13 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Getter
 @Setter
 @Entity
-public class Instructor implements EntityClass {
+public class Instructor extends Owners implements EntityClass {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,4 +38,8 @@ public class Instructor implements EntityClass {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
+    @Override
+    public List<Long> getOwnersIds() {
+        return Collections.singletonList(user.getId());
+    }
 }

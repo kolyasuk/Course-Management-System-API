@@ -20,6 +20,4 @@ public interface UserService {
     List<FullUserInfoDTO> findUsersByRole(Role role) throws SomethingWentWrongException;
 
     User getLoggedUser() throws SomethingWentWrongException;
-
-    void loggedUserHasAccess(List<User> usersWithAccess) throws SomethingWentWrongException;
 }

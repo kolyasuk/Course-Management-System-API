@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 
+import static edu.sombra.cms.domain.enumeration.Role.ROLE_ADMIN;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -39,8 +41,12 @@ public class UserDetailsImpl implements UserDetails {
         return Collections.singletonList(authority);
     }
 
-    public String getRole(){
-       return getAuthorities().stream().map(o -> Role.ofName(o.getAuthority())).findFirst().orElseThrow(() -> new RuntimeException("")).name();
+    public String getRoleName(){
+        return getRole().name();
+    }
+
+    public Role getRole(){
+        return getAuthorities().stream().map(o -> Role.ofName(o.getAuthority())).findFirst().orElseThrow(() -> new RuntimeException(""));
     }
 
     @Override
@@ -66,6 +72,10 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public boolean isAdmin() {
+        return ROLE_ADMIN.equals(getRole());
     }
 
 }
