@@ -7,6 +7,7 @@ import edu.sombra.cms.domain.entity.User;
 import edu.sombra.cms.domain.mapper.CourseOverviewMapper;
 import edu.sombra.cms.domain.mapper.InstructorMapper;
 import edu.sombra.cms.domain.payload.InstructorData;
+import edu.sombra.cms.messages.InstructorMessage;
 import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.repository.InstructorRepository;
 import edu.sombra.cms.service.InstructorService;
@@ -25,7 +26,6 @@ import java.util.Optional;
 
 import static edu.sombra.cms.messages.InstructorMessage.NOT_FOUND;
 import static edu.sombra.cms.messages.InstructorMessage.USER_IS_NOT_INSTRUCTOR;
-import static edu.sombra.cms.messages.StudentMessage.INFO_ALREADY_CREATED;
 
 @Service
 @Validated
@@ -73,9 +73,8 @@ public class InstructorServiceImpl implements InstructorService {
     @Override
     @Transactional(rollbackFor = SomethingWentWrongException.class)
     public InstructorDTO create(@Valid InstructorData instructorData, Long userId) throws SomethingWentWrongException {
-        userId = Optional.ofNullable(userId).orElse(SecurityUtil.getLoggedUserId());
         if(instructorRepository.findByUserId(userId).isPresent()){
-            throw INFO_ALREADY_CREATED.ofException();
+            throw InstructorMessage.INFO_ALREADY_CREATED.ofException();
         }
 
         Instructor instructor = new Instructor();

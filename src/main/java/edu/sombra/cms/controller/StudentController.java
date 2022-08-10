@@ -11,6 +11,7 @@ import edu.sombra.cms.service.StudentCourseService;
 import edu.sombra.cms.service.StudentLessonService;
 import edu.sombra.cms.service.StudentService;
 import edu.sombra.cms.service.impl.UserAccessService;
+import edu.sombra.cms.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 import static edu.sombra.cms.service.impl.UserAccessService.AccessEntity.*;
 
@@ -34,7 +36,8 @@ public class StudentController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public StudentDTO createStudentInfo(@RequestBody @Valid StudentData studentData, @RequestParam(required = false) Long userId) throws SomethingWentWrongException {
-        userAccessService.checkAccess(STUDENT, userId);
+        userId = Optional.ofNullable(userId).orElse(SecurityUtil.getLoggedUserId());
+        userAccessService.checkAccess(USER, userId);
         return studentService.create(studentData, userId);
     }
 
@@ -58,7 +61,7 @@ public class StudentController {
         return studentLessonService.getDTOByLessonId(id);
     }
 
-    @PutMapping(value = "/lesson/{id}/homework", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/lesson/{id}/homework", consumes = {"multipart/form-data"})
     @ResponseStatus(HttpStatus.OK)
     public void createHomework(@PathVariable Long id, @RequestPart("homeworkData") HomeworkData homeworkData, @RequestPart(value = "homeworkFile") MultipartFile homeworkFile) throws SomethingWentWrongException {
         userAccessService.checkAccess(STUDENT_LESSON, id);

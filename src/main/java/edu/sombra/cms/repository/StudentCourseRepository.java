@@ -13,6 +13,8 @@ public interface StudentCourseRepository extends JpaRepository<StudentCourse, St
 
     Optional<StudentCourse> findStudentCourseByStudentIdAndCourseId(Long studentId, Long courseId);
 
+    Optional<StudentCourse> findStudentCourseByStudentUserIdAndCourseId(Long studentId, Long courseId);
+
     @Modifying
     @Query("update StudentCourse sc set sc.mark = :mark where sc = :studentCourse")
     void updateMark(Integer mark, StudentCourse studentCourse);

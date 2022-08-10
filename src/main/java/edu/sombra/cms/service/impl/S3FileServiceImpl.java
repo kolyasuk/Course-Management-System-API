@@ -36,8 +36,7 @@ public class S3FileServiceImpl implements S3FileService {
         s3File.setFilename(filename);
         s3File.setUser(user);
 
-        s3FileRepository.save(s3File);
-        return s3File;
+        return s3FileRepository.save(s3File);
     }
 
     public static String generateUniqueFileKey(Long studentId, String fileName) {

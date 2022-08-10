@@ -4,9 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -21,17 +18,14 @@ public class Student extends Owners implements EntityClass {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Size(max = 40)
     private String firstName;
 
-    @NotBlank
-    @Size(max = 40)
     private String lastName;
 
-    @Email
-    @Size(max = 50)
-    private String email;
+    @Column(name = "group_name")
+    private String group;
+
+    private String faculty;
 
     @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
     private List<StudentCourse> studentCourses = new ArrayList<>();

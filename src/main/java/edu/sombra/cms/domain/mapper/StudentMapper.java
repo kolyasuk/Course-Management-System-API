@@ -22,7 +22,8 @@ public class StudentMapper extends AbstractMapper<Long, StudentDTO> {
         studentDTO.setId(student.getId());
         studentDTO.setFirstName(student.getFirstName());
         studentDTO.setLastName(student.getLastName());
-        studentDTO.setEmail(student.getEmail());
+        studentDTO.setGroup(student.getGroup());
+        studentDTO.setFaculty(student.getFaculty());
 
         return studentDTO;
     }

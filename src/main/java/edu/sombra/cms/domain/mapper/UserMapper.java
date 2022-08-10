@@ -3,7 +3,7 @@ package edu.sombra.cms.domain.mapper;
 import edu.sombra.cms.config.security.UserDetailsImpl;
 import edu.sombra.cms.domain.dto.FullUserInfoDTO;
 import edu.sombra.cms.domain.entity.User;
-import edu.sombra.cms.domain.payload.RegistrationData;
+import edu.sombra.cms.domain.payload.UserRegistrationData;
 import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -34,11 +34,11 @@ public class UserMapper {
                 .setEmail(user.getEmail());
     }
 
-    public User fromRegistrationData(RegistrationData registrationData) {
+    public User fromRegistrationData(UserRegistrationData userRegistrationData) {
         return new User()
-                .setFullName(registrationData.getFullName())
-                .setEmail(registrationData.getEmail())
-                .setRole(registrationData.getRole())
-                .setPassword(passwordEncoder.encode(registrationData.getPassword()));
+                .setFullName(userRegistrationData.getFullName())
+                .setEmail(userRegistrationData.getEmail())
+                .setRole(userRegistrationData.getRole())
+                .setPassword(passwordEncoder.encode(userRegistrationData.getPassword()));
     }
 }

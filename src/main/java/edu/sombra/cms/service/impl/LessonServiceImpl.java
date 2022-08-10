@@ -81,7 +81,7 @@ public class LessonServiceImpl implements LessonService {
         Course course = courseService.getById(courseId);
         Instructor instructor = instructorService.getById(instructorId);
 
-        if(course.getInstructors().contains(instructor)){
+        if(!course.getInstructors().contains(instructor)){
             throw NOT_COURSE_INSTRUCTOR.ofException();
         }
 

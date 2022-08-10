@@ -9,9 +9,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,18 +20,14 @@ import java.time.LocalDateTime;
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "email")
         })
-public class User {
+public class User extends Owners {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotBlank
-    @Size(max = 120)
     private String password;
 
-    @NotBlank
-    @Size(max = 50)
     @Email
     private String email;
 
@@ -66,4 +62,8 @@ public class User {
         return getRole().equals(role);
     }
 
+    @Override
+    public List<Long> getOwnersIds() {
+        return Collections.singletonList(id);
+    }
 }

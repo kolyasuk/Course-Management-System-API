@@ -4,7 +4,7 @@ import edu.sombra.cms.domain.dto.FullUserInfoDTO;
 import edu.sombra.cms.domain.entity.User;
 import edu.sombra.cms.domain.enumeration.Role;
 import edu.sombra.cms.domain.mapper.UserMapper;
-import edu.sombra.cms.domain.payload.RegistrationData;
+import edu.sombra.cms.domain.payload.UserRegistrationData;
 import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.repository.UserRepository;
 import edu.sombra.cms.service.UserService;
@@ -40,10 +40,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = SomethingWentWrongException.class)
-    public FullUserInfoDTO create(@Valid RegistrationData registrationData) throws SomethingWentWrongException {
-        validateRegistrationData(registrationData);
+    public FullUserInfoDTO create(@Valid UserRegistrationData userRegistrationData) throws SomethingWentWrongException {
+        validateRegistrationData(userRegistrationData);
 
-        User userToRegister = userMapper.fromRegistrationData(registrationData);
+        User userToRegister = userMapper.fromRegistrationData(userRegistrationData);
         userRepository.save(userToRegister);
         var registeredUser = userMapper.toView(userToRegister.getId());
 
@@ -51,8 +51,8 @@ public class UserServiceImpl implements UserService {
         return registeredUser;
     }
 
-    private void validateRegistrationData(@Valid RegistrationData registrationData) throws SomethingWentWrongException {
-        if (userRepository.existsByEmail(registrationData.getEmail())) {
+    private void validateRegistrationData(@Valid UserRegistrationData userRegistrationData) throws SomethingWentWrongException {
+        if (userRepository.existsByEmail(userRegistrationData.getEmail())) {
             throw EMAIL_EXISTS.ofException();
         }
     }

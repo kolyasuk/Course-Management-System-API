@@ -1,6 +1,7 @@
 package edu.sombra.cms.domain.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -15,6 +16,7 @@ import static java.util.stream.Stream.concat;
 @Data
 @Entity
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class StudentLesson extends Owners implements Serializable {
 
     @EmbeddedId
@@ -31,10 +33,10 @@ public class StudentLesson extends Owners implements Serializable {
     private Lesson lesson;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name="homework_file",
+    @JoinTable(name = "homework_file",
             joinColumns = {
-                    @JoinColumn(name="student_id"),
-                    @JoinColumn(name="lesson_id")
+                    @JoinColumn(name="lesson_id"),
+                    @JoinColumn(name="student_id")
             },
             inverseJoinColumns = @JoinColumn(name="homework_file_id"))
     private Set<S3File> homeworkFiles = new HashSet<>();

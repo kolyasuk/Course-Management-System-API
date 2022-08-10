@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.sombra.cms.config.security.JwtTokenUtil;
 import edu.sombra.cms.controller.AdminController;
 import edu.sombra.cms.domain.dto.FullUserInfoDTO;
-import edu.sombra.cms.domain.payload.RegistrationData;
+import edu.sombra.cms.domain.payload.UserRegistrationData;
 import edu.sombra.cms.service.CourseService;
 import edu.sombra.cms.service.UserService;
 import edu.sombra.cms.service.impl.UserDetailsServiceImpl;
@@ -50,7 +50,7 @@ public class AdminControllerTest {
     @DisplayName("Create user valid input returns code 200")
     @WithMockUser
     void whenValidInput_thenReturns200() throws Exception {
-        RegistrationData instructor = new RegistrationData("password", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
+        UserRegistrationData instructor = new UserRegistrationData("password", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
 
         mockMvc.perform(post("/api/admin/user")
                 .contentType("application/json")
@@ -62,7 +62,7 @@ public class AdminControllerTest {
     @DisplayName("Create user invalid input returns code 400")
     @WithMockUser
     void whenInvalidInput_thenReturns400() throws Exception {
-        RegistrationData instructor = new RegistrationData("", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
+        UserRegistrationData instructor = new UserRegistrationData("", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
 
         mockMvc.perform(post("/api/admin/user")
                 .contentType("application/json")
@@ -74,7 +74,7 @@ public class AdminControllerTest {
     @DisplayName("Create user invalid input returns code 400 and ErrorResponse")
     @WithMockUser
     void whenInvalidInput_thenReturns400AndErrorResponse() throws Exception {
-        RegistrationData instructor = new RegistrationData("", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
+        UserRegistrationData instructor = new UserRegistrationData("", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
 
         mockMvc.perform(post("/api/admin/user")
                 .contentType("application/json")
@@ -87,14 +87,14 @@ public class AdminControllerTest {
     @DisplayName("Create user valid input maps to business model")
     @WithMockUser
     void whenValidInput_thenMapsToBusinessModel() throws Exception {
-        RegistrationData instructor = new RegistrationData("password", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
+        UserRegistrationData instructor = new UserRegistrationData("password", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
 
         mockMvc.perform(post("/api/admin/user")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(instructor)))
                 .andExpect(status().isOk());
 
-        ArgumentCaptor<RegistrationData> registrationDataCaptor = ArgumentCaptor.forClass(RegistrationData.class);
+        ArgumentCaptor<UserRegistrationData> registrationDataCaptor = ArgumentCaptor.forClass(UserRegistrationData.class);
 
         verify(userService, times(1)).create(registrationDataCaptor.capture());
         assertThat(registrationDataCaptor.getValue().getPassword()).isEqualTo("password");
@@ -107,11 +107,11 @@ public class AdminControllerTest {
     @DisplayName("Create user valid input returns FullUserInfoDTO")
     @WithMockUser
     void whenValidInput_thenReturnsFullUserInfoDTO() throws Exception {
-        RegistrationData instructor = new RegistrationData("password", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
+        UserRegistrationData instructor = new UserRegistrationData("password", "Instructor1 Instructor1", "instructor1@gmail.com", ROLE_INSTRUCTOR);
         FullUserInfoDTO userServiceReturn = new FullUserInfoDTO(1, "instructor1@gmail.com", "Instructor1 Instructor1");
         FullUserInfoDTO expected = new FullUserInfoDTO(1, "instructor1@gmail.com", "Instructor1 Instructor1");
 
-        when(userService.create(any(RegistrationData.class))).thenReturn(userServiceReturn);
+        when(userService.create(any(UserRegistrationData.class))).thenReturn(userServiceReturn);
 
         String actualResponseBody = mockMvc.perform(post("/api/admin/user")
                 .contentType("application/json")

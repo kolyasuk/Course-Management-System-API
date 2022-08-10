@@ -4,7 +4,7 @@ import edu.sombra.cms.domain.dto.CourseDTO;
 import edu.sombra.cms.domain.dto.FullUserInfoDTO;
 import edu.sombra.cms.domain.enumeration.Role;
 import edu.sombra.cms.domain.payload.CourseData;
-import edu.sombra.cms.domain.payload.RegistrationData;
+import edu.sombra.cms.domain.payload.UserRegistrationData;
 import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.service.CourseService;
 import edu.sombra.cms.service.UserService;
@@ -23,8 +23,8 @@ public class AdminController {
     private final CourseService courseService;
 
     @PostMapping("/user")
-    public FullUserInfoDTO register(@RequestBody @Valid RegistrationData registrationData) throws SomethingWentWrongException {
-        return userService.create(registrationData);
+    public FullUserInfoDTO register(@RequestBody @Valid UserRegistrationData userRegistrationData) throws SomethingWentWrongException {
+        return userService.create(userRegistrationData);
     }
 
     @PostMapping("/course")

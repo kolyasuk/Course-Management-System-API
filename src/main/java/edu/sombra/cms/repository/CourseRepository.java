@@ -2,7 +2,6 @@ package edu.sombra.cms.repository;
 
 
 import edu.sombra.cms.domain.entity.Course;
-import edu.sombra.cms.domain.entity.Lesson;
 import edu.sombra.cms.domain.enumeration.CourseStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -15,6 +14,8 @@ import java.util.Optional;
 public interface CourseRepository extends JpaRepository<Course, Long> {
 
     Optional<Course> findByIdAndStatus(Long id, CourseStatus status);
+
+    Optional<Course> findTopByOrderByIdDesc();
 
     @Modifying
     @Query("update Course c set c.status = :status where c = :course")

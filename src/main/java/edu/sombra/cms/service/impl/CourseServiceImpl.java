@@ -48,7 +48,6 @@ public class CourseServiceImpl implements CourseService {
     private final StudentLessonRepository studentLessonRepository;
     private final CourseMapper courseMapper;
     private final LessonRepository lessonRepository;
-    private final UserService userService;
     private final LessonOverviewMapper lessonOverviewMapper;
     private final StudentOverviewMapper studentOverviewMapper;
 

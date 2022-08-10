@@ -13,6 +13,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.validation.ConstraintViolationException;
 import java.nio.file.AccessDeniedException;
+import java.util.NoSuchElementException;
+
+import static edu.sombra.cms.messages.UserMessage.ACCESS_DENIED;
 
 @ControllerAdvice
 public class ControllerAdvisor extends ResponseEntityExceptionHandler {
@@ -43,6 +46,11 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Object> handleAccessDenied(AccessDeniedException ex, WebRequest request) {
         return new ResponseEntity<>(new ErrorResponse(ex), HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<Object> handleNoSuchElementException(NoSuchElementException ex, WebRequest request) {
+        return new ResponseEntity<>(new ErrorResponse(ACCESS_DENIED.ofException()), HttpStatus.NOT_FOUND);
     }
 
 }

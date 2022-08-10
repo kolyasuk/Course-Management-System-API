@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,16 +17,10 @@ public class Instructor extends Owners implements EntityClass {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Size(max = 40)
     private String firstName;
 
-    @NotBlank
-    @Size(max = 40)
     private String lastName;
 
-    @NotBlank
-    @Size(max = 500)
     private String info;
 
     @ManyToMany(mappedBy = "instructors", fetch = FetchType.LAZY)

@@ -15,6 +15,8 @@ public interface StudentLessonRepository extends JpaRepository<StudentLesson, St
 
     Optional<StudentLesson> findStudentLessonByStudentIdAndLessonId(Long studentId, Long lessonId);
 
+    Optional<StudentLesson> findStudentLessonByStudentUserIdAndLessonId(Long userId, Long lessonId);
+
     @Query("select case when count(sl) > 0 then true else false end " +
             "from StudentLesson sl where sl.student = :student and sl.lesson.course = :course and sl.mark is null")
     boolean existsStudentLessonByStudentAndCourseAndMarkIsNull(Student student, Course course);

@@ -42,8 +42,8 @@ public class StudentCourse extends Owners implements Serializable {
 
     @Data
     @Embeddable
-    @AllArgsConstructor
     @NoArgsConstructor
+    @AllArgsConstructor
     public static class StudentCoursePK implements Serializable {
 
         @Column(name = "student_id")
