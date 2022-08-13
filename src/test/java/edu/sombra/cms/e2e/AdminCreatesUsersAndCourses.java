@@ -2,8 +2,10 @@ package edu.sombra.cms.e2e;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.sombra.cms.config.security.JwtTokenUtil;
+import edu.sombra.cms.domain.dto.StudentCourseOverviewDTO;
 import edu.sombra.cms.domain.entity.*;
 import edu.sombra.cms.domain.enumeration.Role;
+import edu.sombra.cms.domain.mapper.StudentCourseOverviewMapper;
 import edu.sombra.cms.domain.payload.*;
 import edu.sombra.cms.repository.*;
 import edu.sombra.cms.service.impl.UserDetailsServiceImpl;
@@ -25,6 +27,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static edu.sombra.cms.domain.enumeration.CourseStatus.ACTIVE;
+import static edu.sombra.cms.domain.enumeration.CourseStatus.FINISHED;
+import static edu.sombra.cms.domain.enumeration.StudentCourseStatus.FAILED;
 import static java.lang.String.valueOf;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -60,6 +64,8 @@ public class AdminCreatesUsersAndCourses {
     private StudentCourseRepository studentCourseRepository;
     @Autowired
     private StudentLessonRepository studentLessonRepository;
+    @Autowired
+    private StudentCourseOverviewMapper studentCourseOverviewMapper;
 
 
     static {
@@ -151,15 +157,15 @@ public class AdminCreatesUsersAndCourses {
         Course course = courseRepository.findTopByOrderByIdDesc().orElseThrow();
 
         LessonData lesson1Data = new LessonData("Lesson 1", "Lesson 1 information", course.getId(), instructor.getId(),
-                "Lesson 1 homework task", LocalDate.now().plusDays(1));
+                "Lesson 1 homework task", LocalDate.now());
         LessonData lesson2Data = new LessonData("Lesson 2", "Lesson 2 information", course.getId(), instructor.getId(),
-                "Lesson 2 homework task", LocalDate.now().plusDays(1));
+                "Lesson 2 homework task", LocalDate.now());
         LessonData lesson3Data = new LessonData("Lesson 3", "Lesson 3 information", course.getId(), instructor.getId(),
-                "Lesson 3 homework task", LocalDate.now().plusDays(1));
+                "Lesson 3 homework task", LocalDate.now());
         LessonData lesson4Data = new LessonData("Lesson 4", "Lesson 4 information", course.getId(), instructor.getId(),
-                "Lesson 4 homework task", LocalDate.now().plusDays(1));
+                "Lesson 4 homework task", LocalDate.now());
         LessonData lesson5Data = new LessonData("Lesson 5", "Lesson 5 information", course.getId(), instructor.getId(),
-                "Lesson 5 homework task", LocalDate.now().plusDays(1));
+                "Lesson 5 homework task", LocalDate.now());
 
         mockMvc.perform(post("/api/lesson")
                 .header("Authorization",  createAccessToken(instructor.getUser().getEmail()))
@@ -203,8 +209,8 @@ public class AdminCreatesUsersAndCourses {
                 .header("Authorization",  createAccessToken("instructor1@email.com")))
                 .andExpect(status().isOk());
 
-        Course activatedCourse = courseRepository.findByIdAndStatus(course.getId(), ACTIVE).orElseThrow();
-        assertThat(course.getId()).isEqualTo(activatedCourse.getId());
+        Course activatedCourse = courseRepository.findById(course.getId()).orElseThrow();
+        assertThat(activatedCourse.getStatus()).isEqualTo(ACTIVE);
     }
 
     @Test
@@ -248,16 +254,45 @@ public class AdminCreatesUsersAndCourses {
     @Test
     @Order(9)
     void instructorEvaluateHomework() throws Exception {
+        List<StudentLesson> studentLessons = studentLessonRepository.findAll();
 
+        for (int i = 0; i < studentLessons.size(); i++) {
+            StudentLesson studentLesson = studentLessons.get(i);
+            EvaluateLessonData evaluateLessonData = new EvaluateLessonData(studentLesson.getStudent().getId(), createMark(i), "Nice");
+
+            mockMvc.perform(put("/api/lesson/{id}/mark", studentLesson.getLesson().getId())
+                    .header("Authorization", createAccessToken("instructor1@email.com"))
+                    .contentType("application/json")
+                    .content(objectMapper.writeValueAsString(evaluateLessonData)))
+                    .andExpect(status().isOk());
+        }
+
+        List<StudentLesson> evaluatedStudentLessons = studentLessonRepository.findAll();
+        for (int i = 0; i < evaluatedStudentLessons.size(); i++) {
+            StudentLesson studentLesson = evaluatedStudentLessons.get(i);
+            assertThat(studentLesson.getMark()).isEqualTo(createMark(i));
+        }
+    }
+
+    private int createMark(int i) {
+        return (i + 1) * 10;
     }
 
     @Test
     @Order(10)
     void instructorFinishCourse() throws Exception {
+        Course course = courseRepository.findTopByOrderByIdDesc().orElseThrow();
 
+        mockMvc.perform(put("/api/course/{id}/finish", course.getId())
+                .header("Authorization",  createAccessToken("instructor1@email.com")))
+                .andExpect(status().isOk());
 
-        //todo: check student mark
-        //todo: check status
+        Student student = studentRepository.findByUsername("student1@email.com").orElseThrow();
+        StudentCourseOverviewDTO finishedStudentCourseOverviewDTO = studentCourseOverviewMapper.to(student.getId(), course.getId());
+
+        assertThat(finishedStudentCourseOverviewDTO.getCourseStatus()).isEqualTo(FINISHED);
+        assertThat(finishedStudentCourseOverviewDTO.getPassStatus()).isEqualTo(FAILED);
+        assertThat(finishedStudentCourseOverviewDTO.getMark()).isEqualTo(30);
     }
 
     private String createAccessToken(String username) {

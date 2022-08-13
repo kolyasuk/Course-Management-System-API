@@ -1,7 +1,9 @@
 package edu.sombra.cms.domain.payload;
 
 import edu.sombra.cms.domain.annotation.MarkRange;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
@@ -9,6 +11,8 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class EvaluateLessonData {
 
     @NotNull(message = "{evaluatelessondata.studentId.null}")

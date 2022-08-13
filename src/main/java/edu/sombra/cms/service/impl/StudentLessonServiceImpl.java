@@ -84,7 +84,7 @@ public class StudentLessonServiceImpl implements StudentLessonService {
     @Transactional(rollbackFor = SomethingWentWrongException.class)
     public void evaluate(Long lessonId, @Valid EvaluateLessonData evaluateLessonData) throws SomethingWentWrongException {
         var studentLesson = Optional.of(getByStudentAndLesson(evaluateLessonData.getStudentId(), lessonId))
-                .filter(s -> s.getHomeworkFiles().isEmpty()).orElseThrow(HOMEWORK_IS_NOT_UPLOADED::ofException);
+                .filter(StudentLesson::canBeEvaluated).orElseThrow(HOMEWORK_IS_NOT_UPLOADED::ofException);
 
         if(studentLesson.getMark() == null){
             studentLesson.setMark(evaluateLessonData.getMark());
@@ -92,7 +92,7 @@ public class StudentLessonServiceImpl implements StudentLessonService {
             studentLessonRepository.save(studentLesson);
         }
 
-        LOGGER.info("Evaluated lesson with id: {} for student with id: {}", lessonId, evaluateLessonData.getStudentId());
+        LOGGER.info("Evaluated lesson with id: {} for student with id: {}, mark: {}", lessonId, evaluateLessonData.getStudentId(), evaluateLessonData.getMark());
     }
 
     @Override

@@ -129,25 +129,23 @@ public class CourseServiceImpl implements CourseService {
             throw LESSONS_NOT_FINISHED.ofException();
         }
 
-        calculateStudentCourceMarks(course);
-
+        calculateStudentCourseMarks(course);
         courseRepository.setStatus(course, CourseStatus.FINISHED);
 
         LOGGER.info("Finished course with id: {}", course.getId());
-
         return course;
     }
 
-    private void calculateStudentCourceMarks(Course course) {
+    private void calculateStudentCourseMarks(Course course) {
         for (StudentCourse studentCourse : course.getStudentCourses()) {
             var student = studentCourse.getStudent();
 
-            int studentCourceMark = calculateStudentCourceMark(course, student);
-            studentCourseRepository.updateMark(studentCourceMark, studentCourse);
+            int studentCourseMark = calculateStudentCourseMark(course, student);
+            studentCourseRepository.updateMark(studentCourseMark, studentCourse);
         }
     }
 
-    private int calculateStudentCourceMark(Course course, edu.sombra.cms.domain.entity.Student student) {
+    private int calculateStudentCourseMark(Course course, edu.sombra.cms.domain.entity.Student student) {
         int mark = 0;
         if(!studentLessonRepository.existsStudentLessonByStudentAndCourseAndMarkIsNull(student, course)) {
             mark = studentLessonRepository.getAvgMark(student, course);

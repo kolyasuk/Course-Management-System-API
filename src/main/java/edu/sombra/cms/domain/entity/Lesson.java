@@ -38,10 +38,6 @@ public class Lesson extends Owners implements EntityClass {
     @JoinColumn(name="instructor_id", nullable = false)
     private Instructor instructor;
 
-    public List<User> getRelatedUsers(){
-        return course.getRelatedUsers();
-    }
-
     @Override
     public List<Long> getOwnersIds() {
         return course.getOwnersIds();

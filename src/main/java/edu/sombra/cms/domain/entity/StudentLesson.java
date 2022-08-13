@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -60,6 +61,10 @@ public class StudentLesson extends Owners implements Serializable {
     @Override
     public List<Long> getOwnersIds() {
         return concat(lesson.getOwnersIds().stream(), student.getOwnersIds().stream()).collect(toList());
+    }
+
+    public boolean canBeEvaluated() {
+        return !homeworkFiles.isEmpty() || LocalDate.now().isAfter(lesson.getFinishDate());
     }
 
     @Data
