@@ -2,8 +2,12 @@ package edu.sombra.cms.service.impl;
 
 import edu.sombra.cms.domain.dto.CourseOverviewDTO;
 import edu.sombra.cms.domain.dto.InstructorDTO;
+import edu.sombra.cms.domain.dto.OverviewPageDTO;
+import edu.sombra.cms.domain.entity.Course;
 import edu.sombra.cms.domain.entity.Instructor;
+import edu.sombra.cms.domain.entity.Lesson;
 import edu.sombra.cms.domain.entity.User;
+import edu.sombra.cms.domain.mapper.ComingLessonMapper;
 import edu.sombra.cms.domain.mapper.CourseOverviewMapper;
 import edu.sombra.cms.domain.mapper.InstructorMapper;
 import edu.sombra.cms.domain.payload.InstructorData;
@@ -21,8 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static edu.sombra.cms.messages.InstructorMessage.NOT_FOUND;
 import static edu.sombra.cms.messages.InstructorMessage.USER_IS_NOT_INSTRUCTOR;
@@ -36,6 +42,7 @@ public class InstructorServiceImpl implements InstructorService {
     private final InstructorMapper instructorMapper;
     private final UserService userService;
     private final CourseOverviewMapper courseOverviewMapper;
+    private final ComingLessonMapper comingLessonMapper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InstructorServiceImpl.class);
 
@@ -96,6 +103,15 @@ public class InstructorServiceImpl implements InstructorService {
         var instructor = getLoggedInstructor();
 
         return courseOverviewMapper.toList(instructor.getCourses());
+    }
+
+    @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
+    public List<OverviewPageDTO.ComingLessonDTO> comingLessons() throws SomethingWentWrongException {
+        var instructor = getLoggedInstructor();
+        var comingLessons = instructor.getCourses().stream().map(Course::getLessons).flatMap(Collection::stream).filter(Lesson::isComing).collect(Collectors.toList());
+
+        return comingLessonMapper.toList(comingLessons);
     }
 
     private User getInstructorUser(Long userId) throws SomethingWentWrongException {

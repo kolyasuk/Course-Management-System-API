@@ -10,9 +10,9 @@ import org.springframework.stereotype.Repository;
 public interface LessonRepository extends JpaRepository<Lesson, Long> {
 
     //created native query only to create jpa test case
-    @Query(value = "select case when count(*) > 0 then true else false end " +
+    @Query(value = "select count(*) " +
             "from Lesson l " +
             "join course c on c.id = l.course_id " +
-            "where c.id = :courseId and l.finish_date > current_date", nativeQuery = true)
-    boolean existsNotFinishedLessons(Long courseId);
+            "where c.id = :courseId and l.homework_finish_date > current_date", nativeQuery = true)
+    Integer existsNotFinishedLessons(Long courseId);
 }

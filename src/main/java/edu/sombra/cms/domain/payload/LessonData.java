@@ -35,6 +35,9 @@ public class LessonData {
     private String homework;
 
     @NotNull(message = "{lessondata.date.null}")
+    private LocalDate homeworkDate;
+
+    @NotNull(message = "{lessondata.date.null}")
     private LocalDate date;
 
 }

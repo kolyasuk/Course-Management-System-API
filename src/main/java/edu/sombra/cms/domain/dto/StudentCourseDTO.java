@@ -13,7 +13,6 @@ public class StudentCourseDTO {
 
     private long id;
     private String name;
-    //todo: add dto for status
     private Integer mark;
     private CourseStatus courseStatus;
     private StudentCourseStatus passStatus;

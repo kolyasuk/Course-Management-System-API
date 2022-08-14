@@ -38,6 +38,6 @@ public class NativeQueriesTest {
     @Test
     @Sql("classpath:sql/createNotFinishedLesson.sql")
     void lessonRepository_existsNotFinishedLessonsIsTrue(){
-        assertThat(lessonRepository.existsNotFinishedLessons(1L)).isTrue();
+        assertThat(lessonRepository.existsNotFinishedLessons(1L)).isGreaterThan(0);
     }
 }

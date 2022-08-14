@@ -110,7 +110,7 @@ public class CourseServiceTest {
     @Test
     void courseIsNotFinishedBecauseExistNotFinishedLessons() {
         when(courseRepository.findByIdAndStatus(any(Long.class), any(CourseStatus.class))).thenReturn(Optional.of(inactiveCourseEntityForTest()));
-        when(lessonRepository.existsNotFinishedLessons(any(Long.class))).thenReturn(Boolean.TRUE);
+        when(lessonRepository.existsNotFinishedLessons(any(Long.class))).thenReturn(1);
         SomethingWentWrongException somethingWentWrongException = assertThrows(SomethingWentWrongException.class, () -> courseService.finish(1L));
 
         String expectedMessage = "Course lessons are not finished yet";

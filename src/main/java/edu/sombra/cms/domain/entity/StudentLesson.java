@@ -64,7 +64,11 @@ public class StudentLesson extends Owners implements Serializable {
     }
 
     public boolean canBeEvaluated() {
-        return !homeworkFiles.isEmpty() || LocalDate.now().isAfter(lesson.getFinishDate());
+        return !homeworkFiles.isEmpty() || LocalDate.now().isAfter(lesson.getHomeworkFinishDate());
+    }
+
+    public boolean isComing(){
+        return lesson.isComing();
     }
 
     @Data

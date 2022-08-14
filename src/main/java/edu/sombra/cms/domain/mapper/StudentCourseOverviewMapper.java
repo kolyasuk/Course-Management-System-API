@@ -26,7 +26,7 @@ public class StudentCourseOverviewMapper {
         studentCourseOverviewDTO.setId(course.getId());
         studentCourseOverviewDTO.setName(course.getName());
         studentCourseOverviewDTO.setMark(studentCourse.getMark());
-        studentCourseOverviewDTO.setCourseStatus(course.getStatus());
+        studentCourseOverviewDTO.setStatus(course.getStatus());
 
         var studentCourseStatus = Optional.ofNullable(studentCourse.getMark()).map(StudentCourseStatus::ofMark).orElse(null);
         studentCourseOverviewDTO.setPassStatus(studentCourseStatus);

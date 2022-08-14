@@ -1,12 +1,14 @@
 package edu.sombra.cms.service.impl;
 
 import edu.sombra.cms.domain.dto.CourseDTO;
+import edu.sombra.cms.domain.dto.CourseOverviewDTO;
 import edu.sombra.cms.domain.dto.LessonOverviewDTO;
 import edu.sombra.cms.domain.dto.StudentOverviewDTO;
 import edu.sombra.cms.domain.entity.Course;
 import edu.sombra.cms.domain.entity.StudentCourse;
 import edu.sombra.cms.domain.enumeration.CourseStatus;
 import edu.sombra.cms.domain.mapper.CourseMapper;
+import edu.sombra.cms.domain.mapper.CourseOverviewMapper;
 import edu.sombra.cms.domain.mapper.LessonOverviewMapper;
 import edu.sombra.cms.domain.mapper.StudentOverviewMapper;
 import edu.sombra.cms.domain.payload.CourseData;
@@ -15,7 +17,10 @@ import edu.sombra.cms.repository.CourseRepository;
 import edu.sombra.cms.repository.LessonRepository;
 import edu.sombra.cms.repository.StudentCourseRepository;
 import edu.sombra.cms.repository.StudentLessonRepository;
-import edu.sombra.cms.service.*;
+import edu.sombra.cms.service.CourseService;
+import edu.sombra.cms.service.InstructorService;
+import edu.sombra.cms.service.StudentLessonService;
+import edu.sombra.cms.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +55,7 @@ public class CourseServiceImpl implements CourseService {
     private final LessonRepository lessonRepository;
     private final LessonOverviewMapper lessonOverviewMapper;
     private final StudentOverviewMapper studentOverviewMapper;
+    private final CourseOverviewMapper courseOverviewMapper;
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CourseServiceImpl.class);
@@ -58,6 +64,11 @@ public class CourseServiceImpl implements CourseService {
     @Transactional(rollbackFor = SomethingWentWrongException.class)
     public Course getById(Long courseId) throws SomethingWentWrongException {
         return courseRepository.findById(courseId).orElseThrow(NOT_FOUND::ofException);
+    }
+
+    @Override
+    public List<CourseOverviewDTO> findAll() throws SomethingWentWrongException {
+        return courseOverviewMapper.toList(courseRepository.findAll());
     }
 
     @Override
@@ -164,7 +175,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @Transactional(rollbackFor = SomethingWentWrongException.class)
     public boolean existsNotFinishedLessons(Long courseId) {
-        return lessonRepository.existsNotFinishedLessons(courseId);
+        return lessonRepository.existsNotFinishedLessons(courseId) > 0;
     }
 
     @Override

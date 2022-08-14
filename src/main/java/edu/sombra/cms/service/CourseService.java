@@ -1,6 +1,7 @@
 package edu.sombra.cms.service;
 
 import edu.sombra.cms.domain.dto.CourseDTO;
+import edu.sombra.cms.domain.dto.CourseOverviewDTO;
 import edu.sombra.cms.domain.dto.LessonOverviewDTO;
 import edu.sombra.cms.domain.dto.StudentOverviewDTO;
 import edu.sombra.cms.domain.entity.Course;
@@ -13,6 +14,8 @@ import java.util.List;
 public interface CourseService {
 
     Course getById(Long courseId) throws SomethingWentWrongException;
+
+    List<CourseOverviewDTO> findAll() throws SomethingWentWrongException;
 
     CourseDTO getDTOById(Long courseId) throws SomethingWentWrongException;
 

@@ -1,10 +1,9 @@
 package edu.sombra.cms.service.impl;
 
+import edu.sombra.cms.domain.dto.OverviewPageDTO;
 import edu.sombra.cms.domain.dto.StudentCourseOverviewDTO;
 import edu.sombra.cms.domain.dto.StudentDTO;
-import edu.sombra.cms.domain.entity.Student;
-import edu.sombra.cms.domain.entity.StudentCourse;
-import edu.sombra.cms.domain.entity.User;
+import edu.sombra.cms.domain.entity.*;
 import edu.sombra.cms.domain.mapper.StudentCourseOverviewMapper;
 import edu.sombra.cms.domain.mapper.StudentMapper;
 import edu.sombra.cms.domain.payload.StudentData;
@@ -24,6 +23,7 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static edu.sombra.cms.messages.StudentMessage.*;
 
@@ -36,6 +36,7 @@ public class StudentServiceImpl implements StudentService {
     private final StudentMapper studentMapper;
     private final UserService userService;
     private final StudentCourseOverviewMapper studentCourseOverviewMapper;
+    private final edu.sombra.cms.domain.mapper.ComingLessonMapper comingLessonMapper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StudentServiceImpl.class);
 
@@ -92,6 +93,13 @@ public class StudentServiceImpl implements StudentService {
     public List<StudentCourseOverviewDTO> courseList() throws SomethingWentWrongException {
         var student = getLoggedStudent();
         return getStudentCourse(student.getStudentCourses());
+    }
+
+    @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
+    public List<OverviewPageDTO.ComingLessonDTO> comingLesson() throws SomethingWentWrongException {
+        var student = getLoggedStudent();
+        return comingLessonMapper.toList(student.getStudentLessons().stream().map(StudentLesson::getLesson).filter(Lesson::isComing).collect(Collectors.toList()));
     }
 
     private List<StudentCourseOverviewDTO> getStudentCourse(List<StudentCourse> studentCourses) throws SomethingWentWrongException {

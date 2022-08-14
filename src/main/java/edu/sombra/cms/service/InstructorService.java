@@ -2,6 +2,7 @@ package edu.sombra.cms.service;
 
 import edu.sombra.cms.domain.dto.CourseOverviewDTO;
 import edu.sombra.cms.domain.dto.InstructorDTO;
+import edu.sombra.cms.domain.dto.OverviewPageDTO;
 import edu.sombra.cms.domain.entity.Instructor;
 import edu.sombra.cms.domain.payload.InstructorData;
 import edu.sombra.cms.messages.SomethingWentWrongException;
@@ -24,5 +25,7 @@ public interface InstructorService {
     InstructorDTO create(@Valid InstructorData instructorData, Long userId) throws SomethingWentWrongException;
 
     List<CourseOverviewDTO> courseList() throws SomethingWentWrongException;
+
+    List<OverviewPageDTO.ComingLessonDTO> comingLessons() throws SomethingWentWrongException;
 
 }

@@ -24,8 +24,11 @@ public class Lesson extends Owners implements EntityClass {
 
     private String homework;
 
-    @Column(name = "finish_date")
-    private LocalDate finishDate;
+    @Column(name = "homework_finish_date")
+    private LocalDate homeworkFinishDate;
+
+    @Column(name = "lesson_date")
+    private LocalDate lessonDate;
 
     @OneToMany(mappedBy = "lesson", fetch = FetchType.LAZY)
     private List<StudentLesson> studentLessons = new ArrayList<>();
@@ -41,5 +44,9 @@ public class Lesson extends Owners implements EntityClass {
     @Override
     public List<Long> getOwnersIds() {
         return course.getOwnersIds();
+    }
+
+    public boolean isComing(){
+        return lessonDate.isAfter(LocalDate.now()) && lessonDate.isBefore(LocalDate.now().plusDays(2));
     }
 }

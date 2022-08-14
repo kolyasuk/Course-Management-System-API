@@ -1,14 +1,19 @@
 package edu.sombra.cms.service.impl;
 
 import edu.sombra.cms.domain.dto.LessonDTO;
+import edu.sombra.cms.domain.dto.OverviewPageDTO;
 import edu.sombra.cms.domain.entity.Course;
 import edu.sombra.cms.domain.entity.Instructor;
 import edu.sombra.cms.domain.entity.Lesson;
+import edu.sombra.cms.domain.mapper.ComingLessonMapper;
 import edu.sombra.cms.domain.mapper.LessonMapper;
 import edu.sombra.cms.domain.payload.LessonData;
 import edu.sombra.cms.messages.SomethingWentWrongException;
 import edu.sombra.cms.repository.LessonRepository;
-import edu.sombra.cms.service.*;
+import edu.sombra.cms.service.CourseService;
+import edu.sombra.cms.service.InstructorService;
+import edu.sombra.cms.service.LessonService;
+import edu.sombra.cms.service.StudentLessonService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static edu.sombra.cms.messages.LessonMessage.NOT_COURSE_INSTRUCTOR;
 import static edu.sombra.cms.messages.LessonMessage.NOT_FOUND;
@@ -33,7 +40,7 @@ public class LessonServiceImpl implements LessonService {
     private final CourseService courseService;
     private final InstructorService instructorService;
     private final StudentLessonService saveStudentLessons;
-    private final UserService userService;
+    private final ComingLessonMapper comingLessonMapper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LessonServiceImpl.class);
 
@@ -59,7 +66,8 @@ public class LessonServiceImpl implements LessonService {
         lesson.setName(lessonData.getName());
         lesson.setDescription(lessonData.getDescription());
         lesson.setHomework(lessonData.getHomework());
-        lesson.setFinishDate(lessonData.getDate());
+        lesson.setHomeworkFinishDate(lessonData.getHomeworkDate());
+        lesson.setLessonDate(lessonData.getDate());
 
         lesson.setCourse(courseService.getById(lessonData.getCourseId()));
         lesson.setInstructor(getInstructor(lessonData.getCourseId(), lessonData.getInstructorId()));
@@ -86,6 +94,14 @@ public class LessonServiceImpl implements LessonService {
         }
 
         return instructor;
+    }
+
+    @Override
+    @Transactional(rollbackFor = SomethingWentWrongException.class)
+    public List<OverviewPageDTO.ComingLessonDTO> comingLessons() throws SomethingWentWrongException {
+        var comingLessons = lessonRepository.findAll().stream().filter(Lesson::isComing).collect(Collectors.toList());
+
+        return comingLessonMapper.toList(comingLessons);
     }
 
 }

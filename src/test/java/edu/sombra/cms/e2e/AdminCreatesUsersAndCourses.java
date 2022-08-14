@@ -157,15 +157,15 @@ public class AdminCreatesUsersAndCourses {
         Course course = courseRepository.findTopByOrderByIdDesc().orElseThrow();
 
         LessonData lesson1Data = new LessonData("Lesson 1", "Lesson 1 information", course.getId(), instructor.getId(),
-                "Lesson 1 homework task", LocalDate.now());
+                "Lesson 1 homework task", LocalDate.now(), LocalDate.now());
         LessonData lesson2Data = new LessonData("Lesson 2", "Lesson 2 information", course.getId(), instructor.getId(),
-                "Lesson 2 homework task", LocalDate.now());
+                "Lesson 2 homework task", LocalDate.now(), LocalDate.now());
         LessonData lesson3Data = new LessonData("Lesson 3", "Lesson 3 information", course.getId(), instructor.getId(),
-                "Lesson 3 homework task", LocalDate.now());
+                "Lesson 3 homework task", LocalDate.now(), LocalDate.now());
         LessonData lesson4Data = new LessonData("Lesson 4", "Lesson 4 information", course.getId(), instructor.getId(),
-                "Lesson 4 homework task", LocalDate.now());
+                "Lesson 4 homework task", LocalDate.now(), LocalDate.now());
         LessonData lesson5Data = new LessonData("Lesson 5", "Lesson 5 information", course.getId(), instructor.getId(),
-                "Lesson 5 homework task", LocalDate.now());
+                "Lesson 5 homework task", LocalDate.now(), LocalDate.now());
 
         mockMvc.perform(post("/api/lesson")
                 .header("Authorization",  createAccessToken(instructor.getUser().getEmail()))
@@ -290,7 +290,7 @@ public class AdminCreatesUsersAndCourses {
         Student student = studentRepository.findByUsername("student1@email.com").orElseThrow();
         StudentCourseOverviewDTO finishedStudentCourseOverviewDTO = studentCourseOverviewMapper.to(student.getId(), course.getId());
 
-        assertThat(finishedStudentCourseOverviewDTO.getCourseStatus()).isEqualTo(FINISHED);
+        assertThat(finishedStudentCourseOverviewDTO.getStatus()).isEqualTo(FINISHED);
         assertThat(finishedStudentCourseOverviewDTO.getPassStatus()).isEqualTo(FAILED);
         assertThat(finishedStudentCourseOverviewDTO.getMark()).isEqualTo(30);
     }

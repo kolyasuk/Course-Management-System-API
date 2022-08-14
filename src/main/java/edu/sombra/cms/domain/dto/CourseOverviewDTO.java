@@ -6,11 +6,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CourseOverviewDTO {
+public class CourseOverviewDTO implements ICourseOverview {
 
-    private long id;
+    private Long id;
     private String name;
-    //todo: add dto for status
     private CourseStatus status;
 
 }
