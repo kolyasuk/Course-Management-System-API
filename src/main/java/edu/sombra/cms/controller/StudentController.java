@@ -13,7 +13,6 @@ import edu.sombra.cms.service.StudentService;
 import edu.sombra.cms.service.impl.UserAccessService;
 import edu.sombra.cms.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,7 +33,6 @@ public class StudentController {
     private final UserAccessService userAccessService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
     public StudentDTO createStudentInfo(@RequestBody @Valid StudentData studentData, @RequestParam(required = false) Long userId) throws SomethingWentWrongException {
         userId = Optional.ofNullable(userId).orElse(SecurityUtil.getLoggedUserId());
         userAccessService.checkAccess(USER, userId);
@@ -42,27 +40,23 @@ public class StudentController {
     }
 
     @GetMapping("/course")
-    @ResponseStatus(HttpStatus.OK)
     public List<StudentCourseOverviewDTO> courseList() throws SomethingWentWrongException {
         return studentService.courseList();
     }
 
     @GetMapping("/course/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public StudentCourseDTO getStudentCourse(@PathVariable Long id) throws SomethingWentWrongException {
         userAccessService.checkAccess(STUDENT_COURSE, id);
         return studentCourseService.getDTOByCourseId(id);
     }
 
     @GetMapping("/lesson/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public StudentLessonDTO getStudentLesson(@PathVariable Long id) throws SomethingWentWrongException {
         userAccessService.checkAccess(STUDENT_LESSON, id);
         return studentLessonService.getDTOByLessonId(id);
     }
 
     @PostMapping(value = "/lesson/{id}/homework", consumes = {"multipart/form-data"})
-    @ResponseStatus(HttpStatus.OK)
     public void createHomework(@PathVariable Long id, @RequestPart("homeworkData") HomeworkData homeworkData, @RequestPart(value = "homeworkFile") MultipartFile homeworkFile) throws SomethingWentWrongException {
         userAccessService.checkAccess(STUDENT_LESSON, id);
         studentLessonService.addHomework(id, homeworkData, homeworkFile);

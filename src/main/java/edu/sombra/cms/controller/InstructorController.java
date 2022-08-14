@@ -8,7 +8,6 @@ import edu.sombra.cms.service.InstructorService;
 import edu.sombra.cms.service.impl.UserAccessService;
 import edu.sombra.cms.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,7 +25,6 @@ public class InstructorController {
     private final UserAccessService userAccessService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
     public InstructorDTO createInstructorInfo(@RequestBody @Valid InstructorData instructorData, @RequestParam(required = false) Long userId) throws SomethingWentWrongException {
         userId = Optional.ofNullable(userId).orElse(SecurityUtil.getLoggedUserId());
         userAccessService.checkAccess(USER, userId);
@@ -34,7 +32,6 @@ public class InstructorController {
     }
 
     @GetMapping("/course")
-    @ResponseStatus(HttpStatus.OK)
     public List<CourseOverviewDTO> courseList() throws SomethingWentWrongException {
         return instructorService.courseList();
     }

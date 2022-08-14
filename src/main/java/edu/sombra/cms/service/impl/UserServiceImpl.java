@@ -109,7 +109,7 @@ public class UserServiceImpl implements UserService {
                 .map(Authentication::getAuthorities).orElse(null);
 
         if(authentication != null){
-            return authentication.stream().map(GrantedAuthority::getAuthority).anyMatch(Role.ROLE_ADMIN::isEqual);
+            return authentication.stream().map(GrantedAuthority::getAuthority).anyMatch(ROLE_ADMIN.name()::equals);
         }
 
         return false;

@@ -8,7 +8,6 @@ import edu.sombra.cms.service.LessonService;
 import edu.sombra.cms.service.StudentLessonService;
 import edu.sombra.cms.service.impl.UserAccessService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,20 +24,17 @@ public class LessonController {
     private final UserAccessService userAccessService;
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public LessonDTO getById(@PathVariable Long id) throws SomethingWentWrongException {
         userAccessService.checkAccess(LESSON, id);
         return lessonService.getDTOById(id);
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
     public LessonDTO create(@RequestBody @Valid LessonData lessonData) throws SomethingWentWrongException {
         return lessonService.create(lessonData);
     }
 
     @PutMapping("/{id}/mark")
-    @ResponseStatus(HttpStatus.OK)
     public void evaluate(@PathVariable("id") Long lessonId, @RequestBody @Valid EvaluateLessonData evaluateLessonData) throws SomethingWentWrongException {
         userAccessService.checkAccess(LESSON, lessonId);
         studentLessonService.evaluate(lessonId, evaluateLessonData);

@@ -1,6 +1,7 @@
 package edu.sombra.cms.controller.advisor;
 
 import edu.sombra.cms.messages.SomethingWentWrongException;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +52,11 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<Object> handleNoSuchElementException(NoSuchElementException ex, WebRequest request) {
         return new ResponseEntity<>(new ErrorResponse(ACCESS_DENIED.ofException()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<Object> handleExpiredJwtException(ExpiredJwtException ex, WebRequest request) {
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage()), HttpStatus.UNAUTHORIZED);
     }
 
 }
